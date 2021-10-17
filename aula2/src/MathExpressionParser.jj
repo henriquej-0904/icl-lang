@@ -1,0 +1,187 @@
+PARSER_BEGIN(MathExpressionParser)
+
+
+import java.io.*;
+import java.util.List;
+import java.util.LinkedList;
+
+/** ID lister. */
+public class MathExpressionParser {
+
+  private static final String MATH_EXPRESSION_INPUT_FILE = "MathExpression.j";
+
+  private static final String JASMIN_JAR_PATH_ENV = "JASMIN_JAR_PATH";
+
+  private static final String DEST_FOLDER_PARAM = "-d";
+  private static final String DEFAULT_DEST_FOLDER = "out";
+
+  /** Main entry point. */
+  public static void main(String args[]) {
+
+    if (!(args.length == 0 || args.length == 2))
+    {
+      System.out.println("Usage: java -jar MathCompiler.jar " + DEST_FOLDER_PARAM + " <Output folder> ");
+      System.exit(1);
+    }
+
+    String destFolder = DEFAULT_DEST_FOLDER;
+
+    if (args.length == 2)
+    {
+      if (!args[0].equals(DEST_FOLDER_PARAM))
+      {
+        System.err.println("Invalid argument.");
+        System.out.println("Usage: java -jar MathCompiler.jar " + DEST_FOLDER_PARAM + " <Output folder> ");
+        System.exit(1);
+      }
+
+      destFolder = args[1];
+    }
+
+    // Create destFolder
+    new File(destFolder).mkdirs();
+
+    String jasminJarPath = System.getenv(JASMIN_JAR_PATH_ENV);
+    if (jasminJarPath == null)
+    {
+      System.err.println("Cannot find jasmin jar executable.\n" +
+        "Environment var " + JASMIN_JAR_PATH_ENV + " must be defined.");
+      System.exit(1);
+    }
+
+    MathExpressionParser parser = new MathExpressionParser(System.in);
+
+    try {
+
+    // Create tmp file to save CompileBlock output.
+    File tmpFile = File.createTempFile("MathExpression", ".j");
+    tmpFile.deleteOnExit();
+    
+    // Get expression from stdin.
+    System.out.print( "> " );
+    ASTNode ast = parser.Start();
+
+    // Compile expression and dump to tmp file.
+    CompileBlock c = new CompileBlock(MATH_EXPRESSION_INPUT_FILE);
+    ast.compile(c);
+    c.dump(new PrintStream(tmpFile));
+
+    // Call jasmin to compile to a .class file.
+
+    List<String> jasminCommand = new LinkedList<String>();
+    jasminCommand.add("java");
+    jasminCommand.add("-jar");
+    jasminCommand.add(jasminJarPath);
+    jasminCommand.add(DEST_FOLDER_PARAM);
+    jasminCommand.add(destFolder);
+
+    jasminCommand.add(tmpFile.getAbsolutePath());
+
+    ProcessBuilder processBuilder = new ProcessBuilder(jasminCommand);
+    Process jasminProcess = processBuilder.start();
+    int jasminExitValue = jasminProcess.waitFor();
+
+    if (jasminExitValue == 0)
+      System.out.println ("Success!");
+    else
+    {
+      System.err.println ("Error calling jasmin.");
+      System.exit(jasminExitValue);
+    }
+
+    } catch (Exception e) {
+      System.out.println ("Syntax Error!");
+      e.printStackTrace();
+      parser.ReInit(System.in);
+    }
+  }
+
+}
+
+PARSER_END(MathExpressionParser)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\r"
+}
+
+TOKEN :
+{ 
+  < Id: ["a"-"z","A"-"Z"] ( ["a"-"z","A"-"Z","0"-"9"] )* >
+  |
+  < Num: (["0"-"9"]) + >
+  |
+  < PLUS : "+" >
+  |
+  < MINUS : "-">
+  |
+  < MUL : "*">
+  |
+  < DIV : "/">
+  |
+  < LPAR : "(" >
+  |
+  < RPAR : ")" >
+  |
+  < EL: "\n" >
+}
+
+ASTNode Start() :
+{
+ASTNode t1;
+}
+{
+   t1 = Exp() <EL>
+	{ return t1; }
+}
+
+ASTNode Exp() :
+{
+ASTNode t1,t2;
+Token tok;
+}
+{
+     t1 = Term() ( ( tok=<PLUS> | tok=<MINUS> ) t2=Term() 
+
+                 { if (tok.kind == PLUS)
+                         t1 = new ASTAdd(t1,t2);
+                   else  t1 = new ASTSub(t1,t2); 
+                 }
+
+                 ) *
+    
+     { return t1; }
+
+}
+
+ASTNode Term() :
+{
+ASTNode t1,t2;
+Token tok;
+}
+{
+     t1=Fact() ( ( tok=<MUL> | tok=<DIV> ) t2=Fact()
+
+                { if (tok.kind == MUL)
+                         t1 = new ASTMul(t1,t2);
+                   else  t1 = new ASTDiv(t1,t2); 
+                }
+     ) *
+
+     { return t1; }  
+	
+}
+
+ASTNode Fact() :
+{ASTNode t1;
+Token tok;
+}
+{
+   ( tok=<Num> { t1 = new ASTNum(Integer.parseInt(tok.image)); } |
+      <MINUS> t1=Fact() {t1 = new ASTUminus(t1);} | 
+     <LPAR> t1=Exp() <RPAR>
+   )   
+  { return t1; }  
+}

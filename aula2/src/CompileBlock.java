@@ -52,7 +52,7 @@ public class CompileBlock {
         code[pc++] = opcode;
     }
 
-    void dump(PrintStream f) { // dumps code to f }
+    void dump(PrintStream f) { // dumps code to f
 
         f.println(start);
 
@@ -61,6 +61,8 @@ public class CompileBlock {
 
         f.println(end);
 
+        f.flush();
+        f.close();
     }
 
 }

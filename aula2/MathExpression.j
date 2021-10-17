@@ -1,4 +1,4 @@
-.class public Main
+.class public MathExpression
 .super java/lang/Object
 ;
 ; standard initializer
