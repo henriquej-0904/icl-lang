@@ -1,7 +1,6 @@
-FROM henriquej0904/icl-tools
+FROM henriquej0904/icl:tools-dev-env AS build
 
 COPY ./src /app/src
-COPY ./MathExpression.j /app/MathExpression.j
 
 # Compile
 WORKDIR /app/src
@@ -20,3 +19,13 @@ jar --create --file ../MathExpression.jar -e MathExpressionParser @../class-file
 rm ../class-files.txt
 
 WORKDIR /app
+
+# ------------------------------------------------------------
+
+FROM henriquej0904/icl:tools-run-env
+
+WORKDIR /app
+
+# Copy jar and build files
+COPY --from=build /app/MathExpression.jar /app/MathExpression.jar
+COPY ./MathExpression.j /app/MathExpression.j
