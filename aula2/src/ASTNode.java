@@ -1,3 +1,5 @@
+import compiler.CompileBlock;
+
 public interface ASTNode {
 
     int eval();

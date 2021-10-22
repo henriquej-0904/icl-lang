@@ -1,3 +1,5 @@
+import compiler.CompileBlock;
+
 public class ASTDiv implements ASTNode {
 
     ASTNode lhs, rhs;

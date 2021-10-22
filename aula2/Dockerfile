@@ -28,4 +28,3 @@ WORKDIR /app
 
 # Copy jar and build files
 COPY --from=build /app/MathExpression.jar /app/MathExpression.jar
-COPY ./MathExpression.j /app/MathExpression.j

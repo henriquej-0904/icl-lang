@@ -1,3 +1,5 @@
+import compiler.CompileBlock;
+
 public class ASTSub implements ASTNode {
 
 ASTNode lhs, rhs;

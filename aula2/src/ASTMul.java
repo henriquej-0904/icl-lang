@@ -1,3 +1,5 @@
+import compiler.CompileBlock;
+
 public class ASTMul implements ASTNode {
 
     ASTNode lhs, rhs;

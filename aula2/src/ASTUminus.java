@@ -1,3 +1,5 @@
+import compiler.CompileBlock;
+
 public class ASTUminus implements ASTNode {
 
     ASTNode lhs;

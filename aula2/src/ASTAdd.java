@@ -1,3 +1,5 @@
+import compiler.CompileBlock;
+
 public class ASTAdd implements ASTNode {
 
 ASTNode lhs, rhs;
