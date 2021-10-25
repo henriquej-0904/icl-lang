@@ -2,12 +2,11 @@ FROM henriquej0904/icl:tools-dev-env AS build
 
 COPY ./src /app/src
 
-# Compile
 WORKDIR /app/src
 
+# Compile
 RUN mkdir ../bin && \
-javacc Compiler.jj && \
-javacc Interpreter.jj && \ 
+javacc Parser.jj && \
 find | grep -e ".java" > ../files.txt && \
 javac -d ../bin @../files.txt && \
 rm ../files.txt
@@ -16,10 +15,8 @@ rm ../files.txt
 WORKDIR /app/bin
 
 RUN find | grep -e ".class" > ../class-files.txt && \
-jar --create --file ../MathExpression.jar -e MathExpressionParser @../class-files.txt && \
+jar --create --file ../MathExpression.jar -e MathExpression @../class-files.txt && \
 rm ../class-files.txt
-
-WORKDIR /app
 
 # ------------------------------------------------------------
 
