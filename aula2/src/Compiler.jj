@@ -1,4 +1,4 @@
-PARSER_BEGIN(MathExpressionParser)
+PARSER_BEGIN(Compiler)
 
 import compiler.*;
 
@@ -7,96 +7,20 @@ import java.util.List;
 import java.util.LinkedList;
 
 /** ID lister. */
-public class MathExpressionParser {
+public class Compiler {
 
-  private static final String JASMIN_JAR_PATH_ENV = "JASMIN_JAR_PATH";
-  private static final String EXPRESSION_FILE_EXTENSION = ".icl";
-
-  private static final String INTERPRETER_PARAM = "-e";
-  private static final String COMPILER_PARAM = "-c";
-
-  private static final String DEST_FOLDER_PARAM = "-d";
-
-  /** Main entry point. */
-  public static void main(String args[])
-  {
-    if (args.length == 0)
-    {
-      printUsage();
-      System.exit(1);
-    }
-
-    String[] newArgs = new String[args.length - 1];
-    System.arraycopy(args, 1, newArgs, 0, newArgs.length);
-
-    if (args[0].equals(INTERPRETER_PARAM))
-      interpreterMain(newArgs);
-    else if (args[0].equals(COMPILER_PARAM))
-      compilerMain(newArgs);
-    else
-    {
-      System.err.println("Invalid argument.");
-      printUsage();
-      System.exit(1);
-    }
-  }
-
-  public static void interpreterMain(String args[])
-  {
-    if (args.length > 0)
-    {
-      printUsage();
-      System.exit(1);
-    }
-
-    MathExpressionParser parser = new MathExpressionParser(System.in);
-
-    boolean exit = false;
-    while (!exit) {
-    try {
-    System.out.print( "> " );
-    ASTNode ast = parser.Start();
-    System.out.println( ast.eval() );
-    }
-     catch (Exception e) {
-      System.out.println ("Syntax Error!");
-      parser.ReInit(System.in);
-    }
-    }
-  }
-
-  public static void compilerMain(String args[]) {
-
-    if (!(args.length == 1 || args.length == 3))
-    {
-      printUsage();
-      System.exit(1);
-    }
-
-    String destFolder = null;
-
-    if (args.length == 3)
-    {
-      if (!args[1].equals(DEST_FOLDER_PARAM))
-      {
-        System.err.println("Invalid argument.");
-        printUsage();
-        System.exit(1);
-      }
-
-      destFolder = args[2];
-    }
+    private static final String JASMIN_JAR_PATH_ENV = "JASMIN_JAR_PATH";
+    private static final String EXPRESSION_FILE_EXTENSION = ".icl";
+    private static final String DEST_FOLDER_PARAM = "-d";
+  public static void run(String source, String destFolder) throws Exception {
 
     String jasminJarPath = getJasminPath();
-
-    try
-    {
       // Open expression file
-      File expressionFile = new File(args[0]);
+      File expressionFile = new File(source);
       String expressionFileName = getExpressionFileNameWithoutExtension(expressionFile);
 
       // Init parser from the input file.
-      MathExpressionParser parser = new MathExpressionParser(new FileInputStream(expressionFile));
+      Compiler parser = new Compiler(new FileInputStream(expressionFile));
 
       // Create destFolder
       if (destFolder != null)
@@ -143,29 +67,6 @@ public class MathExpressionParser {
         System.exit(jasminExitValue);
       }
 
-    } catch (ParseException e) {
-      System.err.println ("Syntax Error!");
-    }
-      catch (Exception e) {
-      System.err.println ("An error occurred!");
-      System.err.println(e.getMessage());
-    }
-  }
-
-  private static void printUsage()
-  {
-    String usage = 
-      "Usage:\n" +
-      "\tjava -jar MathExpression.jar -c <input-file-name>.icl [OPTIONS]\n" +
-      "\tjava -jar MathExpression.jar -e\n\n" +
-
-      "\t-c -> Compile an expression from a file to generate a .class file that computes that expression.\n" +
-      "\t-e -> Evaluate an expression from stdin.\n\n" +
-
-      "OPTIONS:\n" +
-      "\t" + DEST_FOLDER_PARAM + " <Output folder> ";
-    
-    System.out.println(usage);
   }
 
   private static String getJasminPath()
@@ -194,7 +95,7 @@ public class MathExpressionParser {
 
 }
 
-PARSER_END(MathExpressionParser)
+PARSER_END(Compiler)
 
 SKIP :
 {

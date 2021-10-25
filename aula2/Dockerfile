@@ -6,7 +6,8 @@ COPY ./src /app/src
 WORKDIR /app/src
 
 RUN mkdir ../bin && \
-javacc MathExpressionParser.jj && \
+javacc Compiler.jj && \
+javacc Interpreter.jj && \ 
 find | grep -e ".java" > ../files.txt && \
 javac -d ../bin @../files.txt && \
 rm ../files.txt
