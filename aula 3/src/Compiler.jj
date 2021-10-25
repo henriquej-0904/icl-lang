@@ -1,0 +1,184 @@
+PARSER_BEGIN(Compiler)
+
+import compiler.*;
+
+import java.io.*;
+import java.util.List;
+import java.util.LinkedList;
+
+/** ID lister. */
+public class Compiler {
+
+    private static final String JASMIN_JAR_PATH_ENV = "JASMIN_JAR_PATH";
+    private static final String EXPRESSION_FILE_EXTENSION = ".icl";
+    private static final String DEST_FOLDER_PARAM = "-d";
+  public static void run(String source, String destFolder) throws Exception {
+
+    String jasminJarPath = getJasminPath();
+      // Open expression file
+      File expressionFile = new File(source);
+      String expressionFileName = getExpressionFileNameWithoutExtension(expressionFile);
+
+      // Init parser from the input file.
+      Compiler parser = new Compiler(new FileInputStream(expressionFile));
+
+      // Create destFolder
+      if (destFolder != null)
+        new File(destFolder).mkdirs();
+
+      // Create tmp file to save CompileBlock output.
+      File tmpFile = File.createTempFile(expressionFileName, ".j");
+      tmpFile.deleteOnExit();
+
+      ASTNode ast = parser.Start();
+
+      // Compile expression and dump to tmp file.
+      CompileBlock c = new CompileBlock(expressionFileName);
+      ast.compile(c);
+      c.dump(new PrintStream(tmpFile));
+
+      // Call jasmin to compile to a .class file.
+
+      List<String> jasminCommand = new LinkedList<String>();
+      jasminCommand.add("java");
+      jasminCommand.add("-jar");
+      jasminCommand.add(jasminJarPath);
+
+      if (destFolder != null)
+      {
+        jasminCommand.add(DEST_FOLDER_PARAM);
+        jasminCommand.add(destFolder);
+      }
+      
+      jasminCommand.add(tmpFile.getAbsolutePath());
+
+      ProcessBuilder processBuilder = new ProcessBuilder(jasminCommand);
+      Process jasminProcess = processBuilder.start();
+      int jasminExitValue = jasminProcess.waitFor();
+
+      if (jasminExitValue == 0)
+      {
+        System.out.println ("Success!");
+        System.out.println ("Created file: " + expressionFileName + ".class");
+      }
+      else
+      {
+        System.err.println ("Jasmin returned an error.");
+        System.exit(jasminExitValue);
+      }
+
+  }
+
+  private static String getJasminPath()
+  {
+    String jasminJarPath = System.getenv(JASMIN_JAR_PATH_ENV);
+    if (jasminJarPath == null)
+    {
+      System.err.println("Cannot find jasmin jar executable.\n" +
+        "Environment var " + JASMIN_JAR_PATH_ENV + " must be defined.");
+      System.exit(1);
+    }
+
+    return jasminJarPath;
+  }
+
+  private static String getExpressionFileNameWithoutExtension(File expressionFile)
+  {
+    String name = expressionFile.getName();
+    int extensionIndex;
+    if (name.isEmpty() || (extensionIndex = name.lastIndexOf(EXPRESSION_FILE_EXTENSION)) <= 0)
+      throw new IllegalArgumentException("The input file name must begin with a valid character" +
+        " and have the " + EXPRESSION_FILE_EXTENSION + " extension.");
+    
+    return name.substring(0, extensionIndex);
+  }
+
+}
+
+PARSER_END(Compiler)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\r"
+}
+
+TOKEN :
+{ 
+  < Id: ["a"-"z","A"-"Z"] ( ["a"-"z","A"-"Z","0"-"9"] )* >
+  |
+  < Num: (["0"-"9"]) + >
+  |
+  < PLUS : "+" >
+  |
+  < MINUS : "-">
+  |
+  < MUL : "*">
+  |
+  < DIV : "/">
+  |
+  < LPAR : "(" >
+  |
+  < RPAR : ")" >
+  |
+  < EL: "\n" >
+}
+
+ASTNode Start() :
+{
+ASTNode t1;
+}
+{
+   t1 = Exp() <EL>
+	{ return t1; }
+}
+
+ASTNode Exp() :
+{
+ASTNode t1,t2;
+Token tok;
+}
+{
+     t1 = Term() ( ( tok=<PLUS> | tok=<MINUS> ) t2=Term() 
+
+                 { if (tok.kind == PLUS)
+                         t1 = new ASTAdd(t1,t2);
+                   else  t1 = new ASTSub(t1,t2); 
+                 }
+
+                 ) *
+    
+     { return t1; }
+
+}
+
+ASTNode Term() :
+{
+ASTNode t1,t2;
+Token tok;
+}
+{
+     t1=Fact() ( ( tok=<MUL> | tok=<DIV> ) t2=Fact()
+
+                { if (tok.kind == MUL)
+                         t1 = new ASTMul(t1,t2);
+                   else  t1 = new ASTDiv(t1,t2); 
+                }
+     ) *
+
+     { return t1; }  
+	
+}
+
+ASTNode Fact() :
+{ASTNode t1;
+Token tok;
+}
+{
+   ( tok=<Num> { t1 = new ASTNum(Integer.parseInt(tok.image)); } |
+      <MINUS> t1=Fact() {t1 = new ASTUminus(t1);} | 
+     <LPAR> t1=Exp() <RPAR>
+   )   
+  { return t1; }  
+}
