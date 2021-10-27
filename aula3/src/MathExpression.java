@@ -28,8 +28,8 @@ public class MathExpression {
 
 		if (args[0].equals(INTERPRETER_PARAM))
 			interpreterMain(newArgs);
-		else if (args[0].equals(COMPILER_PARAM))
-			compilerMain(newArgs);
+		//else if (args[0].equals(COMPILER_PARAM))
+			//compilerMain(newArgs);
 		else {
 			System.err.println("Invalid argument.");
 			printUsage();
@@ -69,13 +69,14 @@ public class MathExpression {
 			try {
 				System.out.print("> ");
 				ASTNode ast = parser.Start();
-				System.out.println(ast.eval());
+				System.out.println(ast.eval(new Environment()));
 			} catch (ParseException e) {
 				System.err.println("Syntax Error!");
 				parser.ReInit(System.in);
 			} catch (Exception e) {
 				System.err.println("An error occurred!");
 				System.err.println(e.getMessage());
+				e.printStackTrace();
 				end = true;
 			}
 		}
@@ -85,7 +86,7 @@ public class MathExpression {
 	 * The main for the compiler.
 	 * @param args
 	 */
-	private static void compilerMain(String[] args) {
+	/* private static void compilerMain(String[] args) {
 		if (!(args.length == 1 || args.length == 3)) {
 			printUsage();
 			System.exit(1);
@@ -159,13 +160,13 @@ public class MathExpression {
 			System.err.println("An error occurred!");
 			System.err.println(e.getMessage());
 		}
-	}
+	} */
 
 	/**
 	 * Get the jasmin.jar file path from the environment.
 	 * @return The path for the jasmin.jar file.
 	 */
-	private static String getJasminPath() {
+	/* private static String getJasminPath() {
 		String jasminJarPath = System.getenv(JASMIN_JAR_PATH_ENV);
 		if (jasminJarPath == null) {
 			System.err.println("Cannot find jasmin jar executable.\n" + "Environment var " + JASMIN_JAR_PATH_ENV
@@ -174,14 +175,14 @@ public class MathExpression {
 		}
 
 		return jasminJarPath;
-	}
+	} */
 
 	/**
 	 * Get the name of the file without the extension.
 	 * @param expressionFile - The file to get the name.
 	 * @return The name of the file without the extension.
 	 */
-	private static String getExpressionFileNameWithoutExtension(File expressionFile) {
+/* 	private static String getExpressionFileNameWithoutExtension(File expressionFile) {
 		String name = expressionFile.getName();
 		int extensionIndex;
 		if (name.isEmpty() || (extensionIndex = name.lastIndexOf(EXPRESSION_FILE_EXTENSION)) <= 0)
@@ -189,5 +190,5 @@ public class MathExpression {
 					+ " and have the " + EXPRESSION_FILE_EXTENSION + " extension.");
 
 		return name.substring(0, extensionIndex);
-	}
+	} */
 }

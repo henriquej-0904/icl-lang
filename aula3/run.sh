@@ -1,3 +1,3 @@
 #! /bin/bash
 
-docker run --rm -it icl:aula2
+docker run --rm -it icl:aula3

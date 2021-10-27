@@ -2,7 +2,7 @@ import compiler.CompileBlock;
 
 public interface ASTNode {
 
-    int eval();
+    int eval(Environment e);
 
     void compile(CompileBlock c);
 	

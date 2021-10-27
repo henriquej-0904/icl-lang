@@ -1,5 +1,8 @@
 PARSER_BEGIN(Parser)
 
+import java.util.*;
+import util.*;
+
 /** ID lister. */
 public class Parser {}
 
@@ -14,6 +17,14 @@ SKIP :
 
 TOKEN :
 { 
+  < EXIT: "exit" >
+  |
+  < DEF: "def" >
+  |
+  < IN: "in" >
+  |
+  < END: "end" >
+  |
   < Id: ["a"-"z","A"-"Z"] ( ["a"-"z","A"-"Z","0"-"9"] )* >
   |
   < Num: (["0"-"9"]) + >
@@ -30,6 +41,8 @@ TOKEN :
   |
   < RPAR : ")" >
   |
+  < EQUALS : "=" >
+  |
   < EL: "\n" >
 }
 
@@ -45,19 +58,31 @@ ASTNode t1;
 ASTNode Exp() :
 {
 ASTNode t1,t2;
+List<Pair<String,ASTNode>> init = new LinkedList<Pair<String,ASTNode>>();
 Token tok;
 }
 {
-     t1 = Term() ( ( tok=<PLUS> | tok=<MINUS> ) t2=Term() 
+    (t1 = Term() ( ( tok=<PLUS> | tok=<MINUS> ) t2=Term() 
 
                  { if (tok.kind == PLUS)
                          t1 = new ASTAdd(t1,t2);
                    else  t1 = new ASTSub(t1,t2); 
                  }
 
-                 ) *
-    
+                 )* |
+     <DEF> ((tok = <Id>) <EQUALS> t2=Exp()
+              {
+                init.add(new Pair<String, ASTNode>(tok.image,t2));
+              }
+           )+ (<IN> t1 = Exp() <END>
+              {
+                t1 = new ASTDef(init, t1);
+              }
+           )
+    )
      { return t1; }
+
+
 
 }
 
@@ -80,13 +105,15 @@ Token tok;
 }
 
 ASTNode Fact() :
-{ASTNode t1;
+{ASTNode t1 = null;
 Token tok;
 }
 {
    ( tok=<Num> { t1 = new ASTNum(Integer.parseInt(tok.image)); } |
       <MINUS> t1=Fact() {t1 = new ASTUminus(t1);} | 
-     <LPAR> t1=Exp() <RPAR>
+     <LPAR> t1=Exp() <RPAR> |
+     tok=<Id>  {t1 = new ASTId(tok.image);} |
+     <EXIT> {System.exit(0);}
    )   
-  { return t1; }  
+  { return t1;}  
 }

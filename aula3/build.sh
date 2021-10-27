@@ -1,3 +1,3 @@
 #! /bin/bash
 
-docker build -t icl:aula2 .
+docker build -t icl:aula3 .
