@@ -76,7 +76,7 @@ public class MathExpression {
 			} catch (Exception e) {
 				System.err.println("An error occurred!");
 				System.err.println(e.getMessage());
-				e.printStackTrace();
+				//e.printStackTrace();
 				end = true;
 			}
 		}
