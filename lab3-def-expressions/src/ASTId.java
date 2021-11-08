@@ -1,5 +1,5 @@
 import java.nio.channels.UnsupportedAddressTypeException;
-
+import interpreter.Environment;
 import compiler.CompileBlock;
 
 public class ASTId implements ASTNode{

@@ -1,5 +1,5 @@
 import compiler.CompileBlock;
-
+import interpreter.Environment;
 public class ASTMul implements ASTNode {
 
     ASTNode lhs, rhs;

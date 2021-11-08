@@ -43,7 +43,7 @@ public class CompileBlock {
     ".end method";
 
     private String[] code;
-
+    private String[] files;
     private int pc;
 
     private String generatedClassName;
@@ -63,8 +63,8 @@ public class CompileBlock {
         code[pc++] = opcode;
     }
 
-    public void dump(PrintStream f) { // dumps code to f
-
+    public void dump(String folder) { // dumps code to f
+        PrintStream f;
         f.printf(START, generatedClassName);
 
         for (int i = 0; i < pc; i++)

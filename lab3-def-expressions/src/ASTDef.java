@@ -1,6 +1,7 @@
 import compiler.CompileBlock;
 import java.util.*;
 import util.*;
+import interpreter.Environment;
 public class ASTDef implements ASTNode{
     private List<Pair<String,ASTNode>> init; 
     private ASTNode body;

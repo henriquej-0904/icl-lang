@@ -1,5 +1,5 @@
 import compiler.CompileBlock;
-
+import interpreter.Environment;
 public class ASTNum implements ASTNode {
 
 int val;
