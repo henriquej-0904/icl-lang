@@ -6,7 +6,6 @@ import util.Environment;
 import util.Pair;
 
 import java.util.*;
-
 public class ASTDef implements ASTNode{
     private List<Pair<String,ASTNode>> init;
     private ASTNode body;

@@ -2,7 +2,7 @@ package compiler;
 import java.io.IOException;
 import java.io.PrintStream;
 
-public class CompileBlock {
+public class MainCodeBlock {
 
     public static final String GENERATED_CLASS_DEFAULT_NAME = "MathExpression";
 
@@ -48,7 +48,7 @@ public class CompileBlock {
 
     private String generatedClassName;
 
-    public CompileBlock(String className) throws IOException
+    public MainCodeBlock(String className) throws IOException
     {
         if (className == null || className.equals(""))
             generatedClassName = GENERATED_CLASS_DEFAULT_NAME;
