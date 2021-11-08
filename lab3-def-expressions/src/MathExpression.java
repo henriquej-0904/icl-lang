@@ -1,7 +1,11 @@
 import compiler.*;
+import util.Environment;
 
 import java.io.*;
 import java.util.List;
+
+import ast.ASTNode;
+
 import java.util.LinkedList;
 
 /**
@@ -69,7 +73,7 @@ public class MathExpression {
 			try {
 				System.out.print("> ");
 				ASTNode ast = parser.Start();
-				System.out.println(ast.eval(new Environment()));
+				System.out.println(ast.eval(new Environment<Integer>()));
 			} catch (ParseException e) {
 				System.err.println("Syntax Error!");
 				parser.ReInit(System.in);
