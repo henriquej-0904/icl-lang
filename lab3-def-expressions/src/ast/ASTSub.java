@@ -1,10 +1,12 @@
-import compiler.CompileBlock;
+package ast;
+import compiler.CodeBlock;
+import util.Environment;
 
 public class ASTSub implements ASTNode {
 
 ASTNode lhs, rhs;
 
-        public int eval(Environment e)
+        public int eval(Environment<Integer> e)
         { 
 	int v1 = lhs.eval(e);
 	int v2 = rhs.eval(e);
@@ -17,7 +19,7 @@ ASTNode lhs, rhs;
         }
 
         @Override
-        public void compile(CompileBlock c) {
+        public void compile(CodeBlock c) {
                 // TODO Auto-generated method stub
                 lhs.compile(c);
                 rhs.compile(c);

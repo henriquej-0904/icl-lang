@@ -1,6 +1,7 @@
-import java.nio.channels.UnsupportedAddressTypeException;
+package ast;
 
-import compiler.CompileBlock;
+import compiler.CodeBlock;
+import util.Environment;
 
 public class ASTId implements ASTNode{
 
@@ -9,13 +10,12 @@ public class ASTId implements ASTNode{
         this.id = id;
     }
     @Override
-    public int eval(Environment e) {
-        // TODO Auto-generated method stub
+    public int eval(Environment<Integer> e) {
         return e.find(id);
     }
 
     @Override
-    public void compile(CompileBlock c) {
+    public void compile(CodeBlock c) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException();
     }
