@@ -130,8 +130,8 @@ public class MathExpression {
 				destFolderFile.mkdirs();
 
 			// Create tmp folder for j files.
-			File tmpFolder = Files.createTempDirectory("MathExpressionJfiles").toFile();
-			tmpFolder.deleteOnExit();
+			File tmpFolder = new File("MathExpressionJfiles"); tmpFolder.mkdirs();//Files.createTempDirectory("MathExpressionJfiles").toFile();
+			//tmpFolder.deleteOnExit();
 
 			// parse input
 			ASTNode ast = parser.Start();
