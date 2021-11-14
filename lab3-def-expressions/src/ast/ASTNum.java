@@ -1,23 +1,24 @@
 package ast;
-import compiler.CodeBlock;
+
+import compiler.MainCodeBlock;
+import util.Coordinates;
 import util.Environment;
 
 public class ASTNum implements ASTNode {
 
-int val;
+        int val;
 
-        public int eval(Environment<Integer> e) { return val; }
+        public int eval(Environment<Integer> e) {
+                return val;
+        }
 
-        public ASTNum(int n)
-        {
-	   val = n;
+        public ASTNum(int n) {
+                val = n;
         }
 
         @Override
-        public void compile(CodeBlock c) {
-                // TODO Auto-generated method stub
+        public void compile(MainCodeBlock c, Environment<Coordinates> e) {
                 c.emit("sipush " + val);
         }
 
 }
-

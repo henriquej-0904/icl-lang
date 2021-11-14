@@ -1,12 +1,14 @@
 package compiler;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MainCodeBlock {
 
     public static final String GENERATED_CLASS_DEFAULT_NAME = "MathExpression";
-
-    private static final int MAX = 100;
 
     private static final String START =
 
@@ -42,11 +44,29 @@ public class MainCodeBlock {
     "       return\n" +
     ".end method";
 
-    private String[] code;
+    private static final String NEW_FRAME =
 
-    private int pc;
+    "	new f%d\n" +
+    "	dup\n" +
+    "       invokespecial f%d/<init>()V\n" +
+    "	dup\n" +
+
+    "	; store SL in new frame\n" +
+    "	aload 4\n" +
+    "	putfield f%d/sl L%s;\n" +
+    "	; update SL\n" +
+    "	astore 4\n\n";
+
+
+    private static final String SL_OBJECT_TYPE = "java/lang/Object";
+
+    private static final String SL_PREVIOUS_FRAME_TYPE = "f%d";
+
+    private List<String> code;
 
     private String generatedClassName;
+
+    private List<FrameCodeBlock> frames;
 
     public MainCodeBlock(String className) throws IOException
     {
@@ -55,25 +75,104 @@ public class MainCodeBlock {
         else
             generatedClassName = className;
 
-        code = new String[MAX];
-        pc = 0;
+        code = new LinkedList<>();
+        this.frames = new LinkedList<>();
     }
 
     public void emit(String opcode) {
-        code[pc++] = opcode;
+        code.add(opcode);
     }
 
-    public void dump(PrintStream f) { // dumps code to f
 
-        f.printf(START, generatedClassName);
+    public void emitCurrentFrame()
+    {
+        emit("aload 4");
+    }
 
-        for (int i = 0; i < pc; i++)
-            f.println(code[i]);
+    public void endFrame()
+    {
+        emitCurrentFrame();
 
-        f.print(END);
+        int currentFrameId = this.frames.size() - 1;
 
-        f.flush();
-        f.close();
+        String previousFrameSlType;
+        if (currentFrameId == 0)
+            previousFrameSlType = SL_OBJECT_TYPE;
+        else
+            previousFrameSlType = String.format(SL_PREVIOUS_FRAME_TYPE, currentFrameId - 1);
+
+        emit(String.format("getfield f%d/sl L%s;", this.frames.size() - 1, previousFrameSlType) );
+
+        emit("astore 4");
+    }
+
+    /**
+     * 
+     * @param numVariables
+     * @return the frameId
+     */
+    public int addFrame(int numVariables)
+    {
+        int frameId = this.frames.size();
+        FrameCodeBlock frame = new FrameCodeBlock(frameId);
+        frame.setNumVariables(numVariables);
+        this.frames.add(frame);
+    
+        String frameSlType;
+        if (frameId == 0)
+            frameSlType = SL_OBJECT_TYPE;
+        else
+            frameSlType = String.format(SL_PREVIOUS_FRAME_TYPE, frameId - 1);
+
+        String newFrame = String.format(NEW_FRAME, frameId,
+            frameId, frameId, frameSlType);
+        
+        emit(newFrame);
+
+        return frameId;
+    }
+
+    public void dump(File outputFolder) throws IOException, FileNotFoundException { // dumps code to f
+
+        if (!outputFolder.isDirectory())
+            throw new IOException("The output folder does not exist.");
+
+        for (FrameCodeBlock frame : this.frames) {
+            dumpFrame(frame, outputFolder);
+        }
+
+        File mainClassFile = createFile(outputFolder, generatedClassName);
+        
+        try (PrintStream printMainClassFile = new PrintStream(mainClassFile);) {
+            printMainClassFile.printf(START, generatedClassName);
+
+            this.code.forEach(
+                (line) ->
+                {
+                    printMainClassFile.println(line);
+                }
+            );
+
+            printMainClassFile.print(END);
+
+            printMainClassFile.flush();
+        }
+    }
+
+    private File createFile(File outputFolder, String fileName)
+    {
+        return new File(outputFolder + File.separator + fileName + ".j");
+    }
+
+    private void dumpFrame(FrameCodeBlock frame, File outputFolder) throws FileNotFoundException
+    {
+        String frameClassName = frame.getClassName();
+
+        File frameFile = createFile(outputFolder, frameClassName);
+
+        try (PrintStream printFrameFile = new PrintStream(frameFile);) {
+            frame.dump(printFrameFile);
+        }
     }
 
 }

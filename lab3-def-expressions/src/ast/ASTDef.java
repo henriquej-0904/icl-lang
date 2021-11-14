@@ -1,7 +1,8 @@
 package ast;
 
-import compiler.CodeBlock;
-
+import compiler.FrameCodeBlock;
+import compiler.MainCodeBlock;
+import util.Coordinates;
 import util.Environment;
 import util.Pair;
 
@@ -28,9 +29,27 @@ public class ASTDef implements ASTNode{
     }
 
     @Override
-    public void compile(CodeBlock c) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
+    public void compile(MainCodeBlock c, Environment<Coordinates> e) {
+        
+        int frameId = c.addFrame(this.init.size());
+
+        Environment<Coordinates> env = e.beginScope();
+
+        int i = 0;
+        for (Pair<String,ASTNode> pair : this.init) {
+
+            Coordinates varCoord = new Coordinates(frameId, String.format(FrameCodeBlock.VARIABLE_NAME, i) );
+            env.assoc(pair.getLeft(), varCoord);
+
+            c.emitCurrentFrame();
+            pair.getRight().compile(c, env);
+            c.emit(String.format("putfield f%d/%s I", frameId, varCoord.getRight()) );
+
+            i++;
+        }
+
+        this.body.compile(c, env);
+        c.endFrame();
+        env.endScope();
     }
-    
 }

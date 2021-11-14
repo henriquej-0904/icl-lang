@@ -2,6 +2,7 @@ PARSER_BEGIN(Parser)
 
 import java.util.*;
 import util.*;
+import ast.*;
 
 /** ID lister. */
 public class Parser {}
@@ -12,7 +13,7 @@ SKIP :
 {
   " "
 | "\t"
-| "\r"
+| "\r\n"
 }
 
 TOKEN :

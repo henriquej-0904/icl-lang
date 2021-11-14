@@ -1,7 +1,9 @@
 import compiler.*;
+import util.Coordinates;
 import util.Environment;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.List;
 
 import ast.ASTNode;
@@ -20,6 +22,8 @@ public class MathExpression {
 	private static final String JASMIN_JAR_PATH_ENV = "JASMIN_JAR_PATH";
 	private static final String EXPRESSION_FILE_EXTENSION = ".icl";
 
+	private static final String DEFAULT_OUTPUT_FOLDER = "out";
+
 	/** Main entry point. */
 	public static void main(String args[]) {
 		if (args.length == 0) {
@@ -32,8 +36,8 @@ public class MathExpression {
 
 		if (args[0].equals(INTERPRETER_PARAM))
 			interpreterMain(newArgs);
-		//else if (args[0].equals(COMPILER_PARAM))
-			//compilerMain(newArgs);
+		else if (args[0].equals(COMPILER_PARAM))
+			compilerMain(newArgs);
 		else {
 			System.err.println("Invalid argument.");
 			printUsage();
@@ -90,7 +94,7 @@ public class MathExpression {
 	 * The main for the compiler.
 	 * @param args
 	 */
-	/* private static void compilerMain(String[] args) {
+	private static void compilerMain(String[] args) {
 		if (!(args.length == 1 || args.length == 3)) {
 			printUsage();
 			System.exit(1);
@@ -108,6 +112,8 @@ public class MathExpression {
 
 			destFolder = args[2];
 		}
+		else
+			destFolder = DEFAULT_OUTPUT_FOLDER;
 
 		try {
 			String jasminJarPath = getJasminPath();
@@ -119,19 +125,22 @@ public class MathExpression {
 			Parser parser = new Parser(new FileInputStream(expressionFile));
 
 			// Create destFolder
+			File destFolderFile = new File(destFolder);
 			if (destFolder != null)
-				new File(destFolder).mkdirs();
+				destFolderFile.mkdirs();
 
-			// Create tmp file to save CompileBlock output.
-			File tmpFile = File.createTempFile(expressionFileName, ".j");
-			tmpFile.deleteOnExit();
+			// Create tmp folder for j files.
+			File tmpFolder = Files.createTempDirectory("MathExpressionJfiles").toFile();
+			tmpFolder.deleteOnExit();
 
+			// parse input
 			ASTNode ast = parser.Start();
 
 			// Compile expression and dump to tmp file.
-			CompileBlock c = new CompileBlock(expressionFileName);
-			ast.compile(c);
-			c.dump(new PrintStream(tmpFile));
+			MainCodeBlock c = new MainCodeBlock(expressionFileName);
+
+			ast.compile(c, new Environment<Coordinates>());
+			c.dump(tmpFolder);
 
 			// Call jasmin to compile to a .class file.
 
@@ -140,12 +149,14 @@ public class MathExpression {
 			jasminCommand.add("-jar");
 			jasminCommand.add(jasminJarPath);
 
-			if (destFolder != null) {
-				jasminCommand.add(DEST_FOLDER_PARAM);
-				jasminCommand.add(destFolder);
-			}
+			jasminCommand.add(DEST_FOLDER_PARAM);
+			jasminCommand.add(destFolder);
 
-			jasminCommand.add(tmpFile.getAbsolutePath());
+
+			File[] jFiles = tmpFolder.listFiles();
+			for (File jFile : jFiles) {
+				jasminCommand.add(jFile.getAbsolutePath());
+			}
 
 			ProcessBuilder processBuilder = new ProcessBuilder(jasminCommand);
 			Process jasminProcess = processBuilder.start();
@@ -164,13 +175,13 @@ public class MathExpression {
 			System.err.println("An error occurred!");
 			System.err.println(e.getMessage());
 		}
-	} */
+	}
 
 	/**
 	 * Get the jasmin.jar file path from the environment.
 	 * @return The path for the jasmin.jar file.
 	 */
-	/* private static String getJasminPath() {
+	private static String getJasminPath() {
 		String jasminJarPath = System.getenv(JASMIN_JAR_PATH_ENV);
 		if (jasminJarPath == null) {
 			System.err.println("Cannot find jasmin jar executable.\n" + "Environment var " + JASMIN_JAR_PATH_ENV
@@ -179,14 +190,14 @@ public class MathExpression {
 		}
 
 		return jasminJarPath;
-	} */
+	}
 
 	/**
 	 * Get the name of the file without the extension.
 	 * @param expressionFile - The file to get the name.
 	 * @return The name of the file without the extension.
 	 */
-/* 	private static String getExpressionFileNameWithoutExtension(File expressionFile) {
+	private static String getExpressionFileNameWithoutExtension(File expressionFile) {
 		String name = expressionFile.getName();
 		int extensionIndex;
 		if (name.isEmpty() || (extensionIndex = name.lastIndexOf(EXPRESSION_FILE_EXTENSION)) <= 0)
@@ -194,5 +205,5 @@ public class MathExpression {
 					+ " and have the " + EXPRESSION_FILE_EXTENSION + " extension.");
 
 		return name.substring(0, extensionIndex);
-	} */
+	}
 }
