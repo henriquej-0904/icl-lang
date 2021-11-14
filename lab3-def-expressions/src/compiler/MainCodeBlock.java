@@ -31,7 +31,11 @@ public class MainCodeBlock {
     "      getstatic java/lang/System/out Ljava/io/PrintStream;\n\n" +
     
     "       ; place your bytecodes here between START and END\n" +
-    "       ; START\n\n";
+    "       ; START\n\n" +
+
+    "	    ; initialize frame pointer SL stored in local #4 to null\n" +
+    "       aconst_null\n" +
+    "       astore 4\n\n";
 
     private static final String END =
 
