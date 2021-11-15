@@ -1,7 +1,16 @@
 def
-    x = 2
-    y = x + 8
-    z = x + y
+x = 2
+y = 3
 in
-    x + y +z
-end;
+def k = x + y
+in
+x + y + k
+end
+end 
+ *
+def x = 6 in 
+    def y = 5*x
+    in y
+    end
+end
++1;

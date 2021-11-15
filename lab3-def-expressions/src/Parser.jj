@@ -60,7 +60,6 @@ ASTNode t1;
 ASTNode Exp() :
 {
 ASTNode t1,t2;
-List<Pair<String,ASTNode>> init = new LinkedList<Pair<String,ASTNode>>();
 Token tok;
 }
 {
@@ -71,16 +70,7 @@ Token tok;
                    else  t1 = new ASTSub(t1,t2); 
                  }
 
-                 )* |
-     <DEF> ((tok = <Id>) <EQUALS> t2=Exp()
-              {
-                init.add(new Pair<String, ASTNode>(tok.image,t2));
-              }
-           )+ (<IN> t1 = Exp() <END>
-              {
-                t1 = new ASTDef(init, t1);
-              }
-           )
+                 )*
     )
      { return t1; }
 
@@ -108,6 +98,8 @@ Token tok;
 
 ASTNode Fact() :
 {ASTNode t1 = null;
+ASTNode t2;
+List<Pair<String,ASTNode>> init = new LinkedList<Pair<String,ASTNode>>();
 Token tok;
 }
 {
@@ -115,7 +107,16 @@ Token tok;
       <MINUS> t1=Fact() {t1 = new ASTUminus(t1);} | 
      <LPAR> t1=Exp() <RPAR> |
      tok=<Id>  {t1 = new ASTId(tok.image);} |
-     <EXIT> {System.exit(0);}
+     <EXIT> {System.exit(0);} |
+     <DEF> ((tok = <Id>) <EQUALS> t2=Exp()
+              {
+                init.add(new Pair<String, ASTNode>(tok.image,t2));
+              }
+           )+ (<IN> t1 = Exp() <END> 
+              {
+                t1 = new ASTDef(init, t1);
+              }
+           )
    )   
   { return t1;}  
 }

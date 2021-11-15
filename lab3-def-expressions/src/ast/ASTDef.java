@@ -44,12 +44,13 @@ public class ASTDef implements ASTNode{
             c.emitCurrentFrame();
             pair.getRight().compile(c, env);
             c.emit(String.format("putfield f%d/%s I", frameId, varCoord.getRight()) );
-
             i++;
         }
-
         this.body.compile(c, env);
-        c.endFrame();
         env.endScope();
+        c.endFrame();
+        
+
+     
     }
 }

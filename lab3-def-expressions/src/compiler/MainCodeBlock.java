@@ -72,6 +72,7 @@ public class MainCodeBlock {
 
     private List<FrameCodeBlock> frames;
 
+    private int frameCounter = -1;
     public MainCodeBlock(String className) throws IOException
     {
         if (className == null || className.equals(""))
@@ -96,18 +97,17 @@ public class MainCodeBlock {
     public void endFrame()
     {
         emitCurrentFrame();
-
-        int currentFrameId = this.frames.size() - 1;
-
         String previousFrameSlType;
-        if (currentFrameId == 0)
+        if (frameCounter == 0)
             previousFrameSlType = SL_OBJECT_TYPE;
         else
-            previousFrameSlType = String.format(SL_PREVIOUS_FRAME_TYPE, currentFrameId - 1);
+            previousFrameSlType = String.format(SL_PREVIOUS_FRAME_TYPE, frameCounter - 1);
 
-        emit(String.format("getfield f%d/sl L%s;", this.frames.size() - 1, previousFrameSlType) );
+        emit(String.format("getfield f%d/sl L%s;", frameCounter, previousFrameSlType) );
 
         emit("astore 4");
+        frameCounter --;
+        
     }
 
     /**
@@ -117,23 +117,24 @@ public class MainCodeBlock {
      */
     public int addFrame(int numVariables)
     {
-        int frameId = this.frames.size();
-        FrameCodeBlock frame = new FrameCodeBlock(frameId);
+       // int frameId = this.frames.size();
+        frameCounter ++;
+        FrameCodeBlock frame = new FrameCodeBlock(frameCounter);
         frame.setNumVariables(numVariables);
         this.frames.add(frame);
     
         String frameSlType;
-        if (frameId == 0)
+        if (frameCounter == 0)
             frameSlType = SL_OBJECT_TYPE;
         else
-            frameSlType = String.format(SL_PREVIOUS_FRAME_TYPE, frameId - 1);
+            frameSlType = String.format(SL_PREVIOUS_FRAME_TYPE, frameCounter -1);
 
-        String newFrame = String.format(NEW_FRAME, frameId,
-            frameId, frameId, frameSlType);
+        String newFrame = String.format(NEW_FRAME, frameCounter,
+        frameCounter, frameCounter, frameSlType);
         
         emit(newFrame);
 
-        return frameId;
+        return frameCounter;
     }
 
     public void dump(File outputFolder) throws IOException, FileNotFoundException { // dumps code to f
