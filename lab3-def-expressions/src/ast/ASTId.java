@@ -18,21 +18,14 @@ public class ASTId implements ASTNode{
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
         
-        int currentFrameId = e.getDepth() - 1;
+        //TODO: Frame atual pode nao ser a depth -1. Frame anterior ao atual pode nao ser o atual -1.
 
-        //obter frame atual
         Coordinates coord = e.find(this.id);
         int varFrameId = coord.getLeft();
         String varId = coord.getRight();
 
         c.emitCurrentFrame();
-
-        // obter ref frame da var.
-        for (int i = currentFrameId; i > varFrameId; i--)
-        {
-            c.emit(String.format("getfield f%d/sl Lf%d;", i, i - 1));
-        }
-
+        c.reachFrameIdFromCurrentFrame(varFrameId);
         c.emit(String.format("getfield f%d/%s I", varFrameId, varId) );
     }
     

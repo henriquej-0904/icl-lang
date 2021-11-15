@@ -24,6 +24,17 @@ public class MathExpression {
 
 	private static final String DEFAULT_OUTPUT_FOLDER = "out";
 
+	/**
+	 * Create folder with generated j files.
+	 */
+	private static final boolean SHOW_GENERATED_J_FILES = false;
+
+	/**
+	 * Compile jasmin files with flag debug
+	 */
+	private static final boolean JASMIN_DEBUG_OPTION = false;
+
+
 	/** Main entry point. */
 	public static void main(String args[]) {
 		if (args.length == 0) {
@@ -115,6 +126,7 @@ public class MathExpression {
 		else
 			destFolder = DEFAULT_OUTPUT_FOLDER;
 
+		File tmpFolder = null;
 		try {
 			String jasminJarPath = getJasminPath();
 			// Open expression file
@@ -130,8 +142,16 @@ public class MathExpression {
 				destFolderFile.mkdirs();
 
 			// Create tmp folder for j files.
-			File tmpFolder = new File("MathExpressionJfiles"); tmpFolder.mkdirs();//Files.createTempDirectory("MathExpressionJfiles").toFile();
-			//tmpFolder.deleteOnExit();
+			if (SHOW_GENERATED_J_FILES)
+			{
+				tmpFolder = new File("MathExpressionJfiles");
+				tmpFolder.mkdirs();
+			}
+			else
+			{
+				tmpFolder = Files.createTempDirectory("MathExpressionJfiles").toFile();
+				tmpFolder.deleteOnExit();
+			}
 
 			// parse input
 			ASTNode ast = parser.Start();
@@ -152,6 +172,9 @@ public class MathExpression {
 			jasminCommand.add(DEST_FOLDER_PARAM);
 			jasminCommand.add(destFolder);
 
+			// Debug
+			if (JASMIN_DEBUG_OPTION)
+				jasminCommand.add("-g");
 
 			File[] jFiles = tmpFolder.listFiles();
 			for (File jFile : jFiles) {
@@ -174,6 +197,11 @@ public class MathExpression {
 		} catch (Exception e) {
 			System.err.println("An error occurred!");
 			System.err.println(e.getMessage());
+		}
+		finally
+		{
+			if (!SHOW_GENERATED_J_FILES && tmpFolder != null)
+				tmpFolder.delete();
 		}
 	}
 

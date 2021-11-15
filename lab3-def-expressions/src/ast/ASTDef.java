@@ -31,26 +31,23 @@ public class ASTDef implements ASTNode{
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
         
-        int frameId = c.addFrame(this.init.size());
-
-        Environment<Coordinates> env = e.beginScope();
+        Pair<Environment<Coordinates>, Integer> pairEnvFrameId = c.addFrame(this.init.size(), e);
+        Environment<Coordinates> newEnv = pairEnvFrameId.getLeft();
+        int frameId = pairEnvFrameId.getRight();
 
         int i = 0;
         for (Pair<String,ASTNode> pair : this.init) {
 
             Coordinates varCoord = new Coordinates(frameId, String.format(FrameCodeBlock.VARIABLE_NAME, i) );
-            env.assoc(pair.getLeft(), varCoord);
+            newEnv.assoc(pair.getLeft(), varCoord);
 
             c.emitCurrentFrame();
-            pair.getRight().compile(c, env);
+            pair.getRight().compile(c, newEnv);
             c.emit(String.format("putfield f%d/%s I", frameId, varCoord.getRight()) );
             i++;
         }
-        this.body.compile(c, env);
-        env.endScope();
-        c.endFrame();
-        
 
-     
+        this.body.compile(c, newEnv);
+        c.endFrame(newEnv);
     }
 }

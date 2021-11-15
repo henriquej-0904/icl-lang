@@ -12,7 +12,7 @@ public class FrameCodeBlock {
     ".super java/lang/Object\n" +
     ".field public sl %s;\n";
 
-    private static final String FRAME_0_SL = "Ljava/lang/Object";
+    private static final String FRAME_DEPTH_0_SL = "Ljava/lang/Object";
 
     private static final String FRAME_SL = "Lf%d";
 
@@ -29,15 +29,18 @@ public class FrameCodeBlock {
 
     public static final String VARIABLE_NAME = "x%d";
 
-    private int frameId;
+    public static final int INVALID_PREVIOUS_FRAME_ID = -1;
+
+    private int frameId, previousFrameId;
 
     private int numVariables;
 
     private String className;
 
-    public FrameCodeBlock(int frameId)
+    public FrameCodeBlock(int frameId, int previousFrameId)
     {
         this.frameId = frameId;
+        this.previousFrameId = previousFrameId;
         this.className = String.format(CLASS_NAME, frameId);
         this.numVariables = 0;
     }
@@ -72,10 +75,10 @@ public class FrameCodeBlock {
 
     public void dump(PrintStream f) { // dumps code to f
 
-        if (this.frameId == 0)
-            f.printf(START, this.frameId, FRAME_0_SL);
+        if (this.previousFrameId == INVALID_PREVIOUS_FRAME_ID)
+            f.printf(START, this.frameId, FRAME_DEPTH_0_SL);
         else
-            f.printf(START, this.frameId, String.format(FRAME_SL, this.frameId - 1));
+            f.printf(START, this.frameId, String.format(FRAME_SL, this.previousFrameId));
 
         for (int i = 0; i < this.numVariables; i++)
             f.printf(VARIABLE, i);
