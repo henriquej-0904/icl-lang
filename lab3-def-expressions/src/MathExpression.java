@@ -112,7 +112,7 @@ public class MathExpression {
 		}
 
 		String source = args[0];
-		String destFolder = null;
+		File destFolder = null;
 
 		if (args.length == 3) {
 			if (!args[1].equals(DEST_FOLDER_PARAM)) {
@@ -121,10 +121,10 @@ public class MathExpression {
 				System.exit(1);
 			}
 
-			destFolder = args[2];
+			destFolder = new File(args[2]);
 		}
 		else
-			destFolder = DEFAULT_OUTPUT_FOLDER;
+			destFolder = new File(DEFAULT_OUTPUT_FOLDER);
 
 		File tmpFolder = null;
 		try {
@@ -137,9 +137,8 @@ public class MathExpression {
 			Parser parser = new Parser(new FileInputStream(expressionFile));
 
 			// Create destFolder
-			File destFolderFile = new File(destFolder);
 			if (destFolder != null)
-				destFolderFile.mkdirs();
+				destFolder.mkdirs();
 
 			// Create tmp folder for j files.
 			if (SHOW_GENERATED_J_FILES)
@@ -162,36 +161,9 @@ public class MathExpression {
 			ast.compile(c, new Environment<Coordinates>());
 			c.dump(tmpFolder);
 
-			// Call jasmin to compile to a .class file.
-
-			List<String> jasminCommand = new LinkedList<String>();
-			jasminCommand.add("java");
-			jasminCommand.add("-jar");
-			jasminCommand.add(jasminJarPath);
-
-			jasminCommand.add(DEST_FOLDER_PARAM);
-			jasminCommand.add(destFolder);
-
-			// Debug
-			if (JASMIN_DEBUG_OPTION)
-				jasminCommand.add("-g");
-
-			File[] jFiles = tmpFolder.listFiles();
-			for (File jFile : jFiles) {
-				jasminCommand.add(jFile.getAbsolutePath());
-			}
-
-			ProcessBuilder processBuilder = new ProcessBuilder(jasminCommand);
-			Process jasminProcess = processBuilder.start();
-			int jasminExitValue = jasminProcess.waitFor();
-
-			if (jasminExitValue == 0) {
-				System.out.println("Success!");
-				System.out.println("Created file: " + expressionFileName + ".class");
-			} else {
-				System.err.println("Jasmin returned an error.");
-				System.exit(jasminExitValue);
-			}
+			callJasmin(jasminJarPath, tmpFolder, expressionFileName);
+			buildJar(destFolder, expressionFileName, tmpFolder);
+			
 		} catch (ParseException e) {
 			System.err.println("Syntax Error!");
 		} catch (Exception e) {
@@ -201,7 +173,89 @@ public class MathExpression {
 		finally
 		{
 			if (!SHOW_GENERATED_J_FILES && tmpFolder != null)
+			{
+				File[] files = tmpFolder.listFiles();
+				for (File file : files) {
+					file.delete();
+				}
 				tmpFolder.delete();
+			}
+		}
+	}
+
+	private static void callJasmin(String jasminJarPath, File tmpFolder,
+		String expressionFileName) throws IOException, InterruptedException
+	{
+		// Call jasmin to compile to a .class file.
+
+		List<String> jasminCommand = new LinkedList<String>();
+		jasminCommand.add("java");
+		jasminCommand.add("-jar");
+		jasminCommand.add(jasminJarPath);
+
+		jasminCommand.add(DEST_FOLDER_PARAM);
+		jasminCommand.add(tmpFolder.getAbsolutePath());
+
+		// Debug
+		if (JASMIN_DEBUG_OPTION)
+			jasminCommand.add("-g");
+
+		File[] jFiles = tmpFolder.listFiles();
+		for (File jFile : jFiles) {
+			jasminCommand.add(jFile.getAbsolutePath());
+		}
+
+		ProcessBuilder processBuilder = new ProcessBuilder(jasminCommand);
+		Process jasminProcess = processBuilder.start();
+		int jasminExitValue = jasminProcess.waitFor();
+
+		if (jasminExitValue == 0) {
+			System.out.println("Compiled with success!");
+			//System.out.println("Created file: " + expressionFileName + ".class");
+		} else {
+			System.err.println("Jasmin returned an error.");
+			System.exit(jasminExitValue);
+		}
+	}
+
+	private static void buildJar(File destFolder, String expressionFileName,
+		File tmpFolder) throws IOException, InterruptedException
+	{
+		List<String> jarCommand = new LinkedList<String>();
+		jarCommand.add("jar");
+		jarCommand.add("--create");
+		jarCommand.add("--file");
+		jarCommand.add(destFolder.getAbsolutePath() + File.separator + expressionFileName + ".jar");
+		jarCommand.add("-e");
+		jarCommand.add(expressionFileName);
+
+		//File[] jFiles = tmpFolder.listFiles();
+		File[] classFiles = tmpFolder.listFiles(new FilenameFilter() {
+
+			@Override
+			public boolean accept(File dir, String name) {
+				// TODO Auto-generated method stub
+				return name.contains(".class");
+			}
+			
+		});
+
+		for (File classFile : classFiles) {
+			jarCommand.add(classFile.getName());
+		}
+
+		ProcessBuilder processBuilder = new ProcessBuilder(jarCommand);
+		processBuilder.directory(tmpFolder);
+
+		Process jarProcess = processBuilder.start();
+		int jarExitValue = jarProcess.waitFor();
+
+		if (jarExitValue == 0) {
+			System.out.println("Created file: " + expressionFileName + ".jar");
+		} else {
+			System.err.println(new String (jarProcess.getErrorStream().readAllBytes()));
+			System.err.println("Jar create returned an error.");
+			System.exit(jarExitValue);
 		}
 	}
 

@@ -20,7 +20,7 @@ rm ../class-files.txt
 
 # ------------------------------------------------------------
 
-FROM henriquej0904/icl:tools-run-env
+FROM henriquej0904/icl:tools-dev-env
 
 WORKDIR /app
 
