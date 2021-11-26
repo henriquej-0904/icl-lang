@@ -21,7 +21,7 @@ public class ASTDef implements ASTNode{
        Environment<Integer> env = e.beginScope();
        while(it.hasNext()){
            pair = it.next();
-           env.assoc(pair.getLeft(), pair.getRight().eval(env));
+           env.assoc(pair.getLeft(), pair.getRight().eval(e));
        }
        int toReturn = body.eval(env);
        env.endScope();
@@ -42,7 +42,7 @@ public class ASTDef implements ASTNode{
             newEnv.assoc(pair.getLeft(), varCoord);
 
             c.emitCurrentFrame();
-            pair.getRight().compile(c, newEnv);
+            pair.getRight().compile(c, e);
             c.emit(String.format("putfield f%d/%s I", frameId, varCoord.getRight()) );
             i++;
         }
