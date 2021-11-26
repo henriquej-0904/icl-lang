@@ -5,7 +5,7 @@ LABEL build="docker build -t icl:tools-dev-env ."
 # Update & Install
 RUN apt update && \
 apt -y full-upgrade && \
-apt -y install javacc wget unzip && \
+apt -y install javacc wget unzip nano && \
 rm -r /var/lib/apt/lists/*
 
 # Download jasmin and install
