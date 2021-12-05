@@ -3,6 +3,7 @@ PARSER_BEGIN(Parser)
 import java.util.*;
 import util.*;
 import ast.*;
+import ast.arithmetic.*;
 
 /** ID lister. */
 public class Parser {}
