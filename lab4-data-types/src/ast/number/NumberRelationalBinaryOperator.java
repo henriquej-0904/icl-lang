@@ -44,4 +44,15 @@ public enum NumberRelationalBinaryOperator
     {
         return this.operator;
     }
+
+    public static NumberRelationalBinaryOperator parseOperator(String operator)
+    {
+        for (NumberRelationalBinaryOperator op : NumberRelationalBinaryOperator.values())
+        {
+            if (op.getOperator().equals(operator))
+                return op;  
+        }
+
+        throw new IllegalArgumentException();
+    }
 }

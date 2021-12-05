@@ -31,6 +31,12 @@ TOKEN :
   < END: "end" >
   |
   < UP : "up" >
+
+  |
+  < TRUE : "true" >
+  |
+  < FALSE : "false" >
+
   |
   < Id: ["a"-"z","A"-"Z"] ( ["a"-"z","A"-"Z","0"-"9"] )* >
   |
@@ -49,6 +55,26 @@ TOKEN :
   < RPAR : ")" >
   |
   < EQUALS : "=" >
+
+  |
+  < EQUALS_COMP : "==" >
+  |
+  < NOT_EQUALS : "!=" >
+  |
+  < GREATER_THAN : ">" >
+  |
+  < GREATER_THAN_OR_EQUAL_TO : ">=" >
+  |
+  < LESS_THAN : "<" >
+  |
+  < LESS_THAN_OR_EQUAL_TO : "<=" >
+
+  |
+  < LOGICAL_AND : "&&" >
+  |
+  < LOGICAL_OR : "||" >
+  |
+  < LOGICAL_NOT : "~" >
   |
   < EL: ";" >
 }
@@ -58,8 +84,64 @@ ASTNode Start() :
 ASTNode t1;
 }
 {
-   t1 = Exp() <EL>
+   t1 = BA() <EL>
 	{ return t1; }
+}
+
+
+ASTNode BA() :
+{
+  ASTNode t1,t2;
+}
+{
+    (t1 = BM() ( <LOGICAL_OR> t2=BM() 
+
+                 {
+                   LogicalBinaryOperator operator = LogicalBinaryOperator.OR;
+                    t1 = new ASTLogicalBinaryOperation(t1, t2, operator);
+                 }
+
+                 )*
+    )
+    { return t1; }
+}
+
+ASTNode BM() :
+{
+  ASTNode t1,t2;
+}
+{
+    (t1 = RelationalOps() ( <LOGICAL_AND> t2=RelationalOps() 
+
+                 {
+                    LogicalBinaryOperator operator = LogicalBinaryOperator.AND;
+                    t1 = new ASTLogicalBinaryOperation(t1, t2, operator);
+                 }
+
+                 )*
+    )
+    { return t1; }
+}
+
+ASTNode RelationalOps() :
+{
+  ASTNode t1,t2;
+  Token tok;
+}
+{
+    (t1 = Exp() ( ( tok=<EQUALS_COMP> | tok=<NOT_EQUALS> | 
+                  tok=<GREATER_THAN> | tok=<GREATER_THAN_OR_EQUAL_TO> |
+                  tok=<LESS_THAN> | tok=<LESS_THAN_OR_EQUAL_TO>) t2=Exp() 
+
+                 {
+                    NumberRelationalBinaryOperator operator =
+                        NumberRelationalBinaryOperator.parseOperator(tok.image);
+                    t1 = new ASTNumberRelationalBinaryOperation(t1, t2, operator);
+                 }
+
+                 )?
+    )
+    { return t1; }
 }
 
 ASTNode Exp() :
@@ -111,25 +193,37 @@ Token tok;
 ASTNode Fact() :
 {ASTNode t1 = null;
 ASTNode t2;
-List<Bind> init = new LinkedList<Bind>();
 Token tok;
 int upDepth = 0;
 }
 {
-   ( tok=<Num> { t1 = new ASTNum(Integer.parseInt(tok.image)); } |
-      <MINUS> t1=Fact() {t1 = new ASTUminus(t1);} | 
-     <LPAR> t1=Exp() <RPAR> |
-     tok=<Id>  {t1 = new ASTId(tok.image);} |
-     <EXIT> {System.exit(0);} |
-     <DEF> ((tok = <Id>) <EQUALS> t2=Exp()
+   (  <EXIT> {System.exit(0);} |
+
+    tok=<Num> { t1 = new ASTNum(Integer.parseInt(tok.image)); } |
+
+    tok=<Id>  {t1 = new ASTId(tok.image);} |
+
+    tok=<TRUE> { t1 = new ASTBool(true); } |
+
+    tok=<FALSE> { t1 = new ASTBool(false); } |
+
+    <LPAR> t1=BA() <RPAR> |
+
+    <MINUS> t1=Fact() {t1 = new ASTUminus(t1);} |
+
+    <LOGICAL_NOT> t1=Fact() {t1 = new ASTBoolNot(t1);} |
+
+     <DEF> { List<Bind> init = new LinkedList<Bind>(); }
+            ((tok = <Id>) <EQUALS> t2=BA()
               {
-                init.add(new Bind(tok.image,t2));
+                init.add(new Bind(tok.image, t2));
               }
-           )+ (<IN> t1 = Exp() <END> 
+            )+ (<IN> t1 = BA() <END> 
               {
                 t1 = new ASTDef(init, t1);
               }
-           )                |
+           )
+    |
     
     (
       (<UP>

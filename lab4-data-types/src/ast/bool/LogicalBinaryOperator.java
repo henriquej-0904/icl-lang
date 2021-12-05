@@ -24,4 +24,15 @@ public enum LogicalBinaryOperator
     {
         return this.operator;
     }
+
+    public static LogicalBinaryOperator parseOperator(String operator)
+    {
+        for (LogicalBinaryOperator op : LogicalBinaryOperator.values())
+        {
+            if (op.getOperator().equals(operator))
+                return op;  
+        }
+
+        throw new IllegalArgumentException();
+    }
 }
