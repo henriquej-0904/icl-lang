@@ -8,7 +8,12 @@
 		},
 		{
 			"path": "lab3-def-expressions"
+		},
+		{
+			"path": "lab4-data-types"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"java.dependency.packagePresentation": "hierarchical"
+	}
 }
