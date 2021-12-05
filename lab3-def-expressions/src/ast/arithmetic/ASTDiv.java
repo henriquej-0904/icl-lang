@@ -1,5 +1,6 @@
-package ast;
+package ast.arithmetic;
 
+import ast.ASTNode;
 import compiler.MainCodeBlock;
 import util.Environment;
 import util.Coordinates;
