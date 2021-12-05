@@ -3,6 +3,7 @@ package ast;
 import compiler.MainCodeBlock;
 import util.Coordinates;
 import util.Environment;
+import values.IValue;
 
 public class ASTUp extends ASTId
 {
@@ -20,7 +21,7 @@ public class ASTUp extends ASTId
     }
 
     @Override
-    public int eval(Environment<Integer> e) {
+    public IValue eval(Environment<IValue> e) {
         return e.find(id, upDepth);
     }
 

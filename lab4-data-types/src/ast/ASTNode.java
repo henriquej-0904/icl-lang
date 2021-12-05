@@ -3,15 +3,16 @@ package ast;
 import compiler.MainCodeBlock;
 import util.Coordinates;
 import util.Environment;
+import values.IValue;
 
 public interface ASTNode {
 
     /**
      * Calculates the result of this node using the specified Environment.
-     * @param e - A Environment for the interpreter, an id maps to a result (Integer).
+     * @param e - A Environment for the interpreter, an id maps to a result.
      * @return The calculated result.
      */
-    int eval(Environment<Integer> e);
+    IValue eval(Environment<IValue> e);
 
     /**
      * Compiles this node using the specified environment and stores the compilation

@@ -3,6 +3,7 @@ package ast;
 import compiler.MainCodeBlock;
 import util.Coordinates;
 import util.Environment;
+import values.IValue;
 
 public class ASTId implements ASTNode{
 
@@ -11,8 +12,9 @@ public class ASTId implements ASTNode{
     public ASTId(String id){
         this.id = id;
     }
+    
     @Override
-    public int eval(Environment<Integer> e) {
+    public IValue eval(Environment<IValue> e) {
         return e.find(id);
     }
 
