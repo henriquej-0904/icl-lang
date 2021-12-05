@@ -27,6 +27,8 @@ TOKEN :
   |
   < END: "end" >
   |
+  < UP : "up" >
+  |
   < Id: ["a"-"z","A"-"Z"] ( ["a"-"z","A"-"Z","0"-"9"] )* >
   |
   < Num: (["0"-"9"]) + >
@@ -101,6 +103,7 @@ ASTNode Fact() :
 ASTNode t2;
 List<Pair<String,ASTNode>> init = new LinkedList<Pair<String,ASTNode>>();
 Token tok;
+int upDepth = 0;
 }
 {
    ( tok=<Num> { t1 = new ASTNum(Integer.parseInt(tok.image)); } |
@@ -116,7 +119,18 @@ Token tok;
               {
                 t1 = new ASTDef(init, t1);
               }
-           )
-   )   
+           )                |
+    
+    (
+      (<UP>
+        {
+          upDepth++;
+        })+ (tok = <Id>
+              {
+                t1 = new ASTUp(tok.image, upDepth);
+              })
+    )
+
+   )
   { return t1;}  
 }

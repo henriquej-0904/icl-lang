@@ -58,6 +58,38 @@ public class Environment<E> implements Cloneable {
 			throw new NoSuchElementException();
 	}
 
+	public E find(String id, int upDepth) {
+
+		if (upDepth >= this.scopeStack.size())
+			throw new NoSuchElementException();
+
+		ListIterator<List<Pair<String, E>>> ite = scopeStack.listIterator(scopeStack.size());
+		boolean found = false;
+		Pair<String, E> pair = null;
+		int currDepth = 0;
+
+		while (ite.hasPrevious() && !found && upDepth < this.scopeStack.size() - currDepth){
+			List<Pair<String, E>> scope = ite.previous();
+			Iterator<Pair<String, E>> it = scope.iterator();
+			while (it.hasNext() && !found) {
+				pair = it.next();
+				if (pair.getLeft().equals(id))
+				{
+					if (upDepth == 0)
+						found = true;
+					else
+						upDepth--;
+				}	
+			}
+			currDepth++;
+		}
+
+		if (found)
+			return pair.getRight();
+		else
+			throw new NoSuchElementException();
+	}
+
 	public int getDepth()
 	{
 		return scopeStack.size();
