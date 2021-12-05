@@ -1,6 +1,7 @@
 import compiler.*;
 import util.Coordinates;
 import util.Environment;
+import values.IValue;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -88,7 +89,7 @@ public class MathExpression {
 			try {
 				System.out.print("> ");
 				ASTNode ast = parser.Start();
-				System.out.println(ast.eval(new Environment<Integer>()));
+				System.out.println(ast.eval(new Environment<IValue>()).show());
 			} catch (ParseException e) {
 				System.err.println("Syntax Error!");
 				parser.ReInit(System.in);

@@ -2,8 +2,10 @@ PARSER_BEGIN(Parser)
 
 import java.util.*;
 import util.*;
+
 import ast.*;
-import ast.arithmetic.*;
+import ast.number.*;
+import ast.bool.*;
 
 /** ID lister. */
 public class Parser {}
@@ -68,17 +70,19 @@ Token tok;
 {
     (t1 = Term() ( ( tok=<PLUS> | tok=<MINUS> ) t2=Term() 
 
-                 { if (tok.kind == PLUS)
-                         t1 = new ASTAdd(t1,t2);
-                   else  t1 = new ASTSub(t1,t2); 
+                 {
+                   NumberArithmeticBinaryOperator operator;
+                   if (tok.kind == PLUS)
+                      operator = NumberArithmeticBinaryOperator.ADD;
+                   else 
+                      operator = NumberArithmeticBinaryOperator.SUB;
+
+                    t1 = new ASTNumberArithmeticBinaryOperation(t1, t2, operator);
                  }
 
                  )*
     )
      { return t1; }
-
-
-
 }
 
 ASTNode Term() :
@@ -89,9 +93,14 @@ Token tok;
 {
      t1=Fact() ( ( tok=<MUL> | tok=<DIV> ) t2=Fact()
 
-                { if (tok.kind == MUL)
-                         t1 = new ASTMul(t1,t2);
-                   else  t1 = new ASTDiv(t1,t2); 
+                {
+                  NumberArithmeticBinaryOperator operator;
+                  if (tok.kind == MUL)
+                      operator = NumberArithmeticBinaryOperator.MUL;
+                  else
+                      operator = NumberArithmeticBinaryOperator.DIV;
+
+                  t1 = new ASTNumberArithmeticBinaryOperation(t1, t2, operator);
                 }
      ) *
 
@@ -102,7 +111,7 @@ Token tok;
 ASTNode Fact() :
 {ASTNode t1 = null;
 ASTNode t2;
-List<Pair<String,ASTNode>> init = new LinkedList<Pair<String,ASTNode>>();
+List<Bind> init = new LinkedList<Bind>();
 Token tok;
 int upDepth = 0;
 }
@@ -114,7 +123,7 @@ int upDepth = 0;
      <EXIT> {System.exit(0);} |
      <DEF> ((tok = <Id>) <EQUALS> t2=Exp()
               {
-                init.add(new Pair<String, ASTNode>(tok.image,t2));
+                init.add(new Bind(tok.image,t2));
               }
            )+ (<IN> t1 = Exp() <END> 
               {
