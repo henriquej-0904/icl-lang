@@ -2,6 +2,8 @@ package ast.number;
 
 import ast.ASTNode;
 import compiler.MainCodeBlock;
+import types.IType;
+import types.primitves.TypeInt;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
@@ -23,5 +25,12 @@ public class ASTNum implements ASTNode {
 	public void compile(MainCodeBlock c, Environment<Coordinates> e) {
 		c.emit("sipush " + val);
 	}
+
+	@Override
+	public IType typecheck(Environment<IType> e) {
+		return TypeInt.TYPE;
+	}
+
+	
 
 }

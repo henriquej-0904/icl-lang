@@ -1,6 +1,7 @@
 package ast.names;
 
 import compiler.MainCodeBlock;
+import types.IType;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
@@ -22,6 +23,11 @@ public class ASTUp extends ASTId
 
     @Override
     public IValue eval(Environment<IValue> e) {
+        return e.find(id, upDepth);
+    }
+
+    @Override
+    public IType typecheck(Environment<IType> e) {
         return e.find(id, upDepth);
     }
 

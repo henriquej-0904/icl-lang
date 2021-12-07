@@ -3,6 +3,8 @@ package ast.memory;
 import ast.ASTNode;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
+import types.IType;
+import types.TypeRef;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
@@ -30,10 +32,15 @@ public class ASTDereference implements ASTNode
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        return checkType(this.reference.eval(e)).getValue();
+        return checkRuntimeType(this.reference.eval(e)).getValue();
     }
 
-    protected VCell checkType(IValue value)
+    @Override
+    public IType typecheck(Environment<IType> e) {
+        return checkType(this.reference.typecheck(e)).getValueType();
+    }
+
+    protected VCell checkRuntimeType(IValue value)
     {
         boolean checked = value instanceof VCell;
 
@@ -41,6 +48,16 @@ public class ASTDereference implements ASTNode
             throw new IllegalOperatorException(OPERATOR);
 
         return (VCell)value;
+    }
+
+    protected TypeRef checkType(IType type)
+    {
+        boolean checked = type instanceof TypeRef;
+
+        if (!checked)
+            throw new IllegalOperatorException(OPERATOR);
+
+        return (TypeRef)type;
     }
 
     

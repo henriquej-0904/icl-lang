@@ -1,4 +1,6 @@
 import compiler.*;
+import typeError.TypeErrorException;
+import types.IType;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
@@ -156,9 +158,14 @@ public class MathExpression {
 			// parse input
 			ASTNode ast = parser.Start();
 
+			IType type = ast.typecheck(new Environment<IType>());
+			System.out.println(String.format("The expression type is: %s\n", type.show()));
+			System.exit(0);
+
+			// TODO: implement compile
+
 			// Compile expression and dump to tmp file.
 			MainCodeBlock c = new MainCodeBlock(expressionFileName);
-
 			ast.compile(c, new Environment<Coordinates>());
 			c.dump(tmpFolder);
 
@@ -167,7 +174,13 @@ public class MathExpression {
 			
 		} catch (ParseException e) {
 			System.err.println("Syntax Error!");
-		} catch (Exception e) {
+		}
+		catch (TypeErrorException e)
+		{
+			System.err.println("Type error!");
+			System.err.println(e.getMessage());
+		}
+		catch (Exception e) {
 			System.err.println("An error occurred!");
 			System.err.println(e.getMessage());
 		}

@@ -3,6 +3,8 @@ package ast.bool;
 import ast.ASTNode;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
+import types.IType;
+import types.primitves.TypeBool;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
@@ -33,8 +35,8 @@ public class ASTLogicalBinaryOperation implements ASTNode
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        VBool val1 = checkType(this.left.eval(e));
-        VBool val2 = checkType(this.rigth.eval(e));
+        VBool val1 = checkRuntimeType(this.left.eval(e));
+        VBool val2 = checkRuntimeType(this.rigth.eval(e));
 
         IValue result = null;
         switch(this.operator)
@@ -50,13 +52,28 @@ public class ASTLogicalBinaryOperation implements ASTNode
         return result;
     }
 
-    protected VBool checkType(IValue val)
+    @Override
+    public IType typecheck(Environment<IType> e) {
+        checkType(this.left.typecheck(e));
+        return checkType(this.rigth.typecheck(e));
+    }
+
+    protected VBool checkRuntimeType(IValue val)
     {
         boolean checked = val instanceof VBool;
         if (!checked)
             throw new IllegalOperatorException(this.operator.getOperator());
 
         return (VBool)val;
+    }
+
+    protected IType checkType(IType type)
+    {
+        boolean checked = type instanceof TypeBool;
+        if (!checked)
+            throw new IllegalOperatorException(this.operator.getOperator());
+
+        return type;
     }
 
 }

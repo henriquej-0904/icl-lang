@@ -3,6 +3,8 @@ package ast.executionFlow.loops;
 import ast.ASTNode;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
+import types.IType;
+import types.primitves.TypeBool;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
@@ -32,7 +34,7 @@ public class ASTWhileLoop implements ASTNode
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        while (checkWhileConditionType(this.whileConditionNode.eval(e)).getValue())
+        while (checkWhileConditionRuntimeType(this.whileConditionNode.eval(e)).getValue())
         {
             this.bodyNode.eval(e);
         }
@@ -41,7 +43,15 @@ public class ASTWhileLoop implements ASTNode
         return new VBool(false);
     }
 
-    protected VBool checkWhileConditionType(IValue value)
+    @Override
+    public IType typecheck(Environment<IType> e) {
+        checkTypeWhile(this.whileConditionNode.typecheck(e));
+        this.bodyNode.typecheck(e);
+
+        return TypeBool.TYPE;
+    }
+
+    protected VBool checkWhileConditionRuntimeType(IValue value)
     {
         boolean checked = value instanceof VBool;
 
@@ -49,5 +59,15 @@ public class ASTWhileLoop implements ASTNode
             throw new IllegalOperatorException(OPERATOR);
 
         return (VBool)value;
+    }
+
+    protected TypeBool checkTypeWhile(IType type)
+    {
+        boolean checked = type instanceof TypeBool;
+
+        if (!checked)
+            throw new IllegalOperatorException(OPERATOR);
+
+        return (TypeBool)type;
     }
 }

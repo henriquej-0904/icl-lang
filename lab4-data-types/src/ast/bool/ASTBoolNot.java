@@ -3,6 +3,8 @@ package ast.bool;
 import ast.ASTNode;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
+import types.IType;
+import types.primitves.TypeBool;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
@@ -30,15 +32,29 @@ public class ASTBoolNot implements ASTNode
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        return new VBool( !checkType(this.node.eval(e)).getValue() );
+        return new VBool( !checkRuntimeType(this.node.eval(e)).getValue() );
     }
 
-    protected VBool checkType(IValue val)
+    @Override
+    public IType typecheck(Environment<IType> e) {
+        return checkType(this.node.typecheck(e));
+    }
+
+    protected VBool checkRuntimeType(IValue val)
     {
         boolean checked = val instanceof VBool;
         if (!checked)
             throw new IllegalOperatorException(OPERATOR);
 
         return (VBool)val;
+    }
+
+    protected IType checkType(IType type)
+    {
+        boolean checked = type instanceof TypeBool;
+        if (!checked)
+            throw new IllegalOperatorException(OPERATOR);
+
+        return type;
     }
 }

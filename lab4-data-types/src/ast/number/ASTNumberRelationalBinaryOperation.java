@@ -3,6 +3,8 @@ package ast.number;
 import ast.ASTNode;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
+import types.IType;
+import types.primitves.TypeInt;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
@@ -54,8 +56,8 @@ public class ASTNumberRelationalBinaryOperation implements ASTNode
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        VInt val1 = checkType(this.left.eval(e));
-        VInt val2 = checkType(this.rigth.eval(e));
+        VInt val1 = checkRuntimeType(this.left.eval(e));
+        VInt val2 = checkRuntimeType(this.rigth.eval(e));
 
         IValue result = null;
         switch(this.operator)
@@ -83,12 +85,27 @@ public class ASTNumberRelationalBinaryOperation implements ASTNode
         return result;
     }
 
-    protected VInt checkType(IValue val)
+    @Override
+    public IType typecheck(Environment<IType> e) {
+        checkType(this.left.typecheck(e));
+        return checkType(this.rigth.typecheck(e));
+    }
+
+    protected VInt checkRuntimeType(IValue val)
     {
         boolean checked = val instanceof VInt;
         if (!checked)
             throw new IllegalOperatorException(this.operator.getOperator());
 
         return (VInt)val;
-    }    
+    }
+    
+    protected IType checkType(IType type)
+    {
+        boolean checked = type instanceof TypeInt;
+        if (!checked)
+            throw new IllegalOperatorException(this.operator.getOperator());
+
+        return type;
+    }
 }

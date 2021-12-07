@@ -1,6 +1,7 @@
 package ast;
 
 import compiler.MainCodeBlock;
+import types.IType;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
@@ -22,6 +23,13 @@ public interface ASTNode {
      * @param e - The Environment for the compiler, an id maps to Coordinates.
      */
     void compile(MainCodeBlock c, Environment<Coordinates> e);
+
+    /**
+     * Checks the types.
+     * @param e
+     * @return
+     */
+    IType typecheck(Environment<IType> e);
 	
 }
 

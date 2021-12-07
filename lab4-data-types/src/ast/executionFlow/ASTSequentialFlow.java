@@ -2,6 +2,7 @@ package ast.executionFlow;
 
 import ast.ASTNode;
 import compiler.MainCodeBlock;
+import types.IType;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
@@ -34,5 +35,11 @@ public class ASTSequentialFlow implements ASTNode
 
         // returns the value of the right node.
         return this.right.eval(e);
+    }
+
+    @Override
+    public IType typecheck(Environment<IType> e) {
+        this.left.typecheck(e);
+        return this.right.typecheck(e);
     }
 }

@@ -3,6 +3,9 @@ package ast.executionFlow.conditionalBranches;
 import ast.ASTNode;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
+import typeError.TypeErrorException;
+import types.IType;
+import types.primitves.TypeBool;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
@@ -34,11 +37,26 @@ public class ASTIfThenElse implements ASTNode
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        return checkIfType(this.ifNode.eval(e)).getValue() ?
+        return checkIfRuntimeType(this.ifNode.eval(e)).getValue() ?
                 this.thenNode.eval(e) : this.elseNode.eval(e);
     }
 
-    protected VBool checkIfType(IValue value)
+    @Override
+    public IType typecheck(Environment<IType> e) {
+        checkTypeIf(this.ifNode.typecheck(e));
+
+        IType thenType = this.thenNode.typecheck(e);
+        IType elseType = this.elseNode.typecheck(e);
+
+        if (!thenType.equals(elseType))
+            throw new TypeErrorException(String.format("Incompatible types for if statement. The types of" + 
+            " the then and else branches must be equal.\nThen branch type: %s\nElse branch type: %s\n",
+            thenType.show(), elseType.show()));
+
+        return thenType;
+    }
+
+    protected VBool checkIfRuntimeType(IValue value)
     {
         boolean checked = value instanceof VBool;
 
@@ -46,6 +64,16 @@ public class ASTIfThenElse implements ASTNode
             throw new IllegalOperatorException(OPERATOR);
 
         return (VBool)value;
+    }
+
+    protected TypeBool checkTypeIf(IType type)
+    {
+        boolean checked = type instanceof TypeBool;
+
+        if (!checked)
+            throw new IllegalOperatorException(OPERATOR);
+
+        return (TypeBool)type;
     }
     
     

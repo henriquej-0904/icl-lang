@@ -2,6 +2,7 @@ package ast.names;
 
 import ast.ASTNode;
 import compiler.MainCodeBlock;
+import types.IType;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
@@ -28,6 +29,13 @@ public class ASTId implements ASTNode{
         int varFrameId = coord.getLeft();
         String varId = coord.getRight();
         getFieldFromFrame(c, varFrameId, varId);
+    }
+
+    
+
+    @Override
+    public IType typecheck(Environment<IType> e) {
+        return e.find(id);
     }
 
     /**

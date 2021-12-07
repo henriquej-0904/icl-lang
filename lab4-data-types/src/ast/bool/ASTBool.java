@@ -2,6 +2,8 @@ package ast.bool;
 
 import ast.ASTNode;
 import compiler.MainCodeBlock;
+import types.IType;
+import types.primitves.TypeBool;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
@@ -21,8 +23,15 @@ public class ASTBool implements ASTNode {
 	
 	@Override
 	public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-		//TODO:
-        throw new Error("Not implemented");
+		if (this.val)
+			c.emit("sipush 1");
+		else
+			c.emit("sipush 0");
+	}
+
+	@Override
+	public IType typecheck(Environment<IType> e) {
+		return TypeBool.TYPE;
 	}
 
 }

@@ -2,6 +2,8 @@ package ast.print;
 
 import ast.ASTNode;
 import compiler.MainCodeBlock;
+import types.IType;
+import types.TypeVoid;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
@@ -36,5 +38,13 @@ public class ASTPrintln implements ASTNode
         return VVoid.V_VOID;
     }
 
+    @Override
+    public IType typecheck(Environment<IType> e)
+    {
+        this.node.typecheck(e);
+        
+        // println returns nothing (void)
+        return TypeVoid.TYPE;
+    }
     
 }

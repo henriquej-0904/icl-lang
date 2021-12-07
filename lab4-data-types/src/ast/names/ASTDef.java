@@ -5,11 +5,15 @@ import java.util.List;
 import ast.ASTNode;
 import compiler.FrameCodeBlock;
 import compiler.MainCodeBlock;
+import typeError.TypeErrorException;
+import types.IType;
+import types.TypeVoid;
 import util.Bind;
 import util.Coordinates;
 import util.Environment;
 import util.Pair;
 import values.IValue;
+import values.VVoid;
 
 public class ASTDef implements ASTNode {
 	private List<Bind> init;
@@ -27,12 +31,27 @@ public class ASTDef implements ASTNode {
 
 		for (Bind bind : this.init)
 		{
-			env.assoc(bind.getLeft(), bind.getRight().eval(env));
+			env.assoc(bind.getLeft(), checkRuntimeTypeValue(bind.getRight().eval(env)));
 		}
 
 		IValue value = body.eval(env);
 		env.endScope();
 		return value;
+	}
+
+	@Override
+	public IType typecheck(Environment<IType> e)
+	{
+		Environment<IType> env = e.beginScope();
+
+		for (Bind bind : this.init)
+		{
+			env.assoc(bind.getLeft(), checkTypeValue(bind.getRight().typecheck(env)));
+		}
+
+		IType type = body.typecheck(env);
+		env.endScope();
+		return type;
 	}
 
 	@Override
@@ -58,4 +77,24 @@ public class ASTDef implements ASTNode {
 		this.body.compile(c, newEnv);
 		c.endFrame(newEnv);
 	}
+
+	protected IValue checkRuntimeTypeValue(IValue value)
+    {
+        boolean voidValue = value instanceof VVoid;
+
+        if (voidValue)
+            throw new TypeErrorException("Cannot bind non values (void).");
+
+        return value;
+    }
+
+	protected IType checkTypeValue(IType type)
+    {
+        boolean voidValue = type instanceof TypeVoid;
+
+        if (voidValue)
+            throw new TypeErrorException("Cannot bind non values (void).");
+
+        return type;
+    }
 }
