@@ -2,6 +2,8 @@ package ast.number;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import ast.bool.ASTBool;
+import ast.executionFlow.conditionalBranches.ASTIfThenElse;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;
@@ -32,28 +34,64 @@ public class ASTNumberRelationalBinaryOperation extends ASTNodeAbstract
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        //TODO: 
         
-        throw new Error("Not implemented");
 
-        /* this.left.compile(c, e);
+        this.left.compile(c, e);
         this.rigth.compile(c, e);
-        
+        String l1 = c.getNewId();
+        String l2 = c.getNewId();
         switch(this.operator)
         {
             case EQUALS:
+            c.emit("if_icmpeq " + l1);
+            c.emit("sipush 0");
+            c.emit("goto " + l2);
+            c.emit(l1 + ":");
+            c.emit("sipush 1");
+            c.emit(l2 + ":");
                 break;
             case GREATER_THAN:
+            c.emit("if_icmpgt " + l1);
+            c.emit("sipush 0");
+            c.emit("goto " + l2);
+            c.emit(l1 + ":");
+            c.emit("sipush 1");
+            c.emit(l2 + ":");
                 break;
             case GREATER_THAN_OR_EQUAL_TO:
+            c.emit("if_icmpge " + l1);
+            c.emit("sipush 0");
+            c.emit("goto " + l2);
+            c.emit(l1 + ":");
+            c.emit("sipush 1");
+            c.emit(l2 + ":");
                 break;
             case LESS_THAN:
+            c.emit("if_icmplt " + l1);
+            c.emit("sipush 0");
+            c.emit("goto " + l2);
+            c.emit(l1 + ":");
+            c.emit("sipush 1");
+            c.emit(l2 + ":");
                 break;
             case LESS_THAN_OR_EQUAL_TO:
+            c.emit("if_icmple " + l1);
+            c.emit("sipush 0");
+            c.emit("goto " + l2);
+            c.emit(l1 + ":");
+            c.emit("sipush 1");
+            c.emit(l2 + ":");
                 break;
             case NOT_EQUALS:
+            c.emit("if_icmpne " + l1);
+            c.emit("sipush 0");
+            c.emit("goto " + l2);
+            c.emit(l1 + ":");
+            c.emit("sipush 1");
+            c.emit(l2 + ":");
                 break;
-        } */
+        } 
+
     }
 
     @Override

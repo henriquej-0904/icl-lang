@@ -32,8 +32,7 @@ public class ASTPrintln extends ASTNodeAbstract
 
         node.compile(c, e);
         IType nodeType = node.getType();
-        System.out.println("type: %s");
-
+       
         if(nodeType instanceof TypeInt)
           printInt(c);
         else if (nodeType instanceof TypeBool)

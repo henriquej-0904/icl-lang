@@ -25,8 +25,9 @@ public class ASTSequentialFlow extends ASTNodeAbstract
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        // TODO Auto-generated method stub
-        throw new Error("Not implemented");
+        
+        left.compile(c, e);
+        right.compile(c, e);
     }
 
     @Override

@@ -1,7 +1,7 @@
-def x = true in 
-    if (x) then
-        println(x)
+def x = 5 in 
+    if( x <=5) then
+        x + 1
     else
-        println(10)
+        30
     end
 end;;
