@@ -15,7 +15,7 @@ public class TypeRef implements IType
 
     @Override
     public String show() {
-        return TYPE;
+        return TYPE + " ( " + valueType.show() + " ) ";
     }
 
     public IType getValueType()

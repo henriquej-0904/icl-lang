@@ -16,7 +16,7 @@ public class VCell implements IValue
 
     @Override
     public String show() {
-        return this.value.show();
+        return "Ref ( " + this.value.show() + " ) ";
     }
 
     /**

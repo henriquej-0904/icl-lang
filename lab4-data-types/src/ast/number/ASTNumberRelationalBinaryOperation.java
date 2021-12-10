@@ -4,6 +4,7 @@ import ast.ASTNode;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;
+import types.primitves.TypeBool;
 import types.primitves.TypeInt;
 import util.Coordinates;
 import util.Environment;
@@ -88,7 +89,8 @@ public class ASTNumberRelationalBinaryOperation implements ASTNode
     @Override
     public IType typecheck(Environment<IType> e) {
         checkType(this.left.typecheck(e));
-        return checkType(this.rigth.typecheck(e));
+        checkType(this.rigth.typecheck(e));
+        return TypeBool.TYPE;
     }
 
     protected VInt checkRuntimeType(IValue val)

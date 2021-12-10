@@ -26,4 +26,4 @@ WORKDIR /app
 
 # Copy jar and build files
 COPY --from=build /app/MathExpression.jar /app/MathExpression.jar
-COPY ./Expression.icl /app/Expression.icl
+#COPY ./Expression.icl /app/Expression.icl
