@@ -1,6 +1,6 @@
 import compiler.CompileBlock;
 
-public class ASTDiv extends ASTNodeAbstract {
+public class ASTDiv implements ASTNode {
 
     ASTNode lhs, rhs;
     

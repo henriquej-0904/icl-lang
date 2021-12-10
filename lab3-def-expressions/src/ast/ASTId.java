@@ -4,7 +4,7 @@ import compiler.MainCodeBlock;
 import util.Coordinates;
 import util.Environment;
 
-public class ASTId extends ASTNodeAbstract{
+public class ASTId implements ASTNode{
 
     protected String id;
 

@@ -5,7 +5,7 @@ import compiler.MainCodeBlock;
 import util.Environment;
 import util.Coordinates;
 
-public class ASTDiv extends ASTNodeAbstract {
+public class ASTDiv implements ASTNode {
 
     ASTNode lhs, rhs;
 

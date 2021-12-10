@@ -5,7 +5,7 @@ import compiler.MainCodeBlock;
 import util.Coordinates;
 import util.Environment;
 
-public class ASTNum extends ASTNodeAbstract {
+public class ASTNum implements ASTNode {
 
         int val;
 

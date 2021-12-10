@@ -1,4 +1,4 @@
-public class ASTSub extends ASTNodeAbstract {
+public class ASTSub implements ASTNode {
 
 ASTNode lhs, rhs;
 
