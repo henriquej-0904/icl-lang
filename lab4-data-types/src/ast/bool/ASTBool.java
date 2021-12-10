@@ -1,6 +1,5 @@
 package ast.bool;
 
-import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import types.IType;

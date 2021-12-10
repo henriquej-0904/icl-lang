@@ -26,22 +26,23 @@ public class ASTPrintln extends ASTNodeAbstract
     }
 
     @Override
-    public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        // TODO Auto-generated method stub
+    public void compile(MainCodeBlock c, Environment<Coordinates> e)
+    {
         c.emit("getstatic java/lang/System/out Ljava/io/PrintStream;");
+
         node.compile(c, e);
         IType nodeType = node.getType();
-        System.out.println(nodeType.show());
+        System.out.println("type: %s");
+
         if(nodeType instanceof TypeInt)
           printInt(c);
-        else  if (nodeType instanceof TypeBool){
+        else if (nodeType instanceof TypeBool)
             printBoolean(c);
-        }
-        else{
+        else
+        {
             c.emit("ldc \" \"");
             c.emit("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
         }
-       
     }
 
     private void printBoolean(MainCodeBlock c){
@@ -77,10 +78,10 @@ public class ASTPrintln extends ASTNodeAbstract
     @Override
     public IType typecheck(Environment<IType> e)
     {
-        
+        this.node.typecheck(e);
         // println returns nothing (void)
-          type = TypeVoid.TYPE;
-          return type;
+        type = TypeVoid.TYPE;
+        return type;
     }
     
 }

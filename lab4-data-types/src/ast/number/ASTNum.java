@@ -1,6 +1,5 @@
 package ast.number;
 
-import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import types.IType;

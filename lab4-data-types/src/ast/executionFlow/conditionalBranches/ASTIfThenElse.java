@@ -33,6 +33,7 @@ public class ASTIfThenElse extends ASTNodeAbstract {
         String l1, l2;
         l1 = c.getNewId();
         l2 = c.getNewId();
+        
         ifNode.compile(c, e);
         c.emit("ifeq " + l1);
         thenNode.compile(c, e);

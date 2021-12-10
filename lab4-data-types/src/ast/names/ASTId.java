@@ -1,6 +1,5 @@
 package ast.names;
 
-import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import types.IType;
@@ -36,7 +35,7 @@ public class ASTId extends ASTNodeAbstract{
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        type = e.find(id);
+        this.type = e.find(id);
         return type;
     }
 

@@ -24,6 +24,7 @@ public class ASTWhileLoop extends ASTNodeAbstract
     public ASTWhileLoop(ASTNode whileConditionNode, ASTNode bodyNode) {
         this.whileConditionNode = whileConditionNode;
         this.bodyNode = bodyNode;
+        type = TypeBool.TYPE;
     }
 
     @Override
@@ -46,7 +47,7 @@ public class ASTWhileLoop extends ASTNodeAbstract
 
     @Override
     public IType typecheck(Environment<IType> e) {
-      type = checkTypeWhile(this.whileConditionNode.typecheck(e));
+        checkTypeWhile(this.whileConditionNode.typecheck(e));
         this.bodyNode.typecheck(e);
       
         return TypeBool.TYPE;
