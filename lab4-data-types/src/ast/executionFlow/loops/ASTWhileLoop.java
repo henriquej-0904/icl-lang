@@ -1,6 +1,7 @@
 package ast.executionFlow.loops;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;
@@ -10,7 +11,7 @@ import util.Environment;
 import values.IValue;
 import values.primitive.VBool;
 
-public class ASTWhileLoop implements ASTNode
+public class ASTWhileLoop extends ASTNodeAbstract
 {
     public static final String OPERATOR = "while do";
 
@@ -45,9 +46,9 @@ public class ASTWhileLoop implements ASTNode
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        checkTypeWhile(this.whileConditionNode.typecheck(e));
+      type = checkTypeWhile(this.whileConditionNode.typecheck(e));
         this.bodyNode.typecheck(e);
-
+      
         return TypeBool.TYPE;
     }
 

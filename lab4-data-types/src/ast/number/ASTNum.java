@@ -1,6 +1,7 @@
 package ast.number;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import types.IType;
 import types.primitves.TypeInt;
@@ -9,12 +10,13 @@ import util.Environment;
 import values.IValue;
 import values.primitive.VInt;
 
-public class ASTNum implements ASTNode {
+public class ASTNum extends ASTNodeAbstract {
 
 	private int val;
 
 	public ASTNum(int n) {
 		val = n;
+		type = TypeInt.TYPE;
 	}
 
 	public IValue eval(Environment<IValue> e) {
@@ -28,7 +30,7 @@ public class ASTNum implements ASTNode {
 
 	@Override
 	public IType typecheck(Environment<IType> e) {
-		return TypeInt.TYPE;
+		return type;
 	}
 
 	

@@ -1,4 +1,4 @@
-public class ASTDiv implements ASTNode {
+public class ASTDiv extends ASTNodeAbstract {
 
     ASTNode lhs, rhs;
     

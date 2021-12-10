@@ -28,7 +28,8 @@ public class ASTUp extends ASTId
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        return e.find(id, upDepth);
+        type = e.find(id, upDepth);
+        return type;
     }
 
     @Override

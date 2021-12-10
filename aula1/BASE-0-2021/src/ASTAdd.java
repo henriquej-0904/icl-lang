@@ -1,4 +1,4 @@
-public class ASTAdd implements ASTNode {
+public class ASTAdd extends ASTNodeAbstract {
 
 ASTNode lhs, rhs;
 

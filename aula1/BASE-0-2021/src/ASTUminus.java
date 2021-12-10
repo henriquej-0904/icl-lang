@@ -1,4 +1,4 @@
-public class ASTUminus implements ASTNode {
+public class ASTUminus extends ASTNodeAbstract {
 
     ASTNode lhs;
     

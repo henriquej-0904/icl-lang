@@ -7,7 +7,7 @@ import util.Environment;
 import util.Pair;
 
 import java.util.*;
-public class ASTDef implements ASTNode{
+public class ASTDef extends ASTNodeAbstract{
     private List<Pair<String,ASTNode>> init;
     private ASTNode body;
     public ASTDef(List<Pair<String,ASTNode>> init, ASTNode body){

@@ -1,6 +1,6 @@
 import compiler.CompileBlock;
 
-public class ASTNum implements ASTNode {
+public class ASTNum extends ASTNodeAbstract {
 
 int val;
 

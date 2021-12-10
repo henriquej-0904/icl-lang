@@ -1,6 +1,7 @@
 package ast.number;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;
@@ -12,7 +13,7 @@ import values.IValue;
 import values.primitive.VBool;
 import values.primitive.VInt;
 
-public class ASTNumberRelationalBinaryOperation implements ASTNode
+public class ASTNumberRelationalBinaryOperation extends ASTNodeAbstract
 {
     protected final ASTNode left, rigth;
 
@@ -26,6 +27,7 @@ public class ASTNumberRelationalBinaryOperation implements ASTNode
         this.left = left;
         this.rigth = rigth;
         this.operator = operator;
+        type = TypeBool.TYPE;
     }
 
     @Override
@@ -90,7 +92,7 @@ public class ASTNumberRelationalBinaryOperation implements ASTNode
     public IType typecheck(Environment<IType> e) {
         checkType(this.left.typecheck(e));
         checkType(this.rigth.typecheck(e));
-        return TypeBool.TYPE;
+        return  type;
     }
 
     protected VInt checkRuntimeType(IValue val)

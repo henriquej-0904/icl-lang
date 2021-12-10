@@ -1,6 +1,7 @@
 package ast.bool;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;
@@ -10,7 +11,7 @@ import util.Environment;
 import values.IValue;
 import values.primitive.VBool;
 
-public class ASTLogicalBinaryOperation implements ASTNode
+public class ASTLogicalBinaryOperation extends ASTNodeAbstract
 {
     protected final ASTNode left, rigth;
 
@@ -24,12 +25,23 @@ public class ASTLogicalBinaryOperation implements ASTNode
         this.left = left;
         this.rigth = rigth;
         this.operator = operator;
+        type = TypeBool.TYPE;
     }
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e)
     {
-        throw new Error("Not implemented");    
+        this.left.compile(c, e);
+        this.rigth.compile(c, e);
+        switch(this.operator)
+        {
+            case AND:
+              c.emit("iand");
+                break;
+            case OR:
+               c.emit("ior");
+                break;
+        }   
     }
 
     @Override
@@ -54,7 +66,8 @@ public class ASTLogicalBinaryOperation implements ASTNode
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        checkType(this.left.typecheck(e));
+        
+       checkType(this.left.typecheck(e));
         return checkType(this.rigth.typecheck(e));
     }
 
@@ -75,5 +88,9 @@ public class ASTLogicalBinaryOperation implements ASTNode
 
         return type;
     }
+
+    
+
+
 
 }

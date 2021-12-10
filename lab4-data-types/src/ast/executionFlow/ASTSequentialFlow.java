@@ -1,13 +1,14 @@
 package ast.executionFlow;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import types.IType;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
 
-public class ASTSequentialFlow implements ASTNode
+public class ASTSequentialFlow extends ASTNodeAbstract
 {
     public static final String OPERATOR = ";";
     
@@ -40,6 +41,7 @@ public class ASTSequentialFlow implements ASTNode
     @Override
     public IType typecheck(Environment<IType> e) {
         this.left.typecheck(e);
-        return this.right.typecheck(e);
+         type = this.right.typecheck(e);
+         return type;
     }
 }

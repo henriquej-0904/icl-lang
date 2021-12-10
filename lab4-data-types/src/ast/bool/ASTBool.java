@@ -1,6 +1,7 @@
 package ast.bool;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import types.IType;
 import types.primitves.TypeBool;
@@ -9,12 +10,12 @@ import util.Environment;
 import values.IValue;
 import values.primitive.VBool;
 
-public class ASTBool implements ASTNode {
+public class ASTBool extends ASTNodeAbstract {
 
 	private boolean val;
-
 	public ASTBool(boolean val) {
 		this.val = val;
+		type = TypeBool.TYPE;
 	}
 
 	public IValue eval(Environment<IValue> e) {
@@ -31,7 +32,8 @@ public class ASTBool implements ASTNode {
 
 	@Override
 	public IType typecheck(Environment<IType> e) {
-		return TypeBool.TYPE;
+		return type;
 	}
+
 
 }

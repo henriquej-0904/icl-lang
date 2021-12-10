@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.util.List;
 
 import ast.ASTNode;
+import ast.print.ASTPrintln;
 
 import java.util.LinkedList;
 
@@ -30,7 +31,7 @@ public class MathExpression {
 	/**
 	 * Create folder with generated j files.
 	 */
-	private static final boolean SHOW_GENERATED_J_FILES = false;
+	private static final boolean SHOW_GENERATED_J_FILES = true;
 
 	/**
 	 * Compile jasmin files with flag debug
@@ -159,9 +160,10 @@ public class MathExpression {
 			ASTNode ast = parser.Start();
 
 			IType type = ast.typecheck(new Environment<IType>());
+			
 			System.out.println(String.format("The expression type is: %s\n", type.show()));
-			System.exit(0);
-
+			
+			ast = new ASTPrintln(ast);
 			// TODO: implement compile
 
 			// Compile expression and dump to tmp file.

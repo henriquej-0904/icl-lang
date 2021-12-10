@@ -5,7 +5,7 @@ import compiler.MainCodeBlock;
 import util.Coordinates;
 import util.Environment;
 
-public class ASTUminus implements ASTNode {
+public class ASTUminus extends ASTNodeAbstract {
 
     ASTNode lhs;
 

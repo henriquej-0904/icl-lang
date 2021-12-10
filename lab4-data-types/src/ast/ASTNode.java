@@ -30,6 +30,10 @@ public interface ASTNode {
      * @return
      */
     IType typecheck(Environment<IType> e);
+
+
+    IType getType();
+    
 	
 }
 

@@ -1,6 +1,7 @@
 package ast.bool;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;
@@ -10,7 +11,7 @@ import util.Environment;
 import values.IValue;
 import values.primitive.VBool;
 
-public class ASTBoolNot implements ASTNode
+public class ASTBoolNot extends ASTNodeAbstract
 {
     public static final String OPERATOR = "~";
 
@@ -21,12 +22,14 @@ public class ASTBoolNot implements ASTNode
      */
     public ASTBoolNot(ASTNode node) {
         this.node = node;
+        type = TypeBool.TYPE;
     }
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        // TODO Auto-generated method stub
-        throw new Error("Not implemented");
+        node.compile(c, e);
+        c.emit("sipush 1");
+        c.emit("ixor");
     }
 
     @Override
@@ -38,6 +41,7 @@ public class ASTBoolNot implements ASTNode
     @Override
     public IType typecheck(Environment<IType> e) {
         return checkType(this.node.typecheck(e));
+        
     }
 
     protected VBool checkRuntimeType(IValue val)
@@ -57,4 +61,5 @@ public class ASTBoolNot implements ASTNode
 
         return type;
     }
+
 }

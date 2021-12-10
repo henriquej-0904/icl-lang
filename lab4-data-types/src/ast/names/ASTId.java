@@ -1,13 +1,14 @@
 package ast.names;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import types.IType;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
 
-public class ASTId implements ASTNode{
+public class ASTId extends ASTNodeAbstract{
 
     protected String id;
 
@@ -35,7 +36,8 @@ public class ASTId implements ASTNode{
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        return e.find(id);
+        type = e.find(id);
+        return type;
     }
 
     /**

@@ -1,6 +1,6 @@
 import compiler.CompileBlock;
 
-public class ASTMul implements ASTNode {
+public class ASTMul extends ASTNodeAbstract {
 
     ASTNode lhs, rhs;
     

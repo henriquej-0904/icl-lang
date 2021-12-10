@@ -1,6 +1,7 @@
 package ast.memory;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import typeError.TypeErrorException;
 import types.IType;
@@ -12,7 +13,7 @@ import values.IValue;
 import values.VCell;
 import values.VVoid;
 
-public class ASTNew implements ASTNode
+public class ASTNew extends ASTNodeAbstract
 {
     protected ASTNode val;
 
@@ -36,7 +37,8 @@ public class ASTNew implements ASTNode
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        return new TypeRef(checkType(this.val.typecheck(e)));
+         type = new TypeRef(checkType(this.val.typecheck(e)));
+         return type;
     }
 
     protected IValue checkRuntimeType(IValue value)

@@ -1,6 +1,7 @@
 package ast.executionFlow.conditionalBranches;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import typeError.TypeErrorException;
@@ -11,8 +12,7 @@ import util.Environment;
 import values.IValue;
 import values.primitive.VBool;
 
-public class ASTIfThenElse implements ASTNode
-{
+public class ASTIfThenElse extends ASTNodeAbstract {
     public static final String OPERATOR = "if then else";
 
     protected ASTNode ifNode, thenNode, elseNode;
@@ -30,15 +30,22 @@ public class ASTIfThenElse implements ASTNode
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        // TODO Auto-generated method stub
-        throw new Error("Not implemented");
+        String l1, l2;
+        l1 = c.getNewId();
+        l2 = c.getNewId();
+        ifNode.compile(c, e);
+        c.emit("ifeq " + l1);
+        thenNode.compile(c, e);
+        c.emit("goto " + l2);
+        c.emit(l1 + ": ");
+        elseNode.compile(c, e);
+        c.emit(l2 + ":");
+        
     }
 
     @Override
-    public IValue eval(Environment<IValue> e)
-    {
-        return checkIfRuntimeType(this.ifNode.eval(e)).getValue() ?
-                this.thenNode.eval(e) : this.elseNode.eval(e);
+    public IValue eval(Environment<IValue> e) {
+        return checkIfRuntimeType(this.ifNode.eval(e)).getValue() ? this.thenNode.eval(e) : this.elseNode.eval(e);
     }
 
     @Override
@@ -49,32 +56,30 @@ public class ASTIfThenElse implements ASTNode
         IType elseType = this.elseNode.typecheck(e);
 
         if (!thenType.equals(elseType))
-            throw new TypeErrorException(String.format("Incompatible types for if statement. The types of" + 
-            " the then and else branches must be equal.\nThen branch type: %s\nElse branch type: %s\n",
-            thenType.show(), elseType.show()));
+            throw new TypeErrorException(String.format("Incompatible types for if statement. The types of" +
+                    " the then and else branches must be equal.\nThen branch type: %s\nElse branch type: %s\n",
+                    thenType.show(), elseType.show()));
 
+        type = thenType;
         return thenType;
     }
 
-    protected VBool checkIfRuntimeType(IValue value)
-    {
+    protected VBool checkIfRuntimeType(IValue value) {
         boolean checked = value instanceof VBool;
 
         if (!checked)
             throw new IllegalOperatorException(OPERATOR);
 
-        return (VBool)value;
+        return (VBool) value;
     }
 
-    protected TypeBool checkTypeIf(IType type)
-    {
+    protected TypeBool checkTypeIf(IType type) {
         boolean checked = type instanceof TypeBool;
 
         if (!checked)
             throw new IllegalOperatorException(OPERATOR);
 
-        return (TypeBool)type;
+        return (TypeBool) type;
     }
-    
-    
+
 }

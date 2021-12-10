@@ -1,6 +1,7 @@
 package ast.memory;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;
@@ -10,7 +11,7 @@ import util.Environment;
 import values.IValue;
 import values.VCell;
 
-public class ASTDereference implements ASTNode
+public class ASTDereference extends ASTNodeAbstract
 {
     public static final String OPERATOR = "!";
 
@@ -37,7 +38,8 @@ public class ASTDereference implements ASTNode
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        return checkType(this.reference.typecheck(e)).getValueType();
+         type = checkType(this.reference.typecheck(e)).getValueType();
+         return type;
     }
 
     protected VCell checkRuntimeType(IValue value)

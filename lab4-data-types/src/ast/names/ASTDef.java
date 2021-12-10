@@ -3,6 +3,7 @@ package ast.names;
 import java.util.List;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import compiler.FrameCodeBlock;
 import compiler.MainCodeBlock;
 import typeError.TypeErrorException;
@@ -15,7 +16,7 @@ import util.Pair;
 import values.IValue;
 import values.VVoid;
 
-public class ASTDef implements ASTNode {
+public class ASTDef extends ASTNodeAbstract {
 	private List<Bind> init;
 	private ASTNode body;
 
@@ -49,9 +50,10 @@ public class ASTDef implements ASTNode {
 			env.assoc(bind.getLeft(), checkTypeValue(bind.getRight().typecheck(env)));
 		}
 
-		IType type = body.typecheck(env);
+		IType bodyType = body.typecheck(env);
+		type = bodyType;
 		env.endScope();
-		return type;
+		return bodyType;
 	}
 
 	@Override

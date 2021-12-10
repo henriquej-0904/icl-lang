@@ -32,7 +32,7 @@ public class MainCodeBlock {
     "      .limit stack 256\n\n" +
     
     "      ;    1 - the PrintStream object held in java.lang.System.out\n" +
-    "      getstatic java/lang/System/out Ljava/io/PrintStream;\n\n" +
+   // "      getstatic java/lang/System/out Ljava/io/PrintStream;\n\n" +
     
     "       ; place your bytecodes here between START and END\n" +
     "       ; START\n\n" +
@@ -45,10 +45,10 @@ public class MainCodeBlock {
 
     "\n       ; END\n\n" +
 
-    "       ; convert to String;\n" +
-    "       invokestatic java/lang/String/valueOf(I)Ljava/lang/String;\n" +
-    "       ; call println\n" +
-    "       invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\n" +
+    // "       ; convert to String;\n" +
+    // "       invokestatic java/lang/String/valueOf(I)Ljava/lang/String;\n" +
+    // "       ; call println\n" +
+    // "       invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\n" +
     "       return\n" +
     ".end method";
 
@@ -81,6 +81,8 @@ public class MainCodeBlock {
 
     private int currentFrameId;
 
+    private int idCount;
+
     public MainCodeBlock(String className) throws IOException
     {
         if (className == null || className.equals(""))
@@ -92,6 +94,12 @@ public class MainCodeBlock {
         this.frames = new LinkedList<>();
 
         this.currentFrameId = FrameCodeBlock.INVALID_PREVIOUS_FRAME_ID;
+
+        idCount = 0;
+    }
+
+    public String getNewId(){
+        return "L" + idCount++;
     }
 
     public void emit(String opcode) {

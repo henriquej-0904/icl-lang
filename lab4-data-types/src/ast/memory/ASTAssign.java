@@ -1,6 +1,7 @@
 package ast.memory;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import typeError.TypeErrorException;
@@ -13,7 +14,7 @@ import values.IValue;
 import values.VCell;
 import values.VVoid;
 
-public class ASTAssign implements ASTNode
+public class ASTAssign extends ASTNodeAbstract
 {
     public static final String OPERATOR = ":=";
 
@@ -54,7 +55,7 @@ public class ASTAssign implements ASTNode
             throw new TypeErrorException(
                 String.format("Incompatible type for assignment - %s.\nExpected value type: %s\n",
                     valueType.show(), ref.getValueType().show()));
-
+        type = valueType;
         return valueType;
     }
 
