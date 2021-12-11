@@ -3,6 +3,7 @@ package ast.memory;
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
+import compiler.RefCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;
 import types.TypeRef;
@@ -26,8 +27,9 @@ public class ASTDereference extends ASTNodeAbstract
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        // TODO Auto-generated method stub
-        throw new Error("Not implemented");
+       reference.compile(c, e);
+       RefCodeBlock ref = c.getRefClass(((TypeRef)reference.getType()).getValueType());
+       c.emit(String.format("getfield %s/v %s", ref.getClassName(), ref.getValueFieldType()));
     }
 
     @Override

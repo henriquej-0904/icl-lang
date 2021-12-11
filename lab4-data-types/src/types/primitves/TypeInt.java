@@ -10,4 +10,13 @@ public class TypeInt extends TypePrimitive
     }
 
     public static final TypeInt TYPE = new TypeInt();
+
+    @Override
+    public int hashCode() {
+        // TODO Auto-generated method stub
+        return 1;
+        
+    }
+
+    
 }

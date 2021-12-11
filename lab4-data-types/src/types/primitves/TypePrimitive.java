@@ -26,5 +26,9 @@ public abstract class TypePrimitive implements IType
 
         return super.equals(obj);
     }
-    
+
+    @Override
+    public String toString(){
+        return show();
+    }
 }

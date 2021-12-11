@@ -3,9 +3,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import types.IType;
 import util.Coordinates;
 import util.Environment;
 import util.Pair;
@@ -78,6 +81,7 @@ public class MainCodeBlock {
      * List of pairs: previous frameId, Frame
      */
     private List<Pair<Integer, FrameCodeBlock>> frames;
+    private Map<IType,RefCodeBlock> refs;
 
     private int currentFrameId;
 
@@ -96,6 +100,7 @@ public class MainCodeBlock {
         this.currentFrameId = FrameCodeBlock.INVALID_PREVIOUS_FRAME_ID;
 
         idCount = 0;
+        refs = new HashMap<>();
     }
 
     public String getNewId(){
@@ -216,6 +221,10 @@ public class MainCodeBlock {
             dumpFrame(pairPreviousFrameIdFrame.getRight(), outputFolder);
         }
 
+        for (RefCodeBlock ref : this.refs.values()) {
+            dumpRef(ref, outputFolder);
+        }
+
         File mainClassFile = createFile(outputFolder, generatedClassName);
         
         try (PrintStream printMainClassFile = new PrintStream(mainClassFile);) {
@@ -234,6 +243,16 @@ public class MainCodeBlock {
         }
     }
 
+    public RefCodeBlock createRefClass(IType value){
+        RefCodeBlock r = new RefCodeBlock(value);
+        refs.putIfAbsent(value,r );
+        return r;
+    }
+
+    public RefCodeBlock getRefClass(IType value){
+        return refs.get(value);
+    }
+
     private File createFile(File outputFolder, String fileName)
     {
         return new File(outputFolder + File.separator + fileName + ".j");
@@ -247,6 +266,17 @@ public class MainCodeBlock {
 
         try (PrintStream printFrameFile = new PrintStream(frameFile);) {
             frame.dump(printFrameFile);
+        }
+    }
+
+    private void dumpRef(RefCodeBlock ref, File outputFolder) throws FileNotFoundException
+    {
+        String classname = ref.getClassName();
+
+        File refFile = createFile(outputFolder, classname);
+
+        try (PrintStream printRefFile = new PrintStream(refFile);) {
+            ref.dump(printRefFile);
         }
     }
 }

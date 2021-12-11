@@ -3,18 +3,19 @@ package ast.memory;
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
+import compiler.RefCodeBlock;
 import typeError.TypeErrorException;
 import types.IType;
 import types.TypeRef;
 import types.TypeVoid;
+import types.primitves.TypePrimitive;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
 import values.VCell;
 import values.VVoid;
 
-public class ASTNew extends ASTNodeAbstract
-{
+public class ASTNew extends ASTNodeAbstract {
     protected ASTNode val;
 
     /**
@@ -26,8 +27,14 @@ public class ASTNew extends ASTNodeAbstract
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        // TODO Auto-generated method stub
-        throw new Error("Not implemented");
+       RefCodeBlock ref = c.createRefClass(val.getType());
+       String className = ref.getClassName();
+        c.emit("new " + className);
+        c.emit("dup");
+        c.emit(String.format("invokespecial %s/<init>()V", className));
+        c.emit("dup");
+        val.compile(c, e);
+        c.emit(String.format("putfield %s/v %s", className, ref.getValueFieldType()));
     }
 
     @Override
@@ -37,12 +44,11 @@ public class ASTNew extends ASTNodeAbstract
 
     @Override
     public IType typecheck(Environment<IType> e) {
-         type = new TypeRef(checkType(this.val.typecheck(e)));
-         return type;
+        type = new TypeRef(checkType(this.val.typecheck(e)));
+        return type;
     }
 
-    protected IValue checkRuntimeType(IValue value)
-    {
+    protected IValue checkRuntimeType(IValue value) {
         boolean voidValue = value instanceof VVoid;
 
         if (voidValue)
@@ -51,8 +57,7 @@ public class ASTNew extends ASTNodeAbstract
         return value;
     }
 
-    protected IType checkType(IType type)
-    {
+    protected IType checkType(IType type) {
         boolean voidType = type instanceof TypeVoid;
 
         if (voidType)

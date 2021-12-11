@@ -4,6 +4,7 @@ import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import types.IType;
+import types.TypeRef;
 import types.TypeVoid;
 import types.primitves.TypeBool;
 import types.primitves.TypeInt;
@@ -28,20 +29,18 @@ public class ASTPrintln extends ASTNodeAbstract
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e)
     {
-        c.emit("getstatic java/lang/System/out Ljava/io/PrintStream;");
 
-        node.compile(c, e);
         IType nodeType = node.getType();
-       
+        if(nodeType instanceof TypeRef || nodeType instanceof TypeVoid)
+            return;
+        c.emit("getstatic java/lang/System/out Ljava/io/PrintStream;");
+        node.compile(c, e);
+        
+        
         if(nodeType instanceof TypeInt)
           printInt(c);
         else if (nodeType instanceof TypeBool)
             printBoolean(c);
-        else
-        {
-            c.emit("ldc \" \"");
-            c.emit("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
-        }
     }
 
     private void printBoolean(MainCodeBlock c){

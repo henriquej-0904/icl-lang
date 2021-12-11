@@ -10,4 +10,11 @@ public class TypeBool extends TypePrimitive
     }
 
     public static final TypeBool TYPE = new TypeBool();
+
+    @Override
+    public int hashCode() {
+        // TODO Auto-generated method stub
+        return 2;
+        
+    }
 }

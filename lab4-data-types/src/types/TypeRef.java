@@ -42,4 +42,22 @@ public class TypeRef implements IType
         // check if the types of the values in the references are equal.
         return getValueType().equals(otherRef.getValueType());
     }
+
+    @Override
+    public String toString(){
+       return "ref_of_" + valueType;
+    }
+
+    @Override
+    public int hashCode(){
+        String s = toString();
+        int res = 0;
+        int n = s.length();
+       for(int i = 0; i < s.length(); i++){
+        res += s.charAt(i)*31^(n-(i + 1));
+
+       }
+       return res;
+    }
+
 }
