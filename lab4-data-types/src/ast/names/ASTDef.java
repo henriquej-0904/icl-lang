@@ -59,18 +59,24 @@ public class ASTDef extends ASTNodeAbstract {
 	@Override
 	public void compile(MainCodeBlock c, Environment<Coordinates> e)
 	{
-		Pair<Environment<Coordinates>, Integer> pairEnvFrameId = c.addFrame(this.init.size(), e);
+		Pair<Environment<Coordinates>, FrameCodeBlock> pairEnvFrameId = c.addFrame(e, this.init.size());
 		Environment<Coordinates> newEnv = pairEnvFrameId.getLeft();
-		int frameId = pairEnvFrameId.getRight();
+		FrameCodeBlock frame = pairEnvFrameId.getRight();
 
+		IType type;
+		String jvmType;
 		int i = 0;
 		for (Bind bind : this.init)
 		{
-			Coordinates varCoord = new Coordinates(frameId, String.format(FrameCodeBlock.VARIABLE_NAME, i));
+			type = bind.getRight().getType();
+			jvmType = type.getJvmType();
+			frame.addFieldType(jvmType);
+
+			Coordinates varCoord = new Coordinates(frame.getFrameId(), String.format(FrameCodeBlock.FIELD_NAME_FORMAT, i));
 
 			c.emitCurrentFrame();
 			bind.getRight().compile(c, newEnv);
-			c.emit(String.format("putfield f%d/%s I", frameId, varCoord.getRight()));
+			c.emit(String.format("putfield f%d/%s %s", frame.getFrameId(), varCoord.getRight(), jvmType));
 
 			newEnv.assoc(bind.getLeft(), varCoord);
 			i++;

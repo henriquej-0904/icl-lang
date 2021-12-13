@@ -3,7 +3,6 @@ package compiler;
 import java.io.PrintStream;
 
 import types.IType;
-import types.primitves.TypePrimitive;
 
 public class RefCodeBlock {
     
@@ -30,13 +29,7 @@ public class RefCodeBlock {
     {
 
         className = String.format(CLASS_NAME, valueType);
-        if(valueType instanceof TypePrimitive){
-            valueFieldType  = "I";
-        }
-        else{
-            valueFieldType = "L" + valueType + ";";
-        } 
-       
+        valueFieldType = valueType.getJvmType();
     }
  
 
@@ -51,14 +44,8 @@ public class RefCodeBlock {
         return valueFieldType;
     }
 
-
     public void dump(PrintStream f) { // dumps code to f
-
-        
-            f.printf(CODE,className,valueFieldType);
-        
-        
-
+        f.printf(CODE,className,valueFieldType);
         f.flush();
     }
 }

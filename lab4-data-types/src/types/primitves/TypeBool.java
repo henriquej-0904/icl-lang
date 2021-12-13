@@ -2,6 +2,8 @@ package types.primitves;
 
 public class TypeBool extends TypePrimitive
 {
+    private static final String JVM_TYPE = "I";
+
     /**
      * @param classType
      */
@@ -16,5 +18,10 @@ public class TypeBool extends TypePrimitive
         // TODO Auto-generated method stub
         return 2;
         
+    }
+
+    @Override
+    public String getJvmType() {
+        return JVM_TYPE;
     }
 }

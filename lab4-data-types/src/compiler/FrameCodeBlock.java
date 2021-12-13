@@ -1,6 +1,8 @@
 package compiler;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FrameCodeBlock {
     
@@ -25,24 +27,24 @@ public class FrameCodeBlock {
     "  return\n\n" +
     ".end method";
 
-    private static final String VARIABLE = ".field public x%d I\n";
+    public static final String FIELD_NAME_FORMAT = "x%d";
+    private static final String FIELD_FORMAT = ".field public " + FIELD_NAME_FORMAT + " %s\n";
 
-    public static final String VARIABLE_NAME = "x%d";
 
     public static final int INVALID_PREVIOUS_FRAME_ID = -1;
 
     private int frameId, previousFrameId;
 
-    private int numVariables;
-
     private String className;
 
-    public FrameCodeBlock(int frameId, int previousFrameId)
+    private List<String> fieldsTypes;
+
+    public FrameCodeBlock(int frameId, int previousFrameId, int numFields)
     {
         this.frameId = frameId;
         this.previousFrameId = previousFrameId;
         this.className = String.format(CLASS_NAME, frameId);
-        this.numVariables = 0;
+        this.fieldsTypes = new ArrayList<>(numFields);
     }
 
     /**
@@ -59,18 +61,9 @@ public class FrameCodeBlock {
         return className;
     }
 
-    /**
-     * @return the numVariables
-     */
-    public int getNumVariables() {
-        return numVariables;
-    }
-
-    /**
-     * @param numVariables the numVariables to set
-     */
-    public void setNumVariables(int numVariables) {
-        this.numVariables = numVariables;
+    public void addFieldType(String jvmType)
+    {
+        this.fieldsTypes.add(jvmType);
     }
 
     public void dump(PrintStream f) { // dumps code to f
@@ -80,8 +73,8 @@ public class FrameCodeBlock {
         else
             f.printf(START, this.frameId, String.format(FRAME_SL, this.previousFrameId));
 
-        for (int i = 0; i < this.numVariables; i++)
-            f.printf(VARIABLE, i);
+        for (int i = 0; i < this.fieldsTypes.size(); i++)
+            f.printf(FIELD_FORMAT, i, this.fieldsTypes.get(i));
 
         f.print(END);
 

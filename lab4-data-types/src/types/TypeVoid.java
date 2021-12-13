@@ -31,4 +31,9 @@ public class TypeVoid implements IType
         return 3;
         
     }
+
+    @Override
+    public String getJvmType() {
+        return null;
+    }
 }

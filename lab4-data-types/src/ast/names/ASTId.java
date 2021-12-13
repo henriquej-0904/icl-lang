@@ -53,7 +53,7 @@ public class ASTId extends ASTNodeAbstract{
     {
         c.emitCurrentFrame();
         c.reachFrameIdFromCurrentFrame(frameId);
-        c.emit(String.format("getfield f%d/%s I", frameId, fieldId) );
+        c.emit(String.format("getfield f%d/%s %s", frameId, fieldId, getType().getJvmType()) );
     }
     
 }

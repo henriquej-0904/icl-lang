@@ -1,1 +1,3 @@
-def x = new 5 in !x end;;
+def x = new 5 y = new (new (new 10)) in
+    !!!y
+end;;

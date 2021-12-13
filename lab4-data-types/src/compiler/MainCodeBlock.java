@@ -153,11 +153,10 @@ public class MainCodeBlock {
 
     /**
      * 
-     * @param numVariables
-     * @return Pair(New Environment, new FrameId).
+     * @return Pair(New Environment, new Frame).
      */
-    public Pair<Environment<Coordinates>, Integer>
-        addFrame(int numVariables, Environment<Coordinates> env)
+    public Pair<Environment<Coordinates>, FrameCodeBlock>
+        addFrame(Environment<Coordinates> env, int numFields)
     {
         // new scope
         Environment<Coordinates> newEnv = env.beginScope();
@@ -165,8 +164,7 @@ public class MainCodeBlock {
         int previousFrameId = this.currentFrameId;
 
         // Create frame
-        FrameCodeBlock frame = new FrameCodeBlock(this.frames.size(), previousFrameId);
-        frame.setNumVariables(numVariables);
+        FrameCodeBlock frame = new FrameCodeBlock(this.frames.size(), previousFrameId, numFields);
 
         Pair<Integer, FrameCodeBlock> framePair = new Pair<>(previousFrameId, frame);
         this.frames.add(framePair);
@@ -185,7 +183,7 @@ public class MainCodeBlock {
         
         emit(newFrameInstruction);
 
-        return new Pair<>(newEnv, this.currentFrameId);
+        return new Pair<>(newEnv, frame);
     }
 
     public void reachFrameIdFromCurrentFrame(int frameId)

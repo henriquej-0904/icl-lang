@@ -60,4 +60,9 @@ public class TypeRef implements IType
        return res;
     }
 
+    @Override
+    public String getJvmType() {
+        return "L" + this + ";";
+    }
+
 }

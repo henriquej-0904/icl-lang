@@ -2,6 +2,8 @@ package types.primitves;
 
 public class TypeInt extends TypePrimitive
 {
+    private static final String JVM_TYPE = "I";
+
     /**
      * @param classType
      */
@@ -18,5 +20,8 @@ public class TypeInt extends TypePrimitive
         
     }
 
-    
+    @Override
+    public String getJvmType() {
+        return JVM_TYPE;
+    }
 }
