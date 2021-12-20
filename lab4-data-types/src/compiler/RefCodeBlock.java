@@ -25,6 +25,13 @@ public class RefCodeBlock {
     private String className;
 
     private String valueFieldType;
+
+    /**
+     * Creates a reference code block with the specified type of object
+     * this reference points.
+     * 
+     * @param valueType - The type of value to be referenced.
+     */
     public RefCodeBlock(IType valueType)
     {
 
@@ -40,7 +47,11 @@ public class RefCodeBlock {
         return className;
     }
 
-    public String getValueFieldType(){
+    /**
+     * Get the type of value this reference points in the JVM syntax.
+     * @return The type of value this reference points.
+     */
+    public String getValueFieldTypeJVM(){
         return valueFieldType;
     }
 

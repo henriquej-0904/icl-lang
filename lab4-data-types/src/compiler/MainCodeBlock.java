@@ -241,14 +241,28 @@ public class MainCodeBlock {
         }
     }
 
-    public RefCodeBlock createRefClass(IType value){
-        RefCodeBlock r = new RefCodeBlock(value);
-        refs.putIfAbsent(value,r );
+    /**
+     * Creates a new Reference Code Block with the specified value type.
+     * 
+     * @param valueType - The type of value this reference points.
+     * 
+     * @return A new Reference Code Block with the specified value type.
+     */
+    public RefCodeBlock createRefClass(IType valueType){
+        RefCodeBlock r = new RefCodeBlock(valueType);
+        refs.putIfAbsent(valueType,r );
         return r;
     }
 
-    public RefCodeBlock getRefClass(IType value){
-        return refs.get(value);
+    /**
+     * Get a Reference Code Block with the specified value type.
+     * 
+     * @param valueType - The type of value this reference points.
+     * 
+     * @return A Reference Code Block with the specified value type.
+     */
+    public RefCodeBlock getRefClass(IType valueType){
+        return refs.get(valueType);
     }
 
     private File createFile(File outputFolder, String fileName)

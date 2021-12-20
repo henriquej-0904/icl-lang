@@ -1,11 +1,11 @@
 package ast;
 
 import types.IType;
-import types.TypeVoid;
 
 public abstract class ASTNodeAbstract implements ASTNode{
 
-    protected IType type = TypeVoid.TYPE;
+    protected IType type;
+
     @Override
     public IType getType() {
         // TODO Auto-generated method stub

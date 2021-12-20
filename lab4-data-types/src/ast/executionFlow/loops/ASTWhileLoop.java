@@ -29,8 +29,17 @@ public class ASTWhileLoop extends ASTNodeAbstract
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        // TODO Auto-generated method stub
-        throw new Error("Not implemented");
+        String l1, l2;
+        l1 = c.getNewId();
+        l2 = c.getNewId();
+
+        c.emit(l1 + ":");
+        this.whileConditionNode.compile(c, e);
+        c.emit("ifeq " + l2);
+        this.bodyNode.compile(c, e);
+        c.emit("pop");
+        c.emit("goto " + l1);
+        c.emit(l2 + ":");
     }
 
     @Override

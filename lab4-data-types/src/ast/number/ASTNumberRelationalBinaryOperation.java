@@ -2,8 +2,6 @@ package ast.number;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
-import ast.bool.ASTBool;
-import ast.executionFlow.conditionalBranches.ASTIfThenElse;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;

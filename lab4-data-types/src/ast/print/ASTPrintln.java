@@ -5,13 +5,11 @@ import ast.ASTNodeAbstract;
 import compiler.MainCodeBlock;
 import types.IType;
 import types.TypeRef;
-import types.TypeVoid;
 import types.primitves.TypeBool;
 import types.primitves.TypeInt;
 import util.Coordinates;
 import util.Environment;
 import values.IValue;
-import values.VVoid;
 
 public class ASTPrintln extends ASTNodeAbstract
 {
@@ -31,11 +29,13 @@ public class ASTPrintln extends ASTNodeAbstract
     {
 
         IType nodeType = node.getType();
-        if(nodeType instanceof TypeRef || nodeType instanceof TypeVoid)
+        if(nodeType instanceof TypeRef)
             return;
-        c.emit("getstatic java/lang/System/out Ljava/io/PrintStream;");
+
         node.compile(c, e);
-        
+        c.emit("dup");
+        c.emit("getstatic java/lang/System/out Ljava/io/PrintStream;");
+        c.emit("swap");
         
         if(nodeType instanceof TypeInt)
           printInt(c);
@@ -69,16 +69,13 @@ public class ASTPrintln extends ASTNodeAbstract
         IValue result = this.node.eval(e);
         System.out.println(result.show());
 
-        // println returns nothing (void)
-        return VVoid.V_VOID;
+        return result;
     }
 
     @Override
     public IType typecheck(Environment<IType> e)
     {
-        this.node.typecheck(e);
-        // println returns nothing (void)
-        type = TypeVoid.TYPE;
+        this.type = this.node.typecheck(e);
         return type;
     }
     

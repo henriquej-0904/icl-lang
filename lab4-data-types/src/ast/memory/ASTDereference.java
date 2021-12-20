@@ -29,7 +29,7 @@ public class ASTDereference extends ASTNodeAbstract
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
        reference.compile(c, e);
        RefCodeBlock ref = c.getRefClass(((TypeRef)reference.getType()).getValueType());
-       c.emit(String.format("getfield %s/v %s", ref.getClassName(), ref.getValueFieldType()));
+       c.emit(String.format("getfield %s/v %s", ref.getClassName(), ref.getValueFieldTypeJVM()));
     }
 
     @Override

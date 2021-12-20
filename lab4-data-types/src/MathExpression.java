@@ -162,9 +162,6 @@ public class MathExpression {
 			IType type = ast.typecheck(new Environment<IType>());
 			
 			System.out.println(String.format("The expression type is: %s\n", type.show()));
-			
-			ast = new ASTPrintln(ast);
-			// TODO: implement compile
 
 			// Compile expression and dump to tmp file.
 			MainCodeBlock c = new MainCodeBlock(expressionFileName);
