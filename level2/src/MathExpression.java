@@ -1,9 +1,10 @@
 import compiler.*;
 import typeError.TypeErrorException;
 import types.IType;
-import util.Coordinates;
+import types.ITypeEnvEntry;
 import util.Environment;
 import values.IValue;
+import values.IValueEnvEntry;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -38,7 +39,7 @@ public class MathExpression {
 	 */
 	private static final boolean JASMIN_DEBUG_OPTION = false;
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = System.getenv("DEBUG") != null;
 
 	/** Main entry point. */
 	public static void main(String args[]) {
