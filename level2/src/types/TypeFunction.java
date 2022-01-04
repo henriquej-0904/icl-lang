@@ -1,47 +1,47 @@
 package types;
 
-
 import java.util.List;
 
-public class TypeFunction implements IType{
-List<IType> args;
-IType returnType;
+import util.Utils;
 
-public TypeFunction(List<IType> args, IType returnType){
-    this.args = args;
-    this.returnType = returnType;
-}
+public class TypeFunction implements IType {
+    private List<IType> args;
+    private IType returnType;
+
+    public TypeFunction(List<IType> args, IType returnType) {
+        this.args = args;
+        this.returnType = returnType;
+    }
+
     @Override
     public String show() {
-        // TODO Auto-generated method stub
-        String toReturn = null;
-        for (IType iType : args) {
-            toReturn += iType.show() + ",";
-        }
-        return "( " +  toReturn + " ) -> " +  returnType.show();
+        return Utils.toStringList(this.args,
+            (arg) ->
+            {
+                return arg.show();
+            },
+            null, new StringBuilder("Function "))
+            .append(" -> ")
+            .append(this.returnType.show()).toString();
     }
 
     @Override
     public String getJvmType() {
-        // TODO Auto-generated method stub
         return "L" + this + ";";
     }
 
     @Override
-    public String toString(){
-        String toReturn  = "fun_";
-        for (IType iType : args) {
-            toReturn += iType.toString() + "_";
-        }
+    public String toString() {
 
-        toReturn += returnType.toString();
-        
-    return toReturn;
+        return Utils.toStringList(this.args, null,
+            "_", new StringBuilder("fun_"))
+            .append("_")
+            .append(this.returnType).toString();
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return args.hashCode() ^ returnType.hashCode();
     }
-    
+
 }

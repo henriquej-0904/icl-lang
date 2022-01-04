@@ -1,16 +1,17 @@
 package util;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Environment<E> implements Cloneable {
 
-	private Stack<List<Pair<String, E>>> scopeStack;
+	private Stack<List<EnvironmentEntry<E>>> scopeStack;
 
 	public Environment() {
-		scopeStack = new Stack<List<Pair<String, E>>>();
+		scopeStack = new Stack<List<EnvironmentEntry<E>>>();
 	}
 
-	private Environment(Stack<List<Pair<String, E>>> scopeStack) {
+	private Environment(Stack<List<EnvironmentEntry<E>>> scopeStack) {
 		this.scopeStack = scopeStack;
 	}
 
@@ -28,23 +29,23 @@ public class Environment<E> implements Cloneable {
 		return e;
 	}
 
-	public void assoc(String id, E value) {
-		List<Pair<String, E>> scope = scopeStack.peek();
-		for (Pair<String, E> pair : scope) {
-			if (pair.getLeft().equals(id))
+	public void assoc(EnvironmentEntry<E> entry) {
+		List<EnvironmentEntry<E>> scope = scopeStack.peek();
+		for (EnvironmentEntry<E> pair : scope) {
+			if (pair.getLeft().equals(entry.getLeft()))
 				throw new IllegalArgumentException();
 		}
 
-		scope.add(new Pair<String, E>(id, value));
+		scope.add(entry);
 	}
 
 	public E find(String id) {
-		ListIterator<List<Pair<String, E>>> ite = scopeStack.listIterator(scopeStack.size());
+		ListIterator<List<EnvironmentEntry<E>>> ite = scopeStack.listIterator(scopeStack.size());
 		boolean found = false;
-		Pair<String, E> pair = null;
+		EnvironmentEntry<E> pair = null;
 		while (ite.hasPrevious() && !found) {
-			List<Pair<String, E>> scope = ite.previous();
-			Iterator<Pair<String, E>> it = scope.iterator();
+			List<EnvironmentEntry<E>> scope = ite.previous();
+			Iterator<EnvironmentEntry<E>> it = scope.iterator();
 			while (it.hasNext() && !found) {
 				pair = it.next();
 				if (pair.getLeft().equals(id))
@@ -63,14 +64,14 @@ public class Environment<E> implements Cloneable {
 		if (upDepth >= this.scopeStack.size())
 			throw new NoSuchElementException();
 
-		ListIterator<List<Pair<String, E>>> ite = scopeStack.listIterator(scopeStack.size());
+		ListIterator<List<EnvironmentEntry<E>>> ite = scopeStack.listIterator(scopeStack.size());
 		boolean found = false;
-		Pair<String, E> pair = null;
+		EnvironmentEntry<E> pair = null;
 		int currDepth = 0;
 
 		while (ite.hasPrevious() && !found && upDepth < this.scopeStack.size() - currDepth){
-			List<Pair<String, E>> scope = ite.previous();
-			Iterator<Pair<String, E>> it = scope.iterator();
+			List<EnvironmentEntry<E>> scope = ite.previous();
+			Iterator<EnvironmentEntry<E>> it = scope.iterator();
 			while (it.hasNext() && !found) {
 				pair = it.next();
 				if (pair.getLeft().equals(id))
@@ -98,7 +99,23 @@ public class Environment<E> implements Cloneable {
 	@Override
 	@SuppressWarnings("unchecked")
 	public Object clone() {
-		return new Environment<E>((Stack<List<Pair<String, E>>>) scopeStack.clone());
+		return new Environment<>((Stack<List<EnvironmentEntry<E>>>) scopeStack.clone());
+	}
+
+	private int scopeId;
+
+	public StringBuilder toString(StringBuilder builder)
+	{
+		scopeId = 0;
+
+		Utils.toStringList(this.scopeStack, 
+			(Consumer<List<EnvironmentEntry<E>>>) ((scope) -> 
+				{
+					builder.append("Scope " + scopeId + "=");
+					builder.append(scope.toString());
+					scopeId++;
+				})	, null, Utils.DEFAULT_DELIMITERS, builder);
+		return builder;
 	}
 
 }

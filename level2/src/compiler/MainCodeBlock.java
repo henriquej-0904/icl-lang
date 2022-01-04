@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import types.IType;
-import util.Coordinates;
 import util.Environment;
 import util.Pair;
 
