@@ -2,12 +2,12 @@ package ast.print;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import types.IType;
 import types.TypeRef;
 import types.primitves.TypeBool;
 import types.primitves.TypeInt;
-import util.Coordinates;
 import util.Environment;
 import values.IValue;
 
@@ -78,5 +78,16 @@ public class ASTPrintln extends ASTNodeAbstract
         this.type = this.node.typecheck(e);
         return type;
     }
+
+    @Override
+    public StringBuilder toString(StringBuilder builder) {
+        builder.append(OPERATOR + " (");
+        this.node.toString(builder);
+        builder.append(")");
+
+        return builder;
+    }
+
+    
     
 }

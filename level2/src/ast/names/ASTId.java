@@ -1,9 +1,9 @@
 package ast.names;
 
 import ast.ASTNodeAbstract;
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import types.IType;
-import util.Coordinates;
 import util.Environment;
 import values.IValue;
 
@@ -55,5 +55,12 @@ public class ASTId extends ASTNodeAbstract{
         c.reachFrameIdFromCurrentFrame(frameId);
         c.emit(String.format("getfield f%d/%s %s", frameId, fieldId, getType().getJvmType()) );
     }
+
+    @Override
+    public StringBuilder toString(StringBuilder builder) {
+        return builder.append(this.id);
+    }
+
+    
     
 }

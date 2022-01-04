@@ -2,11 +2,11 @@ package ast.memory;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import compiler.RefCodeBlock;
 import types.IType;
 import types.TypeRef;
-import util.Coordinates;
 import util.Environment;
 import values.IValue;
 import values.VCell;
@@ -43,4 +43,15 @@ public class ASTNew extends ASTNodeAbstract {
         type = new TypeRef(this.val.typecheck(e));
         return type;
     }
+
+    @Override
+    public StringBuilder toString(StringBuilder builder) {
+        builder.append("new (");
+        this.val.toString(builder);
+        builder.append(')');
+
+        return builder;
+    }
+
+    
 }

@@ -2,13 +2,13 @@ package ast.memory;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import compiler.RefCodeBlock;
 import typeError.IllegalOperatorException;
 import typeError.TypeErrorException;
 import types.IType;
 import types.TypeRef;
-import util.Coordinates;
 import util.Environment;
 import values.IValue;
 import values.VCell;
@@ -82,4 +82,15 @@ public class ASTAssign extends ASTNodeAbstract
 
         return (TypeRef)type;
     }
+
+    @Override
+    public StringBuilder toString(StringBuilder builder) {
+        this.left.toString(builder);
+        builder.append(OPERATOR);
+        this.right.toString(builder);
+
+        return builder;
+    }
+
+    
 }

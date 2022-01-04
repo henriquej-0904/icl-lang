@@ -1,10 +1,10 @@
 package ast.bool;
 
 import ast.ASTNodeAbstract;
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import types.IType;
 import types.primitves.TypeBool;
-import util.Coordinates;
 import util.Environment;
 import values.IValue;
 import values.primitive.VBool;
@@ -34,5 +34,12 @@ public class ASTBool extends ASTNodeAbstract {
 		return type;
 	}
 
+	@Override
+	public StringBuilder toString(StringBuilder builder) {
+		builder.append(Boolean.toString(this.val));
 
+		return builder;
+	}
+
+	
 }

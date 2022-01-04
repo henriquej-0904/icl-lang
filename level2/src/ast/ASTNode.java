@@ -1,8 +1,8 @@
 package ast;
 
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import types.IType;
-import util.Coordinates;
 import util.Environment;
 import values.IValue;
 
@@ -33,6 +33,9 @@ public interface ASTNode {
 
 
     IType getType();
+
+    
+    StringBuilder toString(StringBuilder builder);
     
 	
 }

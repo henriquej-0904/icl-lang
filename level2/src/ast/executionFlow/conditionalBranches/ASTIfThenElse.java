@@ -2,12 +2,12 @@ package ast.executionFlow.conditionalBranches;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import typeError.TypeErrorException;
 import types.IType;
 import types.primitves.TypeBool;
-import util.Coordinates;
 import util.Environment;
 import values.IValue;
 import values.primitive.VBool;
@@ -82,5 +82,20 @@ public class ASTIfThenElse extends ASTNodeAbstract {
 
         return (TypeBool) type;
     }
+
+    @Override
+    public StringBuilder toString(StringBuilder builder) {
+        builder.append("if (");
+        this.ifNode.toString(builder);
+        builder.append(")\nthen\n\t");
+        this.thenNode.toString(builder);
+        builder.append("\nelse\n\t");
+        this.elseNode.toString(builder);
+        builder.append("\nend\n");
+
+        return builder;
+    }
+
+    
 
 }

@@ -8,4 +8,13 @@ public class ASTUminus extends ASTNumberArithmeticBinaryOperation
     {
         super(new ASTNum(0), node, NumberArithmeticBinaryOperator.SUB);
     }
+
+    @Override
+    public StringBuilder toString(StringBuilder builder) {
+        builder.append("-");
+        this.rigth.toString(builder);
+        return builder;
+    }
+
+    
 }

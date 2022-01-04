@@ -4,14 +4,18 @@ import java.util.List;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import compiler.Coordinates;
 import compiler.FrameCodeBlock;
 import compiler.MainCodeBlock;
 import types.IType;
+import types.ITypeEnvEntry;
 import util.Bind;
-import util.Coordinates;
 import util.Environment;
+import util.EnvironmentEntry;
 import util.Pair;
+import util.Utils;
 import values.IValue;
+import values.IValueEnvEntry;
 
 public class ASTDef extends ASTNodeAbstract {
 	private List<Bind> init;
@@ -29,7 +33,7 @@ public class ASTDef extends ASTNodeAbstract {
 
 		for (Bind bind : this.init)
 		{
-			env.assoc(bind.getLeft(), bind.getRight().eval(env));
+			env.assoc(new IValueEnvEntry(bind.getLeft(), bind.getRight().eval(env)));
 		}
 
 		IValue value = body.eval(env);
@@ -44,7 +48,7 @@ public class ASTDef extends ASTNodeAbstract {
 
 		for (Bind bind : this.init)
 		{
-			env.assoc(bind.getLeft(), bind.getRight().typecheck(env));
+			env.assoc(new ITypeEnvEntry(bind.getLeft(), bind.getRight().typecheck(env)));
 		}
 
 		IType bodyType = body.typecheck(env);
@@ -75,11 +79,30 @@ public class ASTDef extends ASTNodeAbstract {
 			bind.getRight().compile(c, newEnv);
 			c.emit(String.format("putfield f%d/%s %s", frame.getFrameId(), varCoord.getRight(), jvmType));
 
-			newEnv.assoc(bind.getLeft(), varCoord);
+			newEnv.assoc(new EnvironmentEntry<>(bind.getLeft(), varCoord));
 			i++;
 		}
 
 		this.body.compile(c, newEnv);
 		c.endFrame(newEnv);
 	}
+
+	@Override
+	public StringBuilder toString(StringBuilder builder) {
+		builder.append("def ");
+		Utils.toStringList(this.init, 
+			(bind) -> {
+				builder.append(bind.getLeft());
+				builder.append('=');
+				bind.getRight().toString(builder);
+			},
+			" ", null, builder);
+		builder.append(" in\n\t");
+		this.body.toString(builder);
+		builder.append("\nend\n");
+
+		return builder;
+	}
+
+	
 }

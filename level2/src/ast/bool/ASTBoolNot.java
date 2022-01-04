@@ -2,11 +2,11 @@ package ast.bool;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitves.TypeBool;
-import util.Coordinates;
 import util.Environment;
 import values.IValue;
 import values.primitive.VBool;
@@ -61,5 +61,14 @@ public class ASTBoolNot extends ASTNodeAbstract
 
         return type;
     }
+
+    @Override
+    public StringBuilder toString(StringBuilder builder) {
+        builder.append(OPERATOR);
+        this.node.toString(builder);
+        return builder;
+    }
+
+    
 
 }

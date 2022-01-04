@@ -2,12 +2,12 @@ package ast.memory;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import compiler.RefCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;
 import types.TypeRef;
-import util.Coordinates;
 import util.Environment;
 import values.IValue;
 import values.VCell;
@@ -62,6 +62,13 @@ public class ASTDereference extends ASTNodeAbstract
             throw new IllegalOperatorException(OPERATOR);
 
         return (TypeRef)type;
+    }
+
+    @Override
+    public StringBuilder toString(StringBuilder builder) {
+        builder.append(OPERATOR);
+        this.reference.toString(builder);
+        return builder;
     }
 
     

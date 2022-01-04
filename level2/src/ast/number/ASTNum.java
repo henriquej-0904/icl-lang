@@ -1,10 +1,10 @@
 package ast.number;
 
 import ast.ASTNodeAbstract;
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import types.IType;
 import types.primitves.TypeInt;
-import util.Coordinates;
 import util.Environment;
 import values.IValue;
 import values.primitive.VInt;
@@ -30,6 +30,11 @@ public class ASTNum extends ASTNodeAbstract {
 	@Override
 	public IType typecheck(Environment<IType> e) {
 		return type;
+	}
+
+	@Override
+	public StringBuilder toString(StringBuilder builder) {
+		return builder.append(Integer.toString(this.val));
 	}
 
 	

@@ -2,12 +2,12 @@ package ast.number;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitves.TypeBool;
 import types.primitves.TypeInt;
-import util.Coordinates;
 import util.Environment;
 import values.IValue;
 import values.primitive.VBool;
@@ -148,4 +148,17 @@ public class ASTNumberRelationalBinaryOperation extends ASTNodeAbstract
 
         return type;
     }
+
+    @Override
+    public StringBuilder toString(StringBuilder builder) {
+        this.left.toString(builder);
+        builder.append(' ');
+        builder.append(this.operator.getOperator());
+        builder.append(' ');
+        this.rigth.toString(builder);
+
+        return builder;
+    }
+
+    
 }

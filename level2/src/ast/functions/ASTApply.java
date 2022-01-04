@@ -2,16 +2,18 @@ package ast.functions;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
-import typeError.IllegalOperatorException;
 import typeError.TypeErrorException;
 import types.IType;
-import util.Coordinates;
 import util.Environment;
+import util.Utils;
 import values.IValue;
+import values.IValueEnvEntry;
 import values.VFunction;
 
 public class ASTApply extends ASTNodeAbstract{
@@ -34,7 +36,7 @@ public class ASTApply extends ASTNodeAbstract{
             throw new TypeErrorException("Incorrect number of args for function call. Expected " +  fun.getArgs().size() +" and got " + args.size() + " arguments.");
         }
         while(it.hasNext() && names.hasNext()){
-          funEnv.assoc(names.next(), it.next().eval(e));
+          funEnv.assoc(new IValueEnvEntry(names.next(), it.next().eval(e)));
         }
         toReturn = fun.getBody().eval(funEnv);
         funEnv.endScope();
@@ -63,4 +65,15 @@ public class ASTApply extends ASTNodeAbstract{
 
         return (VFunction)value;
     }
+
+    @Override
+    public StringBuilder toString(StringBuilder builder) {
+        this.function.toString(builder);
+        builder.append(" ");
+        Utils.toStringList(args, (Consumer<ASTNode>)((arg) -> arg.toString(builder)), null, Utils.DEFAULT_DELIMITERS, builder);
+
+        return builder;
+    }
+
+    
 }

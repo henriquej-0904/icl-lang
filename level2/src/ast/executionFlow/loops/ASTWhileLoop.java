@@ -2,11 +2,11 @@ package ast.executionFlow.loops;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitves.TypeBool;
-import util.Coordinates;
 import util.Environment;
 import values.IValue;
 import values.primitive.VBool;
@@ -81,4 +81,17 @@ public class ASTWhileLoop extends ASTNodeAbstract
 
         return (TypeBool)type;
     }
+
+    @Override
+    public StringBuilder toString(StringBuilder builder) {
+        builder.append("while (");
+        this.whileConditionNode.toString(builder);
+        builder.append(") do\n\t");
+        this.bodyNode.toString(builder);
+        builder.append("\nend\n");
+
+        return builder;
+    }
+
+    
 }

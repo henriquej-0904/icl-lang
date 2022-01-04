@@ -2,9 +2,9 @@ package ast.executionFlow;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import types.IType;
-import util.Coordinates;
 import util.Environment;
 import values.IValue;
 
@@ -45,4 +45,15 @@ public class ASTSequentialFlow extends ASTNodeAbstract
          type = this.right.typecheck(e);
          return type;
     }
+
+    @Override
+    public StringBuilder toString(StringBuilder builder) {
+        this.left.toString(builder);
+        builder.append(";\n");
+        this.right.toString(builder);
+
+        return builder;
+    }
+
+    
 }

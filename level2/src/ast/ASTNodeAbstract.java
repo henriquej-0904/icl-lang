@@ -12,6 +12,11 @@ public abstract class ASTNodeAbstract implements ASTNode{
         return type;
     }
     
+    @Override
+    public String toString() {
+        return toString(new StringBuilder()).toString();
+    }
+
     
 
 }

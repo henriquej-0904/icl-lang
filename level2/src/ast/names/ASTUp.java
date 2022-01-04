@@ -1,8 +1,8 @@
 package ast.names;
 
+import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import types.IType;
-import util.Coordinates;
 import util.Environment;
 import values.IValue;
 
@@ -41,5 +41,13 @@ public class ASTUp extends ASTId
         String varId = coord.getRight();
         getFieldFromFrame(c, varFrameId, varId);
     }
+
+    @Override
+    public StringBuilder toString(StringBuilder builder) {
+        builder.append("up" + this.upDepth + " ");
+        return super.toString(builder);
+    }
+
+    
 
 }
