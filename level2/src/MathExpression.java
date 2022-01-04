@@ -38,6 +38,7 @@ public class MathExpression {
 	 */
 	private static final boolean JASMIN_DEBUG_OPTION = false;
 
+	private static final boolean DEBUG = true;
 
 	/** Main entry point. */
 	public static void main(String args[]) {
@@ -97,8 +98,13 @@ public class MathExpression {
 				System.err.println("Syntax Error!");
 				parser.ReInit(System.in);
 			} catch (Exception e) {
-				System.err.println("An error occurred!");
-				System.err.println(e.getMessage());
+				if(DEBUG)
+					e.printStackTrace();
+				else{
+					System.err.println("An error occurred!");
+					System.err.println(e.getMessage());
+				}
+				
 				//e.printStackTrace();
 				end = true;
 			}

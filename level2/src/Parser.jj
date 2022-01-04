@@ -12,6 +12,7 @@ import ast.memory.*;
 import ast.names.*;
 import ast.number.*;
 import ast.print.*;
+import ast.functions.*;
 
 /** ID lister. */
 public class Parser {}
@@ -28,8 +29,6 @@ SKIP :
 
 TOKEN :
 { 
-  < EXIT: "exit" >
-  |
   < DEF: "def" >
   |
   < IN: "in" >
@@ -37,7 +36,8 @@ TOKEN :
   < END: "end" >
   |
   < UP : "up" >
-
+  |
+  <FUN : "fun">
   |
   < TRUE : "true" >
   |
@@ -82,7 +82,6 @@ TOKEN :
   |
   < RPAR : ")" >
   |
-
   < EQUALS : "=" >
   |
   < EQUALS_COMP : "==" >
@@ -96,7 +95,6 @@ TOKEN :
   < LESS_THAN : "<" >
   |
   < LESS_THAN_OR_EQUAL_TO : "<=" >
-
   |
   < LOGICAL_AND : "&&" >
   |
@@ -104,7 +102,10 @@ TOKEN :
   |
   < LOGICAL_NOT : "~" >
   |
-
+  <COMMA : ",">
+  |
+  <ARROW : "->">
+  |
   < END_CMD: ";" >
   |
   < END_PROGRAM : ";;" >
@@ -231,6 +232,7 @@ Token tok;
 ASTNode Term() :
 {
 ASTNode t1,t2;
+List<ASTNode> al;
 Token tok;
 }
 {
@@ -245,20 +247,57 @@ Token tok;
 
                   t1 = new ASTNumberArithmeticBinaryOperation(t1, t2, operator);
                 }
-     ) *
-
-     { return t1; }  
+        | <LPAR> al = AL()  <RPAR>
+        {
+          t1 = new ASTApply(t1,al);
+        }) *
+      
+     { return t1; } 
 	
 }
 
+List <ASTNode> AL():
+{ASTNode t1, t2;
+List<ASTNode> result = new LinkedList<ASTNode>();
+}
+{
+  (t1 = Program() {
+    result.add(t1);
+  }
+  (<COMMA> t2 = Program(){
+    result.add(t2);
+  })*)?
+
+  {
+    return result;
+  }
+}
+
+List <String> PL():
+{
+Token tok;
+List<String> result = new LinkedList<String>();
+}
+{
+  ( tok=<Id>  {result.add(tok.image);}
+  (<COMMA>  tok=<Id> {
+    result.add(tok.image);
+  })*)?
+  
+  {
+    return result;
+  }
+}
+
 ASTNode Fact() :
-{ASTNode t1 = null;
+{
+ASTNode t1 = null;
 ASTNode t2, t3;
 Token tok;
 int upDepth = 0;
 }
 {
-   (  <EXIT> {System.exit(0);} |
+   (
 
     tok=<Num> { t1 = new ASTNum(Integer.parseInt(tok.image)); } |
 
@@ -305,7 +344,10 @@ int upDepth = 0;
 
     <WHILE> t1=Program() <DO> t2=Program() <END> { t1 = new ASTWhileLoop(t1, t2); } |
 
-    <PRINT> t1=Fact() { t1 = new ASTPrintln(t1); }
+    <PRINT> t1=Fact() { t1 = new ASTPrintln(t1); } |
+    <FUN> { List<String> args = PL();} <ARROW> t2 = Program() <END> {
+       t1 = new ASTFun(args, t2);
+    }
 
    )
   { return t1;}  
