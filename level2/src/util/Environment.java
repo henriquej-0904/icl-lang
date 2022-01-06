@@ -5,6 +5,8 @@ import java.util.function.Consumer;
 
 public class Environment<E> implements Cloneable {
 
+	// TODO: Add reference to previous environment instead of calling clone: private Environment<E> previous;
+
 	private Stack<List<EnvironmentEntry<E>>> scopeStack;
 
 	public Environment() {
@@ -56,7 +58,7 @@ public class Environment<E> implements Cloneable {
 		if (found)
 			return pair.getRight();
 		else
-			throw new NoSuchElementException();
+			throw new NoSuchElementException(id + " not declared.");
 	}
 
 	public E find(String id, int upDepth) {
@@ -88,7 +90,7 @@ public class Environment<E> implements Cloneable {
 		if (found)
 			return pair.getRight();
 		else
-			throw new NoSuchElementException();
+			throw new NoSuchElementException(id + " not declared.");
 	}
 
 	public int getDepth()
@@ -111,7 +113,7 @@ public class Environment<E> implements Cloneable {
 		Utils.toStringList(this.scopeStack, 
 			(Consumer<List<EnvironmentEntry<E>>>) ((scope) -> 
 				{
-					builder.append("Scope " + scopeId + "=");
+					builder.append("\nScope " + scopeId + " = ");
 					builder.append(scope.toString());
 					scopeId++;
 				})	, null, Utils.DEFAULT_DELIMITERS, builder);
