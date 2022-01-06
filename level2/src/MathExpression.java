@@ -29,16 +29,6 @@ public class MathExpression {
 
 	private static final String DEFAULT_OUTPUT_FOLDER = "out";
 
-	/**
-	 * Create folder with generated j files.
-	 */
-	private static final boolean SHOW_GENERATED_J_FILES = true;
-
-	/**
-	 * Compile jasmin files with flag debug
-	 */
-	private static final boolean JASMIN_DEBUG_OPTION = false;
-
 	private static final boolean DEBUG = System.getenv("DEBUG") != null;
 
 	/** Main entry point. */
@@ -67,7 +57,7 @@ public class MathExpression {
 	 */
 	private static void printUsage() {
 		String usage = "Usage:\n" + "\tjava -jar MathExpression.jar -c <input-file-name>.icl [OPTIONS]\n"
-				+ "\tjava -jar MathExpression.jar -e\n\n" +
+				+ "\tjava -jar MathExpression.jar -e [<input-file-name>.icl]\n\n" +
 
 				"\t-c -> Compile an expression from a file to generate a .class file that computes that expression.\n"
 				+ "\t-e -> Evaluate an expression from stdin.\n\n" +
@@ -82,33 +72,45 @@ public class MathExpression {
 	 * @param args
 	 */
 	private static void interpreterMain(String[] args) {
-		if (args.length > 0) {
+		if (args.length != 0 && args.length != 1) {
 			printUsage();
 			System.exit(1);
 		}
 
-		Parser parser = new Parser(System.in);
-		boolean end = false;
+		boolean inputFile = args.length > 0;
 
-		while (!end) {
-			try {
-				System.out.print("> ");
-				ASTNode ast = parser.Start();
-				System.out.println(ast.eval(new Environment<IValue>()).show());
-			} catch (ParseException e) {
-				System.err.println("Syntax Error!");
-				parser.ReInit(System.in);
-			} catch (Exception e) {
-				if(DEBUG)
-					e.printStackTrace();
-				else{
-					System.err.println("An error occurred!");
-					System.err.println(e.getMessage());
+		try (InputStream in = inputFile ? new FileInputStream(args[0]) : System.in)
+		{
+			Parser parser = new Parser(in);
+			boolean end = false;
+
+			do {
+				try
+				{
+					if (!inputFile)
+						System.out.print("> ");
+
+					ASTNode ast = parser.Start();
+					System.out.println(ast.eval(new Environment<IValue>()).show());
+				} catch (ParseException e) {
+					System.err.println("Syntax Error!");
+
+					if (!inputFile)
+						parser.ReInit(System.in);
+				} catch (Exception e) {
+					if (DEBUG)
+						e.printStackTrace();
+					else {
+						System.err.println("An error occurred!");
+						System.err.println(e.getMessage());
+					}
+
+					end = true;
 				}
-				
-				//e.printStackTrace();
-				end = true;
-			}
+			} while (!end && !inputFile);
+		}
+		catch (Exception e) {
+			System.err.println(e.getMessage());
 		}
 	}
 
@@ -152,7 +154,7 @@ public class MathExpression {
 				destFolder.mkdirs();
 
 			// Create tmp folder for j files.
-			if (SHOW_GENERATED_J_FILES)
+			if (DEBUG)
 			{
 				tmpFolder = new File("MathExpressionJfiles");
 				tmpFolder.mkdirs();
@@ -192,7 +194,7 @@ public class MathExpression {
 		}
 		finally
 		{
-			if (!SHOW_GENERATED_J_FILES && tmpFolder != null)
+			if (!DEBUG && tmpFolder != null)
 			{
 				File[] files = tmpFolder.listFiles();
 				for (File file : files) {
@@ -217,7 +219,7 @@ public class MathExpression {
 		jasminCommand.add(tmpFolder.getAbsolutePath());
 
 		// Debug
-		if (JASMIN_DEBUG_OPTION)
+		if (DEBUG)
 			jasminCommand.add("-g");
 
 		File[] jFiles = tmpFolder.listFiles();
@@ -231,7 +233,6 @@ public class MathExpression {
 
 		if (jasminExitValue == 0) {
 			System.out.println("Compiled with success!");
-			//System.out.println("Created file: " + expressionFileName + ".class");
 		} else {
 			System.err.println("Jasmin returned an error.");
 			System.exit(jasminExitValue);
@@ -249,12 +250,10 @@ public class MathExpression {
 		jarCommand.add("-e");
 		jarCommand.add(expressionFileName);
 
-		//File[] jFiles = tmpFolder.listFiles();
 		File[] classFiles = tmpFolder.listFiles(new FilenameFilter() {
 
 			@Override
 			public boolean accept(File dir, String name) {
-				// TODO Auto-generated method stub
 				return name.contains(".class");
 			}
 			
