@@ -8,36 +8,36 @@ import util.Environment;
 import util.Utils;
 
 public class VFunction implements IValue {
+
+    private static boolean showActive = false;
+
     private List<String> args;
     private ASTNode body;
     private Environment<IValue> env;
-
-    private boolean showActive;
 
     public VFunction(List<String> args, ASTNode body, Environment<IValue> env) {
         this.args = args;
         this.body = body;
         this.env = env;
-        this.showActive = false;
     }
 
     @Override
     public String show() {
 
-        if (this.showActive)
-            return "Recursive closure";
+        if (showActive)
+            return "Closure";
 
-        StringBuilder builder = new StringBuilder("Closure [\n\targs=");
+        StringBuilder builder = new StringBuilder("Closure [\n\targs = ");
         Utils.toStringList(this.args, (Consumer<String>)((arg) -> builder.append(arg)), null,
             Utils.DEFAULT_DELIMITERS, builder);
 
-        builder.append("\n\tbody=");
+        builder.append("\n\tbody = ");
         this.body.toString(builder);
 
-        builder.append("\n\tenvironment=");
-        this.showActive = true;
+        builder.append("\n\tenvironment = ");
+        showActive = true;
         this.env.toString(builder);
-        this.showActive = false;
+        showActive = false;
 
         builder.append("\n]");
 
