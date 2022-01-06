@@ -1,4 +1,4 @@
-FROM henriquej0904/icl:tools-dev-env AS build
+FROM henriquej0904/icl:tools AS build
 
 COPY ./src /app/src
 
@@ -20,7 +20,7 @@ rm ../class-files.txt
 
 # ------------------------------------------------------------
 
-FROM henriquej0904/icl:tools-dev-env
+FROM henriquej0904/icl:tools
 
 WORKDIR /app
 

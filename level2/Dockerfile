@@ -1,7 +1,6 @@
-FROM henriquej0904/icl:tools-dev-env AS build
+FROM henriquej0904/icl:tools AS build
 
-ARG JAVA_DEBUG_OPTIONS="-g"
-ENV DEBUG=1
+ARG JAVA_DEBUG_OPTIONS=""
 
 COPY ./src /app/src
 
@@ -23,9 +22,11 @@ rm ../class-files.txt
 
 # ------------------------------------------------------------
 
-FROM henriquej0904/icl:tools-dev-env
+FROM henriquej0904/icl:tools
 
 WORKDIR /app
 
 # Copy jar and build files
 COPY --from=build /app/MathExpression.jar /app/MathExpression.jar
+
+#ENV DEBUG=1

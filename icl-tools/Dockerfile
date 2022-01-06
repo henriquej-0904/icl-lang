@@ -1,6 +1,6 @@
 FROM henriquej0904/java:16-jdk-headless-ubuntu-20.04
 
-LABEL build="docker build -t icl:tools-dev-env ."
+LABEL build="docker build -t icl:tools ."
 
 # Update & Install
 RUN apt update && \
