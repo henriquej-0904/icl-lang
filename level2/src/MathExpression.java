@@ -90,7 +90,7 @@ public class MathExpression {
 					if (!inputFile)
 						System.out.print("> ");
 
-					ASTNode ast = parser.Start();
+					ASTNode ast = parser.Start(true);
 					System.out.println(ast.eval(new Environment<IValue>()).show());
 				} catch (ParseException e) {
 					System.err.println("Syntax Error!");
@@ -166,20 +166,20 @@ public class MathExpression {
 			}
 
 			// parse input
-			ASTNode ast = parser.Start();
+			ASTNode ast = parser.Start(false);
 
 			IType type = ast.typecheck(new Environment<IType>());
 			
 			System.out.println(String.format("The expression type is: %s\n", type.show()));
-
+			
 			// Compile expression and dump to tmp file.
-			MainCodeBlock c = new MainCodeBlock(expressionFileName);
+			/* MainCodeBlock c = new MainCodeBlock(expressionFileName);
 			ast.compile(c, new Environment<Coordinates>());
 			c.dump(tmpFolder);
 
 			callJasmin(jasminJarPath, tmpFolder, expressionFileName);
 			buildJar(destFolder, expressionFileName, tmpFolder);
-			
+			 */
 		} catch (ParseException e) {
 			System.err.println("Syntax Error!");
 		}
@@ -202,7 +202,7 @@ public class MathExpression {
 				}
 				tmpFolder.delete();
 			}
-		}
+		} 
 	}
 
 	private static void callJasmin(String jasminJarPath, File tmpFolder,

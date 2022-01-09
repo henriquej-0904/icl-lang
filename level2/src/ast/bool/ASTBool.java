@@ -4,7 +4,7 @@ import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import types.IType;
-import types.primitves.TypeBool;
+import types.primitives.TypeBool;
 import util.Environment;
 import values.IValue;
 import values.primitive.VBool;

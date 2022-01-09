@@ -1,4 +1,4 @@
-package types.primitves;
+package types.primitives;
 
 public class TypeInt extends TypePrimitive
 {

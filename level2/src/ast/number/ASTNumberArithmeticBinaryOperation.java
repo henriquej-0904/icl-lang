@@ -6,7 +6,7 @@ import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;
-import types.primitves.TypeInt;
+import types.primitives.TypeInt;
 import util.Environment;
 import values.IValue;
 import values.primitive.VInt;

@@ -1,5 +1,6 @@
 package types;
 
+
 public interface IType
 {
     String show();
@@ -9,4 +10,5 @@ public interface IType
      * @return
      */
     String getJvmType();
+
 }

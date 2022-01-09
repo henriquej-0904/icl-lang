@@ -13,9 +13,12 @@ import ast.names.*;
 import ast.number.*;
 import ast.print.*;
 import ast.functions.*;
-
+import types.*;
+import types.primitives.*;
 /** ID lister. */
-public class Parser {}
+public class Parser {
+  static boolean interpreting;
+}
 
 PARSER_END(Parser)
 
@@ -28,7 +31,13 @@ SKIP :
 }
 
 TOKEN :
-{ 
+{ // token types
+  < TYPE_INT: "int">
+  |
+  <TYPE_BOOL: "bool">
+  |
+  <TYPE_REF: "ref_">
+  |
   < DEF: "def" >
   |
   < IN: "in" >
@@ -50,7 +59,8 @@ TOKEN :
   |
   < DEREFERENCE : "!" >
   |
-
+  < DOTS : ":">
+  |
   < IF : "if" >
   |
   < THEN : "then" >
@@ -65,7 +75,6 @@ TOKEN :
 
   < PRINT : "println" >
   |
-
   < Id: ["a"-"z","A"-"Z"] ( ["a"-"z","A"-"Z","0"-"9"] )* >
   |
   < Num: (["0"-"9"]) + >
@@ -111,8 +120,9 @@ TOKEN :
   < END_PROGRAM : ";;" >
 }
 
-ASTNode Start() :
+ASTNode Start(boolean interpreting) :
 {
+Parser.interpreting = interpreting;
 ASTNode t1, t2;
 }
 {
@@ -273,21 +283,41 @@ List<ASTNode> result = new LinkedList<ASTNode>();
   }
 }
 
-List <String> PL():
+List <FunctionArg> PL_Interpreter():
 {
 Token tok;
-List<String> result = new LinkedList<String>();
+List<FunctionArg> result = new LinkedList<FunctionArg>();
 }
 {
-  ( tok=<Id>  {result.add(tok.image);}
+  ( tok=<Id>  {result.add(new FunctionArg(tok.image));}
   (<COMMA>  tok=<Id> {
-    result.add(tok.image);
+    result.add(new FunctionArg(tok.image));
   })*)?
   
   {
     return result;
   }
 }
+
+List <FunctionArg> PL_Compiler():
+{
+Token tok1;
+IType type;
+List<FunctionArg> result = new LinkedList<FunctionArg>();
+}
+{
+  (tok1=<Id> <DOTS> type = parseType()
+  {
+    result.add(new FunctionArg(tok1.image, type));
+  } (<COMMA>  tok1=<Id> <DOTS> type = parseType()
+  {
+    result.add(new FunctionArg(tok1.image, type));
+  })*)?
+ {
+   return result;
+ }
+}
+
 
 ASTNode Fact() :
 {
@@ -345,10 +375,36 @@ int upDepth = 0;
     <WHILE> t1=Program() <DO> t2=Program() <END> { t1 = new ASTWhileLoop(t1, t2); } |
 
     <PRINT> t1=Fact() { t1 = new ASTPrintln(t1); } |
-    <FUN> { List<String> args = PL();} <ARROW> t2 = Program() <END> {
+    <FUN> { List<FunctionArg> args; 
+      if(interpreting)
+              args = PL_Interpreter();
+            else
+              args = PL_Compiler();} <ARROW> t2 = Program() <END> {
        t1 = new ASTFun(args, t2);
     }
 
    )
   { return t1;}  
+}
+
+IType parseType() : 
+{
+  Token tok;
+  IType type;
+}
+
+{ (
+  tok = <TYPE_INT> {type = TypeInt.TYPE;} |
+  tok = <TYPE_BOOL> {type = TypeBool.TYPE;}|
+  <TYPE_REF> {type = new TypeRef(parseType());}|
+  <LPAR> {List <IType> argTypes = new LinkedList<IType>();} 
+  
+  (type = parseType() {argTypes.add(type);} (<COMMA> type = parseType() { argTypes.add(type);} )* )? 
+
+  <RPAR> type = parseType() {
+    type = new TypeFunction(argTypes, type);
+  })
+
+  {return type;}
+
 }

@@ -1,6 +1,6 @@
-println (def x = new 5 y = new 10 in
-        while !y > 0 do
-        println (y := !y -1)
-        end;
-	println(-2)
-    end -2);;
+def comp = fun f:(int)int,g:(int)int-> (fun x:int -> f(g(x))end) end in
+        def inc = fun x:int -> x + 1 end in
+                def dup = comp(inc,inc) in
+                        dup(2)  end 
+                        end
+                end;;

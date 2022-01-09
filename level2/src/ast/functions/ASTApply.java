@@ -10,7 +10,9 @@ import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import typeError.TypeErrorException;
 import types.IType;
+import types.TypeFunction;
 import util.Environment;
+import util.FunctionArg;
 import util.Utils;
 import values.IValue;
 import values.IValueEnvEntry;
@@ -31,12 +33,12 @@ public class ASTApply extends ASTNodeAbstract{
         VFunction fun = checkRuntimeTypeVFunction(function.eval(e));
         Environment<IValue> funEnv = fun.getEnv().beginScope();
         Iterator<ASTNode> it = args.iterator();
-        Iterator<String> names = fun.getArgs().iterator();
+        Iterator<FunctionArg> names = fun.getArgs().iterator();
         if(args.size() != fun.getArgs().size()){
             throw new TypeErrorException("Incorrect number of args for function call. Expected " +  fun.getArgs().size() +" and got " + args.size() + " arguments.");
         }
         while(it.hasNext() && names.hasNext()){
-          funEnv.assoc(new IValueEnvEntry(names.next(), it.next().eval(e)));
+          funEnv.assoc(new IValueEnvEntry(names.next().id, it.next().eval(e)));
         }
         toReturn = fun.getBody().eval(funEnv);
         funEnv.endScope();
@@ -52,8 +54,20 @@ public class ASTApply extends ASTNodeAbstract{
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        // TODO Auto-generated method stub
-        return null;
+        TypeFunction typeFunction = typeCheckFunction(function.typecheck(e));
+        Iterator<IType>  itFunTypes = typeFunction.getArgs().iterator();
+        Iterator<ASTNode>  it = args.iterator();
+        if(args.size() != typeFunction.getArgs().size()){
+            throw new TypeErrorException("Incorrect number of args for function call. Expected " +  typeFunction.getArgs().size() +" and got " + args.size() + " arguments.");
+        }
+        while(it.hasNext()){
+            IType toCheck = it.next().typecheck(e);
+            IType expected = itFunTypes.next();
+            if(!toCheck.equals(expected))
+                throw new TypeErrorException("Argument types dont match. Expected " + expected.show() + " and got " + toCheck.show());
+        }
+        this.type = typeFunction.getReturnType();
+        return this.type;
     }
     
     protected VFunction checkRuntimeTypeVFunction(IValue value)
@@ -64,6 +78,16 @@ public class ASTApply extends ASTNodeAbstract{
             throw new TypeErrorException("Unexpected type. Type expected - function");
 
         return (VFunction)value;
+    }
+
+    protected TypeFunction typeCheckFunction(IType type)
+    {
+        boolean checked = type instanceof TypeFunction;
+
+        if (!checked)
+            throw new TypeErrorException("Unexpected type. Type expected - function");
+
+        return (TypeFunction)type;
     }
 
     @Override

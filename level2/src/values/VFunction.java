@@ -5,17 +5,18 @@ import java.util.function.Consumer;
 
 import ast.ASTNode;
 import util.Environment;
+import util.FunctionArg;
 import util.Utils;
 
 public class VFunction implements IValue {
 
     private static boolean showActive = false;
 
-    private List<String> args;
+    private List<FunctionArg> args;
     private ASTNode body;
     private Environment<IValue> env;
 
-    public VFunction(List<String> args, ASTNode body, Environment<IValue> env) {
+    public VFunction(List<FunctionArg> args, ASTNode body, Environment<IValue> env) {
         this.args = args;
         this.body = body;
         this.env = env;
@@ -28,7 +29,7 @@ public class VFunction implements IValue {
             return "Closure";
 
         StringBuilder builder = new StringBuilder("Closure [\n\targs = ");
-        Utils.toStringList(this.args, (Consumer<String>)((arg) -> builder.append(arg)), null,
+        Utils.toStringList(this.args, (Consumer<FunctionArg>)((arg) -> builder.append(arg.id)), null,
             Utils.DEFAULT_DELIMITERS, builder);
 
         builder.append("\n\tbody = ");
@@ -44,7 +45,7 @@ public class VFunction implements IValue {
         return builder.toString();
     }
 
-    public List<String> getArgs() {
+    public List<FunctionArg> getArgs() {
         return args;
     }
 

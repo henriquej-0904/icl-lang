@@ -6,8 +6,8 @@ import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import types.IType;
 import types.TypeRef;
-import types.primitves.TypeBool;
-import types.primitves.TypeInt;
+import types.primitives.TypeBool;
+import types.primitives.TypeInt;
 import util.Environment;
 import values.IValue;
 

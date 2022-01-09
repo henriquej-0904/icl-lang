@@ -12,7 +12,7 @@ import types.IType;
 import util.Environment;
 import util.Pair;
 
-public class MainCodeBlock {
+public class MainCodeBlock implements CodeBlock {
 
     public static final String GENERATED_CLASS_DEFAULT_NAME = "MathExpression";
 
@@ -100,7 +100,10 @@ public class MainCodeBlock {
 
         idCount = 0;
         refs = new HashMap<>();
+        ClosureCodeBlock.main = this;
     }
+
+    public MainCodeBlock(){}
 
     public String getNewId(){
         return "L" + idCount++;
