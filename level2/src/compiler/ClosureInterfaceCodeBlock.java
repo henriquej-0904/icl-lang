@@ -1,47 +1,90 @@
 package compiler;
 
 import java.io.PrintStream;
-import java.util.List;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import types.IType;
+import types.TypeFunction;
 import util.Utils;
 
 public class ClosureInterfaceCodeBlock {
     public static String CODE = ".interface	public %s\n" +
     ".super	java/lang/Object\n" +
-    ".method public	abstract apply(%s)%s\n" +
+    ".method public	abstract %s\n" +
     ".end method";
 
     
-    private List<IType> argTypes;
-    private String interfaceName;
-    private String  returnTypeString;
-    public ClosureInterfaceCodeBlock(List<IType> argTypes , IType returnType){
-        this.argTypes = argTypes;
-        returnTypeString = returnType.getJvmType();
+    public final TypeFunction typeFunction;
+    public final String interfaceName;
+    public final String returnTypeString;
+
+    private String applySignature;
+
+    public ClosureInterfaceCodeBlock(TypeFunction typeFunction){
+        this.typeFunction = typeFunction;
+        returnTypeString = getType(typeFunction.getReturnType());
         interfaceName = generateInterfaceName();
       
     }
 
-    public void dump(PrintStream f) { // dumps code to f
-        String argsList = generateArgsList();
-     
-        f.printf(CODE,interfaceName,argsList,returnTypeString);
+    public void dump(PrintStream f) { // dumps code to f     
+        f.printf(CODE,interfaceName, getApplySignature());
         f.flush();
     }
 
     private String generateInterfaceName(){
         StringBuilder toReturn = new StringBuilder( "closure_interface_");
-       return Utils.toStringList(argTypes, (Function<IType,String>)((arg) -> arg.getJvmType()), "_", null, toReturn).append("_" + returnTypeString).toString();
+       return Utils.toStringList(typeFunction.getArgs(), (Consumer<IType>)((arg) -> getType(arg))
+        , "_", null, toReturn).append("_" + returnTypeString).toString();
     }
 
     private String generateArgsList(){
         StringBuilder toReturn = new StringBuilder();
-        return Utils.toStringList(argTypes, (Function<IType,String>)((arg) -> arg.getJvmType()), ",", null, toReturn).toString();
+        return Utils.toStringList(typeFunction.getArgs(), (Consumer<IType>)((arg) -> getType(arg)),
+        ",", Utils.DEFAULT_DELIMITERS, toReturn).toString();
     }
 
     public int getNumArgs(){
-        return argTypes.size();
+        return typeFunction.getArgs().size();
     }
+
+    public String getApplySignature()
+    {
+        if (applySignature != null)
+            return applySignature;
+        
+        StringBuilder builder = new StringBuilder("apply");
+        builder.append(generateArgsList());
+        builder.append(returnTypeString);
+
+        applySignature = builder.toString();
+
+        return applySignature;
+    }
+
+    public static String getType(IType type)
+    {
+        if (type instanceof TypeFunction)
+                return "Ljava/lang/Object;";
+ 
+        return type.getJvmType();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+
+        if (!(obj instanceof ClosureInterfaceCodeBlock))
+            return false;
+
+        ClosureInterfaceCodeBlock other = (ClosureInterfaceCodeBlock)obj;
+        return interfaceName.equals(other.interfaceName);
+    }
+
+    @Override
+    public int hashCode() {
+        return interfaceName.hashCode();
+    }
+
 }

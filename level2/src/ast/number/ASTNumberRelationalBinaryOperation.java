@@ -36,8 +36,8 @@ public class ASTNumberRelationalBinaryOperation extends ASTNodeAbstract
 
         this.left.compile(c, e);
         this.rigth.compile(c, e);
-        String l1 = c.getNewId();
-        String l2 = c.getNewId();
+        String l1 = c.getNewFrameId();
+        String l2 = c.getNewFrameId();
         switch(this.operator)
         {
             case EQUALS:

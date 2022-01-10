@@ -31,8 +31,8 @@ public class ASTIfThenElse extends ASTNodeAbstract {
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
         String l1, l2;
-        l1 = c.getNewId();
-        l2 = c.getNewId();
+        l1 = c.getNewFrameId();
+        l2 = c.getNewFrameId();
         
         ifNode.compile(c, e);
         c.emit("ifeq " + l1);

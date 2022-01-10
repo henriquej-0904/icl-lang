@@ -30,8 +30,8 @@ public class ASTWhileLoop extends ASTNodeAbstract
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
         String l1, l2;
-        l1 = c.getNewId();
-        l2 = c.getNewId();
+        l1 = c.getNewFrameId();
+        l2 = c.getNewFrameId();
 
         c.emit(l1 + ":");
         this.whileConditionNode.compile(c, e);

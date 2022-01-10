@@ -12,11 +12,11 @@ public class FrameCodeBlock {
 
     ".class f%d\n" +
     ".super java/lang/Object\n" +
-    ".field public sl %s;\n";
+    ".field public sl %s\n";
 
-    private static final String FRAME_DEPTH_0_SL = "Ljava/lang/Object";
+    private static final String FRAME_DEPTH_0_SL = "Ljava/lang/Object;";
 
-    private static final String FRAME_SL = "Lf%d";
+    private static final String FRAME_SL = "Lf%d;";
 
     private static final String END =
 
@@ -31,20 +31,26 @@ public class FrameCodeBlock {
     private static final String FIELD_FORMAT = ".field public " + FIELD_NAME_FORMAT + " %s\n";
 
 
-    public static final int INVALID_PREVIOUS_FRAME_ID = -1;
+    public static final int INVALID_FRAME_ID = -1;
 
-    private int frameId, previousFrameId;
+    private int frameId;
 
     private String className;
 
     private List<String> fieldsTypes;
 
+    public final String slType;
+
     public FrameCodeBlock(int frameId, int previousFrameId, int numFields)
     {
         this.frameId = frameId;
-        this.previousFrameId = previousFrameId;
         this.className = String.format(CLASS_NAME, frameId);
         this.fieldsTypes = new ArrayList<>(numFields);
+
+        if (previousFrameId == INVALID_FRAME_ID)
+            slType = FRAME_DEPTH_0_SL;
+        else
+            slType = String.format(FRAME_SL, previousFrameId);
     }
 
     /**
@@ -68,10 +74,7 @@ public class FrameCodeBlock {
 
     public void dump(PrintStream f) { // dumps code to f
 
-        if (this.previousFrameId == INVALID_PREVIOUS_FRAME_ID)
-            f.printf(START, this.frameId, FRAME_DEPTH_0_SL);
-        else
-            f.printf(START, this.frameId, String.format(FRAME_SL, this.previousFrameId));
+        f.printf(START, this.frameId, slType);
 
         for (int i = 0; i < this.fieldsTypes.size(); i++)
             f.printf(FIELD_FORMAT, i, this.fieldsTypes.get(i));

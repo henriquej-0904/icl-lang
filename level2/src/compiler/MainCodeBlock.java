@@ -4,15 +4,19 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import types.IType;
+import types.TypeFunction;
 import util.Environment;
 import util.Pair;
 
-public class MainCodeBlock implements CodeBlock {
+public class MainCodeBlock
+{
 
     public static final String GENERATED_CLASS_DEFAULT_NAME = "MathExpression";
 
@@ -63,7 +67,7 @@ public class MainCodeBlock implements CodeBlock {
 
     "	; store SL in new frame\n" +
     "	aload 4\n" +
-    "	putfield f%d/sl L%s;\n" +
+    "	putfield f%d/sl %s\n" +
     "	; update SL\n" +
     "	astore 4\n\n";
 
@@ -84,7 +88,17 @@ public class MainCodeBlock implements CodeBlock {
 
     private int currentFrameId;
 
-    private int idCount;
+    private int framesIdCount;
+
+
+    private Map<String, ClosureInterfaceCodeBlock> closureInterfaces;
+
+    private Map<Integer, ClosureCodeBlock> closures;
+
+    /**
+     * The active closure or null.
+     */
+    private ClosureCodeBlock activeClosure;
 
     public MainCodeBlock(String className) throws IOException
     {
@@ -96,27 +110,33 @@ public class MainCodeBlock implements CodeBlock {
         code = new LinkedList<>();
         this.frames = new LinkedList<>();
 
-        this.currentFrameId = FrameCodeBlock.INVALID_PREVIOUS_FRAME_ID;
+        this.currentFrameId = FrameCodeBlock.INVALID_FRAME_ID;
 
-        idCount = 0;
+        framesIdCount = 0;
         refs = new HashMap<>();
-        ClosureCodeBlock.main = this;
+
+        closureInterfaces = new HashMap<>();
+        closures = new HashMap<>();
     }
 
-    public MainCodeBlock(){}
-
-    public String getNewId(){
-        return "L" + idCount++;
+    public String getNewFrameId(){
+        return "L" + framesIdCount++;
     }
 
     public void emit(String opcode) {
-        code.add(opcode);
+        if (this.activeClosure != null)
+            this.activeClosure.emit(opcode);
+        else
+            code.add(opcode);
     }
 
 
     public void emitCurrentFrame()
     {
-        emit("aload 4");
+        if (this.activeClosure != null)
+            this.activeClosure.emitCurrentFrame();
+        else
+            emit("aload 4");
     }
 
     /**
@@ -126,8 +146,6 @@ public class MainCodeBlock implements CodeBlock {
      */
     public Environment<Coordinates> endFrame(Environment<Coordinates> env)
     {
-        emitCurrentFrame();
-
         int previousFrameId;
         String previousFrameSlType;
 
@@ -136,7 +154,7 @@ public class MainCodeBlock implements CodeBlock {
         if (env.getDepth() == 1)
         {
             previousFrameSlType = SL_OBJECT_TYPE;
-            previousFrameId = FrameCodeBlock.INVALID_PREVIOUS_FRAME_ID;
+            previousFrameId = FrameCodeBlock.INVALID_FRAME_ID;
         }
         else
         {
@@ -145,12 +163,29 @@ public class MainCodeBlock implements CodeBlock {
             previousFrameSlType = String.format(SL_PREVIOUS_FRAME_TYPE, previousFrameId);
         }
 
-        emit(String.format("getfield f%d/sl L%s;", this.currentFrameId, previousFrameSlType) );
+        String getPreviousSL = String.format("getfield f%d/sl L%s;", this.currentFrameId, previousFrameSlType);
+
+        emitCurrentFrame();
+        emit(getPreviousSL);
         emit("astore 4");
 
         this.currentFrameId = previousFrameId;
 
         return env.endScope();
+    }
+
+    private FrameCodeBlock createFrame(int numFields)
+    {
+        int previousFrameId = this.currentFrameId;
+
+        // Create frame
+        FrameCodeBlock frame = new FrameCodeBlock(this.frames.size(), previousFrameId, numFields);
+
+        Pair<Integer, FrameCodeBlock> framePair = new Pair<>(previousFrameId, frame);
+        this.frames.add(framePair);
+        this.currentFrameId = frame.getFrameId();
+
+        return frame;
     }
 
     /**
@@ -163,27 +198,17 @@ public class MainCodeBlock implements CodeBlock {
         // new scope
         Environment<Coordinates> newEnv = env.beginScope();
 
-        int previousFrameId = this.currentFrameId;
+        FrameCodeBlock frame = createFrame(numFields);
 
-        // Create frame
-        FrameCodeBlock frame = new FrameCodeBlock(this.frames.size(), previousFrameId, numFields);
-
-        Pair<Integer, FrameCodeBlock> framePair = new Pair<>(previousFrameId, frame);
-        this.frames.add(framePair);
-        this.currentFrameId = frame.getFrameId();
-    
-        // Check Environment depth
-        // if depth == 1 then there is no previous frame
-        String frameSlType;
-        if (newEnv.getDepth() == 1)
-            frameSlType = SL_OBJECT_TYPE;
+        if (activeClosure != null)
+            activeClosure.createFrame(frame);
         else
-            frameSlType = String.format(SL_PREVIOUS_FRAME_TYPE, previousFrameId);
-
-        String newFrameInstruction = String.format(NEW_FRAME, this.currentFrameId,
-            this.currentFrameId, this.currentFrameId, frameSlType);
+        {
+            String newFrameInstruction = String.format(NEW_FRAME, this.currentFrameId,
+            this.currentFrameId, this.currentFrameId, frame.slType);
         
-        emit(newFrameInstruction);
+            emit(newFrameInstruction);
+        }
 
         return new Pair<>(newEnv, frame);
     }
@@ -193,23 +218,47 @@ public class MainCodeBlock implements CodeBlock {
         if (this.currentFrameId == frameId)
             return;
 
-        assert this.currentFrameId != FrameCodeBlock.INVALID_PREVIOUS_FRAME_ID;
+        assert this.currentFrameId != FrameCodeBlock.INVALID_FRAME_ID;
 
         int currentFrameId = this.currentFrameId;
         Pair<Integer, FrameCodeBlock> pair = this.frames.get(currentFrameId);
         int previousFrameId = pair.getLeft();
 
-        while (previousFrameId != FrameCodeBlock.INVALID_PREVIOUS_FRAME_ID
+        while (previousFrameId != FrameCodeBlock.INVALID_FRAME_ID
             && currentFrameId != frameId)
         {
             emit(String.format("getfield f%d/sl Lf%d;", currentFrameId, previousFrameId));
             currentFrameId = previousFrameId;
 
-            assert this.currentFrameId != FrameCodeBlock.INVALID_PREVIOUS_FRAME_ID;
+            assert this.currentFrameId != FrameCodeBlock.INVALID_FRAME_ID;
 
             if (currentFrameId != frameId)
                 pair = this.frames.get(currentFrameId);
         }
+    }
+
+    public ClosureCodeBlock createClosure(TypeFunction type)
+    {
+        // Create closure interface
+        ClosureInterfaceCodeBlock closureInterface = new ClosureInterfaceCodeBlock(type);
+        ClosureInterfaceCodeBlock previous =
+            closureInterfaces.putIfAbsent(closureInterface.interfaceName, closureInterface);
+
+        if (previous != null)
+            closureInterface = previous;
+
+        // Create Closure and update activeClosure
+        String sl = currentFrameId == FrameCodeBlock.INVALID_FRAME_ID ? "Ljava/lang/Object;" :
+            "L" + frames.get(currentFrameId).getRight().getClassName() + ";";
+        
+        ClosureCodeBlock closure = new ClosureCodeBlock(closures.size(), sl, closureInterface, activeClosure);
+        closures.put(closure.id, closure);
+        activeClosure = closure;
+
+        // emit init apply function in activeClosure
+        activeClosure.emitInitApplyFunction((numArgs) -> createFrame(numArgs));
+
+        return activeClosure;
     }
 
     public void dump(File outputFolder) throws IOException, FileNotFoundException { // dumps code to f

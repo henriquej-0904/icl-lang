@@ -39,7 +39,10 @@ public class ASTFun extends ASTNodeAbstract
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
         // TODO Auto-generated method stub
-        
+        // Assocs
+        // createClosure
+        // compile body
+        // endClosure
     }
 
     @Override
