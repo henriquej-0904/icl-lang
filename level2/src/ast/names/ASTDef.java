@@ -16,14 +16,20 @@ import util.Pair;
 import util.Utils;
 import values.IValue;
 import values.IValueEnvEntry;
-
+import java.util.Iterator;
 public class ASTDef extends ASTNodeAbstract {
 	private List<Bind> init;
 	private ASTNode body;
-
+	private List<IType> types;
 	public ASTDef(List<Bind> init, ASTNode body) {
 		this.init = init;
 		this.body = body;
+	}
+
+	public ASTDef(List<Bind> init, ASTNode body, List<IType> types) {
+		this.init = init;
+		this.body = body;
+		this.types = types;
 	}
 
 	@Override
@@ -46,9 +52,12 @@ public class ASTDef extends ASTNodeAbstract {
 	{
 		Environment<IType> env = e.beginScope();
 
+		Iterator<IType> it = types.iterator();
+	
 		for (Bind bind : this.init)
 		{
-			env.assoc(new ITypeEnvEntry(bind.getLeft(), bind.getRight().typecheck(env)));
+			env.assoc(new ITypeEnvEntry(bind.getLeft(), it.next()));
+			bind.getRight().typecheck(env);
 		}
 
 		IType bodyType = body.typecheck(env);
@@ -74,12 +83,13 @@ public class ASTDef extends ASTNodeAbstract {
 			frame.addFieldType(jvmType);
 
 			Coordinates varCoord = new Coordinates(frame.getFrameId(), String.format(FrameCodeBlock.FIELD_NAME_FORMAT, i));
-
+			newEnv.assoc(new EnvironmentEntry<>(bind.getLeft(), varCoord));
+			
 			c.emitCurrentFrame();
 			bind.getRight().compile(c, newEnv);
 			c.emit(String.format("putfield f%d/%s %s", frame.getFrameId(), varCoord.getRight(), jvmType));
 
-			newEnv.assoc(new EnvironmentEntry<>(bind.getLeft(), varCoord));
+			
 			i++;
 		}
 

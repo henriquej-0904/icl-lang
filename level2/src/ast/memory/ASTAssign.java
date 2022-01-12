@@ -10,6 +10,7 @@ import typeError.TypeErrorException;
 import types.IType;
 import types.TypeRef;
 import util.Environment;
+import util.Utils;
 import values.IValue;
 import values.VCell;
 
@@ -75,7 +76,7 @@ public class ASTAssign extends ASTNodeAbstract
 
     protected TypeRef checkTypeRef(IType type)
     {
-        boolean checked = type instanceof TypeRef;
+        boolean checked =  Utils.checkType(type, TypeRef.class);
 
         if (!checked)
             throw new IllegalOperatorException(OPERATOR, "Cannot assign a value to a non reference type.");

@@ -9,6 +9,7 @@ import typeError.IllegalOperatorException;
 import types.IType;
 import types.TypeRef;
 import util.Environment;
+import util.Utils;
 import values.IValue;
 import values.VCell;
 
@@ -56,7 +57,7 @@ public class ASTDereference extends ASTNodeAbstract
 
     protected TypeRef checkType(IType type)
     {
-        boolean checked = type instanceof TypeRef;
+        boolean checked =  Utils.checkType(type, TypeRef.class);
 
         if (!checked)
             throw new IllegalOperatorException(OPERATOR);

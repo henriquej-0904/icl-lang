@@ -89,7 +89,7 @@ public class ASTApply extends ASTNodeAbstract{
     protected TypeFunction typeCheckFunction(IType type)
     {
         boolean checked = type instanceof TypeFunction;
-
+   
         if (!checked)
             throw new TypeErrorException("Unexpected type. Type expected - function");
 

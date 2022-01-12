@@ -1,9 +1,8 @@
-def 
-  f = fun g:(int)int -> g (10) end
-in
-  def x = f(fun y:int -> y*2 end)
-  in
-   println (x+2)
-  end
-end;;
+def comp:((int)int,(int)int)(int)int = fun f:(int)int,g:(int)int-> (fun x:int -> f(g(x))end) end in
+        def inc:(int)int = fun x:int -> x + 1 end in
+                def dup:(int)int = comp(inc,inc) in
+                        dup(2)  end 
+                        end
+                end;;
+
 

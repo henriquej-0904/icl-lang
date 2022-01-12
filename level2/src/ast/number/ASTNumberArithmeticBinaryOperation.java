@@ -8,6 +8,7 @@ import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitives.TypeInt;
 import util.Environment;
+import util.Utils;
 import values.IValue;
 import values.primitive.VInt;
 
@@ -95,7 +96,7 @@ public class ASTNumberArithmeticBinaryOperation extends ASTNodeAbstract
 
     protected IType checkType(IType type)
     {
-        boolean checked = type instanceof TypeInt;
+        boolean checked =  Utils.checkType(type, TypeInt.class);
         if (!checked)
             throw new IllegalOperatorException(this.operator.getOperator());
 

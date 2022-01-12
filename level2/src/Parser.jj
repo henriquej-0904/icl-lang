@@ -343,14 +343,22 @@ int upDepth = 0;
 
     <LOGICAL_NOT> t1=Fact() {t1 = new ASTBoolNot(t1);} |
 
-    <DEF> { List<Bind> init = new LinkedList<Bind>(); }
-            ((tok = <Id>) <EQUALS> t2=Program()
+    <DEF> { List<Bind> init = new LinkedList<Bind>(); 
+            IType type = null;
+            List<IType> types = new LinkedList<IType>();
+            }
+            ((tok = <Id>) (<DOTS> type = parseType())? <EQUALS> t2=Program()
               {
                 init.add(new Bind(tok.image, t2));
+                if(!interpreting)
+                  types.add(type);
               }
             )+ (<IN> t1 = Program() <END> 
               {
-                t1 = new ASTDef(init, t1);
+                if(interpreting)
+                  t1 = new ASTDef(init, t1);
+                else
+                  t1 = new ASTDef(init,t1,types);
               }
            )
     |

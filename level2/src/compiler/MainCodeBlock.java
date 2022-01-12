@@ -221,7 +221,7 @@ public class MainCodeBlock
         {
             emit(String.format("getfield f%d/sl Lf%d;", currentFrame.getFrameId(), previousFrame.getFrameId()));
             currentFrame = previousFrame;
-
+            previousFrame =currentFrame.previous;
             assert this.currentFrame != null;
 
         }
