@@ -4,7 +4,7 @@ import java.io.PrintStream;
 
 import types.IType;
 
-public class RefCodeBlock {
+public class RefCodeBlock extends CodeBlock {
     
     private static final String CLASS_NAME = "ref_of_%s";
 
@@ -22,7 +22,6 @@ public class RefCodeBlock {
     ".end method";
 
 
-    private String className;
 
     private String valueFieldType;
 
@@ -34,8 +33,7 @@ public class RefCodeBlock {
      */
     public RefCodeBlock(IType valueType)
     {
-
-        className = String.format(CLASS_NAME, valueType);
+        super(String.format(CLASS_NAME, valueType));
         valueFieldType = valueType.getJvmType();
     }
  
@@ -55,6 +53,7 @@ public class RefCodeBlock {
         return valueFieldType;
     }
 
+    @Override
     public void dump(PrintStream f) { // dumps code to f
         f.printf(CODE,className,valueFieldType);
         f.flush();

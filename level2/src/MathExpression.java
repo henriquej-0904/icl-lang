@@ -172,25 +172,32 @@ public class MathExpression {
 			
 			System.out.println(String.format("The expression type is: %s\n", type.show()));
 			
-			// Compile expression and dump to tmp file.
-			/* MainCodeBlock c = new MainCodeBlock(expressionFileName);
+			//Compile expression and dump to tmp file.
+			MainCodeBlock c = new MainCodeBlock(expressionFileName);
 			ast.compile(c, new Environment<Coordinates>());
 			c.dump(tmpFolder);
 
 			callJasmin(jasminJarPath, tmpFolder, expressionFileName);
 			buildJar(destFolder, expressionFileName, tmpFolder);
-			 */
+			 
 		} catch (ParseException e) {
 			System.err.println("Syntax Error!");
 		}
 		catch (TypeErrorException e)
 		{
 			System.err.println("Type error!");
-			System.err.println(e.getMessage());
+			if(DEBUG)
+				e.printStackTrace();
+			else
+				System.err.println(e.getMessage());
 		}
 		catch (Exception e) {
 			System.err.println("An error occurred!");
-			System.err.println(e.getMessage());
+			if(DEBUG)
+				e.printStackTrace();
+			else
+				System.err.println(e.getMessage());
+
 		}
 		finally
 		{

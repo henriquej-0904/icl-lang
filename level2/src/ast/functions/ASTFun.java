@@ -5,12 +5,15 @@ import java.util.List;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import compiler.ClosureCodeBlock;
 import compiler.Coordinates;
+import compiler.FrameCodeBlock;
 import compiler.MainCodeBlock;
 import types.IType;
 import types.ITypeEnvEntry;
 import types.TypeFunction;
 import util.Environment;
+import util.EnvironmentEntry;
 import util.FunctionArg;
 import util.Utils;
 import values.IValue;
@@ -43,6 +46,27 @@ public class ASTFun extends ASTNodeAbstract
         // createClosure
         // compile body
         // endClosure
+       ClosureCodeBlock closure =  c.createClosure((TypeFunction)type);
+       Environment<Coordinates> newEnv = e.beginScope();
+       int frameId = c.getCurrFrameId();
+
+       int i = 0;
+       for (FunctionArg functionArg : args) {
+        Coordinates varCoord = new Coordinates(frameId, String.format(FrameCodeBlock.FIELD_NAME_FORMAT, i));
+           newEnv.assoc(new EnvironmentEntry<Coordinates>(functionArg.id, varCoord));
+           i++;
+       }
+       body.compile(c, newEnv);
+       c.endClosure();
+       c.emit(String.format("new closure_%d", closure.id));
+       c.emit("dup");
+       c.emit(String.format("invokespecial closure_%d/<init>()V", closure.id));
+       c.emit("dup");
+       c.emitCurrentFrame();
+       c.emit(String.format("putfield closure_%d/sl Lf%d;", closure.id, c.getCurrFrameId()));
+
+
+      
     }
 
     @Override
@@ -59,6 +83,7 @@ public class ASTFun extends ASTNodeAbstract
     }
 
    
+    
 
     @Override
     public StringBuilder toString(StringBuilder builder) {

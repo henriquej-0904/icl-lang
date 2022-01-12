@@ -27,16 +27,13 @@ public class TypeFunction implements IType {
 
     @Override
     public String getJvmType() {
-        return "L" + this + ";";
+        return "Ljava/lang/Object;";
     }
 
     @Override
     public String toString() {
 
-        return Utils.toStringList(this.args, null,
-            "_", new StringBuilder("fun_"))
-            .append("_")
-            .append(this.returnType).toString();
+        return "closure";
     }
 
     @Override

@@ -1,26 +1,24 @@
 package compiler;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
 import types.IType;
-import util.Environment;
-import util.Pair;
+import types.primitives.TypePrimitive;
 
-public class ClosureCodeBlock{
-    public static final String START = ".class public closure_%d\n" + 
+
+public class ClosureCodeBlock extends CodeBlock{
+    public static final String START = ".class public %s\n" + 
     ".super	java/lang/Object\n" +	
     ".implements %s\n" + 
     ".field	public sl %s\n" + 
     ".method public	<init>()V\n" +
          "aload_0\n" + 	
          "invokenonvirtual	java/lang/Object/<init>()V\n " + 	
-         "return" + 	
-    ".end method";
+         "return\n" + 	
+    ".end method\n";
 
     public static final String APPLY = "";
 
@@ -30,19 +28,20 @@ public class ClosureCodeBlock{
     public final String staticLink;
     public final ClosureInterfaceCodeBlock closureInterface;
     public final String currFrame, saveFrame;
-
     private final List<String> code;
-    
+
     public ClosureCodeBlock(int id, String staticLink, ClosureInterfaceCodeBlock closureInterface,
         ClosureCodeBlock previousClosure) 
     {
+        super("closure_" + id);
         this.previousClosure = previousClosure;
         this.id = id;
         this.staticLink = staticLink;
         this.closureInterface = closureInterface;
         code = new LinkedList<>();
-        currFrame = "aload " + closureInterface.getNumArgs() + 1;
-        saveFrame = String.format("astore %d", closureInterface.getNumArgs() + 1);
+        currFrame = "aload " + (closureInterface.getNumArgs() + 1);
+        saveFrame = String.format("astore %d", (closureInterface.getNumArgs() + 1));
+      
     }
 
     public void emit(String opcode)
@@ -60,18 +59,6 @@ public class ClosureCodeBlock{
         emit(this.saveFrame);
     }
 
-    public void createFrame(FrameCodeBlock frame)
-    {
-        emit(String.format(" new f%d", frame.getFrameId()));
-        emit("	dup");
-        emit(String.format("  invokespecial f%d/<init>()V", frame.getFrameId()));
-        emit("	dup");
-        emit("	; store SL in new frame");
-        emitCurrentFrame();
-        emit(String.format("	putfield f%d/sl %s", frame.getFrameId(), frame.slType));
-        emit("	; update SL");
-        saveCurrentFrame();
-    }
 
     public void emitInitApplyFunction(Function<Integer, FrameCodeBlock> createFrame)
     {
@@ -82,7 +69,7 @@ public class ClosureCodeBlock{
         // 1 for (this) - closure reference
         // k for num args of apply
         // 1 for SL
-        emit(".limit locals " + 1 + closureInterface.getNumArgs() + 1);
+        emit(".limit locals " + (1 + closureInterface.getNumArgs() + 1)); 
         emit(".limit stack 256");
 
         emit(String.format(" new f%d", frame.getFrameId()));
@@ -99,14 +86,40 @@ public class ClosureCodeBlock{
         int fieldIndex = 0;
         for (IType argType : closureInterface.typeFunction.getArgs()) {
             emit("dup");
-            emit("aload " + (fieldIndex + 1));
+            if(argType instanceof TypePrimitive)
+                emit("iload " + (fieldIndex + 1));
+            else
+                emit("aload " + (fieldIndex + 1));
             emit(String.format("putfield f%d/x%d %s", frame.getFrameId(), fieldIndex,
-                ClosureInterfaceCodeBlock.getType(argType)));
+                argType.getJvmType()));
 
+            frame.addFieldType(argType.getJvmType());
+            
             fieldIndex++;
         }
 
         // store current sl
         saveCurrentFrame();
     }
+
+    public void endClosure(){
+        if(closureInterface.typeFunction.getReturnType() instanceof TypePrimitive)
+            emit("ireturn");
+        else
+            emit("areturn");
+        emit(".end method");
+    }
+
+    @Override
+    public void dump(PrintStream f){
+        f.printf(START, className, closureInterface.className,staticLink);
+        for (String string : code) {
+            f.println(string);
+        }
+    }
+
+
+
+
+
 }

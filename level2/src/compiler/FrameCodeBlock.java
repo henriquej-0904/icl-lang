@@ -4,7 +4,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FrameCodeBlock {
+public class FrameCodeBlock extends CodeBlock{
     
     private static final String CLASS_NAME = "f%d";
 
@@ -35,22 +35,23 @@ public class FrameCodeBlock {
 
     private int frameId;
 
-    private String className;
-
     private List<String> fieldsTypes;
 
     public final String slType;
 
-    public FrameCodeBlock(int frameId, int previousFrameId, int numFields)
+    public final FrameCodeBlock previous;
+    public FrameCodeBlock(int frameId, int numFields, FrameCodeBlock previous)
     {
+        
+        super(String.format(CLASS_NAME, frameId));
+        this.previous = previous;
         this.frameId = frameId;
-        this.className = String.format(CLASS_NAME, frameId);
         this.fieldsTypes = new ArrayList<>(numFields);
 
-        if (previousFrameId == INVALID_FRAME_ID)
+        if (previous == null)
             slType = FRAME_DEPTH_0_SL;
         else
-            slType = String.format(FRAME_SL, previousFrameId);
+            slType = String.format(FRAME_SL, previous.getFrameId());
     }
 
     /**
@@ -60,18 +61,13 @@ public class FrameCodeBlock {
         return frameId;
     } 
 
-    /**
-     * @return the className
-     */
-    public String getClassName() {
-        return className;
-    }
 
     public void addFieldType(String jvmType)
     {
         this.fieldsTypes.add(jvmType);
     }
 
+    @Override
     public void dump(PrintStream f) { // dumps code to f
 
         f.printf(START, this.frameId, slType);

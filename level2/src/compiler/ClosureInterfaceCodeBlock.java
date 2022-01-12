@@ -1,13 +1,13 @@
 package compiler;
 
 import java.io.PrintStream;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 import types.IType;
 import types.TypeFunction;
 import util.Utils;
 
-public class ClosureInterfaceCodeBlock {
+public class ClosureInterfaceCodeBlock extends CodeBlock{
     public static String CODE = ".interface	public %s\n" +
     ".super	java/lang/Object\n" +
     ".method public	abstract %s\n" +
@@ -15,34 +15,44 @@ public class ClosureInterfaceCodeBlock {
 
     
     public final TypeFunction typeFunction;
-    public final String interfaceName;
+ 
     public final String returnTypeString;
 
     private String applySignature;
 
     public ClosureInterfaceCodeBlock(TypeFunction typeFunction){
+        super(generateInterfaceName(typeFunction));
         this.typeFunction = typeFunction;
-        returnTypeString = getType(typeFunction.getReturnType());
-        interfaceName = generateInterfaceName();
+        returnTypeString = typeFunction.getReturnType().getJvmType();
       
     }
 
+    public ClosureInterfaceCodeBlock(String interfaceName, TypeFunction typeFunction){
+        super(interfaceName);
+        this.typeFunction = typeFunction;
+        returnTypeString = typeFunction.getReturnType().getJvmType();
+      
+    }
+
+    @Override
     public void dump(PrintStream f) { // dumps code to f     
-        f.printf(CODE,interfaceName, getApplySignature());
+        f.printf(CODE,className, getApplySignature());
         f.flush();
     }
 
-    private String generateInterfaceName(){
+    public static String generateInterfaceName(TypeFunction typeFunction){
         StringBuilder toReturn = new StringBuilder( "closure_interface_");
-       return Utils.toStringList(typeFunction.getArgs(), (Consumer<IType>)((arg) -> getType(arg))
-        , "_", null, toReturn).append("_" + returnTypeString).toString();
+       return Utils.toStringList(typeFunction.getArgs(), (Function<IType,String>)((arg) -> arg.toString())
+        , "_", null, toReturn).append("_" + typeFunction.getReturnType()).toString();
     }
 
     private String generateArgsList(){
         StringBuilder toReturn = new StringBuilder();
-        return Utils.toStringList(typeFunction.getArgs(), (Consumer<IType>)((arg) -> getType(arg)),
-        ",", Utils.DEFAULT_DELIMITERS, toReturn).toString();
+        return Utils.toStringList(typeFunction.getArgs(), (Function<IType,String>)((arg) -> arg.getJvmType()),
+        "", Utils.DEFAULT_DELIMITERS, toReturn).toString();
     }
+
+    
 
     public int getNumArgs(){
         return typeFunction.getArgs().size();
@@ -62,13 +72,7 @@ public class ClosureInterfaceCodeBlock {
         return applySignature;
     }
 
-    public static String getType(IType type)
-    {
-        if (type instanceof TypeFunction)
-                return "Ljava/lang/Object;";
- 
-        return type.getJvmType();
-    }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -79,12 +83,12 @@ public class ClosureInterfaceCodeBlock {
             return false;
 
         ClosureInterfaceCodeBlock other = (ClosureInterfaceCodeBlock)obj;
-        return interfaceName.equals(other.interfaceName);
+        return className.equals(other.className);
     }
 
     @Override
     public int hashCode() {
-        return interfaceName.hashCode();
+        return className.hashCode();
     }
 
 }

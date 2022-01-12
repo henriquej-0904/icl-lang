@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import compiler.ClosureInterfaceCodeBlock;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import typeError.TypeErrorException;
@@ -48,8 +49,13 @@ public class ASTApply extends ASTNodeAbstract{
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        // TODO Auto-generated method stub
-        
+       function.compile(c, e);
+       ClosureInterfaceCodeBlock closureInterface = c.getClosureInterface((TypeFunction)function.getType());
+       c.emit("checkcast " + closureInterface.className);
+       for (ASTNode astNode : args) {
+           astNode.compile(c, e);
+       }
+        c.emit("invokeinterface " + closureInterface.className + "/" + closureInterface.getApplySignature() + " " + (args.size() + 1));
     }
 
     @Override
