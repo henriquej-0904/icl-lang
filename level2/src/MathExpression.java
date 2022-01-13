@@ -93,7 +93,7 @@ public class MathExpression {
 					ASTNode ast = parser.Start(true);
 					System.out.println(ast.eval(new Environment<IValue>()).show());
 				} catch (ParseException e) {
-					System.err.println("Syntax Error!");
+					System.err.println(e.getMessage());
 
 					if (!inputFile)
 						parser.ReInit(System.in);
@@ -181,7 +181,8 @@ public class MathExpression {
 			buildJar(destFolder, expressionFileName, tmpFolder);
 			 
 		} catch (ParseException e) {
-			System.err.println("Syntax Error!");
+			//System.err.println("Syntax Error!");
+			System.err.println(e.getMessage());
 		}
 		catch (TypeErrorException e)
 		{

@@ -11,7 +11,7 @@ import types.primitives.TypeBool;
 import util.Environment;
 import util.Utils;
 import values.IValue;
-import values.Vnull;
+import values.VNull;
 import values.primitive.VBool;
 
 public class ASTIfThenElse extends ASTNodeAbstract {
@@ -53,7 +53,7 @@ public class ASTIfThenElse extends ASTNodeAbstract {
            return this.thenNode.eval(e);
         else if( elseNode != null)
             return this.elseNode.eval(e);
-        return Vnull.VALUE;
+        return VNull.VALUE;
     }
 
     @Override

@@ -89,7 +89,7 @@ public class ASTNumberArithmeticBinaryOperation extends ASTNodeAbstract
     {
         boolean checked = val instanceof VInt;
         if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator());
+            throw new IllegalOperatorException(this.operator.getOperator(), TypeInt.TYPE.show(), val.show());
 
         return (VInt)val;
     }
@@ -98,7 +98,7 @@ public class ASTNumberArithmeticBinaryOperation extends ASTNodeAbstract
     {
         boolean checked =  Utils.checkType(type, TypeInt.class);
         if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator());
+            throw new IllegalOperatorException(this.operator.getOperator(), TypeInt.TYPE.show(), type.show());
 
         return type;
     }

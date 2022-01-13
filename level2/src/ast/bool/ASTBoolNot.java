@@ -6,7 +6,6 @@ import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import typeError.IllegalOperatorException;
 import types.IType;
-import types.TypeFunction;
 import types.primitives.TypeBool;
 import util.Environment;
 import util.Utils;
@@ -50,7 +49,7 @@ public class ASTBoolNot extends ASTNodeAbstract
     {
         boolean checked = val instanceof VBool;
         if (!checked)
-            throw new IllegalOperatorException(OPERATOR);
+            throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), val.show());
 
         return (VBool)val;
     }
@@ -59,7 +58,7 @@ public class ASTBoolNot extends ASTNodeAbstract
     {
         boolean checked =  Utils.checkType(type, TypeBool.class);
         if (!checked){
-            throw new IllegalOperatorException(OPERATOR);    
+            throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), type.show());    
         }
             
         return type;

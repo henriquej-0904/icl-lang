@@ -50,7 +50,7 @@ public class ASTDereference extends ASTNodeAbstract
         boolean checked = value instanceof VCell;
 
         if (!checked)
-            throw new IllegalOperatorException(OPERATOR);
+            throw new IllegalOperatorException(OPERATOR, "Ref", value.show());
 
         return (VCell)value;
     }
@@ -60,7 +60,7 @@ public class ASTDereference extends ASTNodeAbstract
         boolean checked =  Utils.checkType(type, TypeRef.class);
 
         if (!checked)
-            throw new IllegalOperatorException(OPERATOR);
+            throw new IllegalOperatorException(OPERATOR, "Ref", type.show());
 
         return (TypeRef)type;
     }

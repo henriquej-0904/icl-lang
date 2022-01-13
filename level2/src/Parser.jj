@@ -319,6 +319,41 @@ List<FunctionArg> result = new LinkedList<FunctionArg>();
 }
 
 
+Pair<Bind, IType> ParseBind():
+{
+  ASTNode t1;
+  Token tok;
+  Bind bind;
+  IType type = null;
+  Pair<Bind, IType> result;
+}
+{
+  (
+    (tok = <Id>) (<DOTS> type = parseType())? <EQUALS> t1=Program()
+      {
+        bind = new Bind(tok.image, t1);
+
+        if (!interpreting)
+        {
+          // check if bind has a type
+          if (type == null)
+            throw new ParseException("Expected type for bind.", tok);
+
+          result = new Pair<Bind, IType>(bind, type);
+        }
+        else
+          result = new Pair<Bind, IType>(bind, null);
+      }
+  )
+
+  {
+    return result;
+  }
+}
+
+
+
+
 ASTNode Fact() :
 {
 ASTNode t1, t2,t3;
@@ -343,15 +378,23 @@ int upDepth = 0;
 
     <LOGICAL_NOT> t1=Fact() {t1 = new ASTBoolNot(t1);} |
 
-    <DEF> { List<Bind> init = new LinkedList<Bind>(); 
-            IType type = null;
-            List<IType> types = new LinkedList<IType>();
-            }
-            ((tok = <Id>) (<DOTS> type = parseType())? <EQUALS> t2=Program()
+    <DEF>
+          {
+            List<Bind> init = new LinkedList<Bind>(); 
+            List<IType> types = null;
+            
+            if (!interpreting)
+              types = new LinkedList<IType>();
+            
+            Pair<Bind, IType> bindWithType = null;
+          }
+
+            ( bindWithType = ParseBind()
               {
-                init.add(new Bind(tok.image, t2));
+                init.add(bindWithType.getLeft());
+
                 if(!interpreting)
-                  types.add(type);
+                  types.add(bindWithType.getRight());
               }
             )+ (<IN> t1 = Program() <END> 
               {

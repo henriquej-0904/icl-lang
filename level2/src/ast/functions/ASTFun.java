@@ -41,11 +41,6 @@ public class ASTFun extends ASTNodeAbstract
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        // TODO Auto-generated method stub
-        // Assocs
-        // createClosure
-        // compile body
-        // endClosure
        ClosureCodeBlock closure =  c.createClosure((TypeFunction)type);
        Environment<Coordinates> newEnv = e.beginScope();
        int frameId = c.getCurrFrameId();
@@ -64,9 +59,6 @@ public class ASTFun extends ASTNodeAbstract
        c.emit("dup");
        c.emitCurrentFrame();
        c.emit(String.format("putfield closure_%d/sl Lf%d;", closure.id, c.getCurrFrameId()));
-
-
-      
     }
 
     @Override

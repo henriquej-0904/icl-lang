@@ -76,7 +76,7 @@ public class ASTLogicalBinaryOperation extends ASTNodeAbstract
     {
         boolean checked = val instanceof VBool;
         if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator());
+            throw new IllegalOperatorException(this.operator.getOperator(), TypeBool.TYPE.show(), val.show());
 
         return (VBool)val;
     }
@@ -85,7 +85,7 @@ public class ASTLogicalBinaryOperation extends ASTNodeAbstract
     {
         boolean checked = Utils.checkType(type, TypeBool.class);
         if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator());
+            throw new IllegalOperatorException(this.operator.getOperator(), TypeBool.TYPE.show(), type.show());
 
         return type;
     }

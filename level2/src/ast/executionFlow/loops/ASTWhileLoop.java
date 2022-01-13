@@ -68,7 +68,7 @@ public class ASTWhileLoop extends ASTNodeAbstract
         boolean checked = value instanceof VBool;
 
         if (!checked)
-            throw new IllegalOperatorException(OPERATOR);
+            throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), value.show());
 
         return (VBool)value;
     }
@@ -78,7 +78,7 @@ public class ASTWhileLoop extends ASTNodeAbstract
         boolean checked =  Utils.checkType(type, TypeBool.class);
 
         if (!checked)
-            throw new IllegalOperatorException(OPERATOR);
+            throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), type.show());
 
         return (TypeBool)type;
     }
