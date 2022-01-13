@@ -321,8 +321,8 @@ List<FunctionArg> result = new LinkedList<FunctionArg>();
 
 ASTNode Fact() :
 {
-ASTNode t1 = null;
-ASTNode t2, t3;
+ASTNode t1, t2,t3;
+t1 = t2 = t3 = null;
 Token tok;
 int upDepth = 0;
 }
@@ -378,7 +378,7 @@ int upDepth = 0;
 
     <DEREFERENCE> t1=Fact() { t1 = new ASTDereference(t1); } |
 
-    <IF> t1=Program() <THEN> t2=Program() <ELSE> t3=Program() <END> { t1 = new ASTIfThenElse(t1, t2, t3); } |
+    <IF> t1=Program() <THEN> t2=Program() (<ELSE> t3=Program())? <END> { t1 = new ASTIfThenElse(t1, t2, t3); } |
 
     <WHILE> t1=Program() <DO> t2=Program() <END> { t1 = new ASTWhileLoop(t1, t2); } |
 

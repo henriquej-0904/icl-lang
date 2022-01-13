@@ -5,16 +5,16 @@ package typeError;
  */
 public class IllegalOperatorException extends TypeErrorException
 {
-    protected final static String DEFAULT_ERROR_MSG_FORMAT = "Illegal arguments to %s operator.";
+    protected final static String DEFAULT_ERROR_MSG_FORMAT = "Illegal arguments to %s operator. Expected %s and got %s";
 
     public final String operator;
 
     /**
      * @param operator
      */
-    public IllegalOperatorException(String operator)
+    public IllegalOperatorException(String operator, String typeExpected, String TypeGot)
     {
-        super(String.format(DEFAULT_ERROR_MSG_FORMAT, operator));
+        super(String.format(DEFAULT_ERROR_MSG_FORMAT, operator, typeExpected, TypeGot));
         this.operator = operator;
     }
 

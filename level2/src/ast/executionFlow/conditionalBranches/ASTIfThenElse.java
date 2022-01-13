@@ -11,6 +11,7 @@ import types.primitives.TypeBool;
 import util.Environment;
 import util.Utils;
 import values.IValue;
+import values.Vnull;
 import values.primitive.VBool;
 
 public class ASTIfThenElse extends ASTNodeAbstract {
@@ -47,7 +48,12 @@ public class ASTIfThenElse extends ASTNodeAbstract {
 
     @Override
     public IValue eval(Environment<IValue> e) {
-        return checkIfRuntimeType(this.ifNode.eval(e)).getValue() ? this.thenNode.eval(e) : this.elseNode.eval(e);
+        Boolean value =  checkIfRuntimeType(this.ifNode.eval(e)).getValue();
+        if(value)
+           return this.thenNode.eval(e);
+        else if( elseNode != null)
+            return this.elseNode.eval(e);
+        return Vnull.VALUE;
     }
 
     @Override
@@ -55,13 +61,15 @@ public class ASTIfThenElse extends ASTNodeAbstract {
         checkTypeIf(this.ifNode.typecheck(e));
 
         IType thenType = this.thenNode.typecheck(e);
-        IType elseType = this.elseNode.typecheck(e);
+        if(elseNode != null){
+            IType elseType = this.elseNode.typecheck(e);
 
         if (!thenType.equals(elseType))
             throw new TypeErrorException(String.format("Incompatible types for if statement. The types of" +
                     " the then and else branches must be equal.\nThen branch type: %s\nElse branch type: %s\n",
                     thenType.show(), elseType.show()));
 
+        }
         type = thenType;
         return thenType;
     }
@@ -70,7 +78,7 @@ public class ASTIfThenElse extends ASTNodeAbstract {
         boolean checked = value instanceof VBool;
 
         if (!checked)
-            throw new IllegalOperatorException(OPERATOR);
+            throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), value.show());
 
         return (VBool) value;
     }
@@ -79,7 +87,7 @@ public class ASTIfThenElse extends ASTNodeAbstract {
         boolean checked = Utils.checkType(type, TypeBool.class);
 
         if (!checked)
-            throw new IllegalOperatorException(OPERATOR);
+            throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), type.show());
 
         return (TypeBool) type;
     }
