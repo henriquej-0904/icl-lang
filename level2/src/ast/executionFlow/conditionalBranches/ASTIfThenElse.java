@@ -32,28 +32,49 @@ public class ASTIfThenElse extends ASTNodeAbstract {
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        String l1, l2;
-        l1 = c.getNewFrameId();
-        l2 = c.getNewFrameId();
+
+        String l1 = c.getNewLabelId();
+        String l2 = null;
         
         ifNode.compile(c, e);
+
         c.emit("ifeq " + l1);
         thenNode.compile(c, e);
+
+        l2 = c.getNewLabelId();
         c.emit("goto " + l2);
+
         c.emit(l1 + ": ");
-        elseNode.compile(c, e);
-        c.emit(l2 + ":");
-        
+
+        if (elseNode != null)
+        {
+            elseNode.compile(c, e);
+            c.emit(l2 + ":");
+        }
+        else
+        {
+            c.emit("sipush 0");
+            c.emit(l2 + ":");
+        }
     }
 
     @Override
     public IValue eval(Environment<IValue> e) {
         Boolean value =  checkIfRuntimeType(this.ifNode.eval(e)).getValue();
+
+        IValue returnValue = null;
+        if (elseNode == null)
+            returnValue = VNull.VALUE;
+
         if(value)
-           return this.thenNode.eval(e);
+        {
+            IValue v = this.thenNode.eval(e);
+            return returnValue != null ? returnValue : v;
+        }
         else if( elseNode != null)
             return this.elseNode.eval(e);
-        return VNull.VALUE;
+        
+        return returnValue;
     }
 
     @Override
@@ -61,16 +82,31 @@ public class ASTIfThenElse extends ASTNodeAbstract {
         checkTypeIf(this.ifNode.typecheck(e));
 
         IType thenType = this.thenNode.typecheck(e);
-        if(elseNode != null){
+
+        if(elseNode != null)
+        {
             IType elseType = this.elseNode.typecheck(e);
 
-        if (!thenType.equals(elseType))
-            throw new TypeErrorException(String.format("Incompatible types for if statement. The types of" +
+            if (!thenType.equals(elseType))
+                throw new TypeErrorException(String.format("Incompatible types for if statement. The types of" +
                     " the then and else branches must be equal.\nThen branch type: %s\nElse branch type: %s\n",
                     thenType.show(), elseType.show()));
 
+            type = thenType;
         }
-        type = thenType;
+        else
+        {
+            /**
+             * Because there is no Else branch, the type of this Node is not the one of the Then branch.
+             * This makes sure that the result of this construction cannot be used as an expression in other
+             * part of the program.
+             * This construction can only be used to modify state.
+             */
+
+            // TODO: type =
+            type = TypeBool.TYPE;
+        }
+
         return thenType;
     }
 

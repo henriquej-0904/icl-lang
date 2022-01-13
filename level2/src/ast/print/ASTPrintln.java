@@ -45,8 +45,8 @@ public class ASTPrintln extends ASTNodeAbstract
 
     private void printBoolean(MainCodeBlock c){
         String l1,l2;
-        l1 = c.getNewFrameId();
-        l2 = c.getNewFrameId();
+        l1 = c.getNewLabelId();
+        l2 = c.getNewLabelId();
         c.emit("ifeq " + l1);
 		c.emit("ldc \"true\"");
         c.emit("goto " + l2);

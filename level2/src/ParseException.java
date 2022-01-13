@@ -147,7 +147,7 @@ public class ParseException extends Exception {
 	    retval += expected.toString();
     }
     
-    return retval;
+    return "Syntax error!\n" + retval;
   }
 
 

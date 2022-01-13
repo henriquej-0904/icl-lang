@@ -27,6 +27,7 @@ public class ASTSequentialFlow extends ASTNodeAbstract
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
         
         left.compile(c, e);
+        c.emit("pop");
         right.compile(c, e);
     }
 

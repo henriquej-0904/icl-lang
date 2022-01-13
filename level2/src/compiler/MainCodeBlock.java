@@ -74,7 +74,7 @@ public class MainCodeBlock
 
     private FrameCodeBlock currentFrame;
 
-    private int framesIdCount;
+    private int labelId;
 
 
     private Map<String, ClosureInterfaceCodeBlock> closureInterfaces;
@@ -98,15 +98,15 @@ public class MainCodeBlock
 
        currentFrame = null;
 
-        framesIdCount = 0;
+        labelId = 0;
         refs = new HashMap<>();
 
         closureInterfaces = new HashMap<>();
         closures = new HashMap<>();
     }
 
-    public String getNewFrameId(){
-        return "L" + framesIdCount++;
+    public String getNewLabelId(){
+        return "L" + labelId++;
     }
 
     public int getCurrFrameId(){
