@@ -5,8 +5,6 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import types.IType;
-
 public class Utils
 {
 
@@ -74,11 +72,6 @@ public class Utils
 
         return builder;
     }
-
-   public static <T> boolean checkType(IType type, Class<T> toCheck)
-   {
-        return toCheck.isInstance(type);
-   }
 
     /**
      * Prints all elements sperated by the specified separator using a string builder.

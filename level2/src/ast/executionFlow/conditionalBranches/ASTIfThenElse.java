@@ -9,7 +9,6 @@ import typeError.IllegalOperatorException;
 import typeError.TypeErrorException;
 import types.IType;
 import types.primitives.TypeBool;
-import util.Utils;
 import values.IValue;
 import values.VNull;
 import values.primitive.VBool;
@@ -120,7 +119,7 @@ public class ASTIfThenElse extends ASTNodeAbstract {
     }
 
     protected TypeBool checkTypeIf(IType type) {
-        boolean checked = Utils.checkType(type, TypeBool.class);
+        boolean checked = type instanceof TypeBool;
 
         if (!checked)
             throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), type.show());

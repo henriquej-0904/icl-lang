@@ -8,7 +8,6 @@ import environment.Environment;
 import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitives.TypeBool;
-import util.Utils;
 import values.IValue;
 import values.primitive.VBool;
 
@@ -75,7 +74,7 @@ public class ASTWhileLoop extends ASTNodeAbstract
 
     protected TypeBool checkTypeWhile(IType type)
     {
-        boolean checked =  Utils.checkType(type, TypeBool.class);
+        boolean checked =  type instanceof TypeBool;
 
         if (!checked)
             throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), type.show());
