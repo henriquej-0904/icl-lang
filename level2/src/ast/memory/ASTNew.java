@@ -5,13 +5,14 @@ import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import compiler.RefCodeBlock;
+import environment.Environment;
 import types.IType;
 import types.TypeRef;
-import util.Environment;
 import values.IValue;
 import values.VCell;
 
-public class ASTNew extends ASTNodeAbstract {
+public class ASTNew extends ASTNodeAbstract
+{
     protected ASTNode val;
 
     /**
@@ -22,9 +23,10 @@ public class ASTNew extends ASTNodeAbstract {
     }
 
     @Override
-    public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-       RefCodeBlock ref = c.createRefClass(val.getType());
-       String className = ref.getClassName();
+    public void compile(MainCodeBlock c, Environment<Coordinates> e)
+    {
+        RefCodeBlock ref = c.createRefClass(val.getType());
+        String className = ref.getClassName();
         c.emit("new " + className);
         c.emit("dup");
         c.emit(String.format("invokespecial %s/<init>()V", className));
@@ -52,6 +54,5 @@ public class ASTNew extends ASTNodeAbstract {
 
         return builder;
     }
-
     
 }

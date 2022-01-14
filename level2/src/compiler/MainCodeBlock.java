@@ -8,9 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import environment.Environment;
 import types.IType;
 import types.TypeFunction;
-import util.Environment;
 import util.Pair;
 
 public class MainCodeBlock

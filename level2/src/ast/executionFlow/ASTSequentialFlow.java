@@ -4,8 +4,8 @@ import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
+import environment.Environment;
 import types.IType;
-import util.Environment;
 import values.IValue;
 
 public class ASTSequentialFlow extends ASTNodeAbstract

@@ -3,14 +3,14 @@ package ast.number;
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
+import environment.Environment;
 import types.IType;
 import types.primitives.TypeInt;
-import util.Environment;
 import values.IValue;
 import values.primitive.VInt;
 
-public class ASTNum extends ASTNodeAbstract {
-
+public class ASTNum extends ASTNodeAbstract
+{
 	private int val;
 
 	public ASTNum(int n) {
@@ -36,7 +36,4 @@ public class ASTNum extends ASTNodeAbstract {
 	public StringBuilder toString(StringBuilder builder) {
 		return builder.append(Integer.toString(this.val));
 	}
-
-	
-
 }

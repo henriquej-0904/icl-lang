@@ -1,7 +1,9 @@
-package util;
+package environment;
 
 import java.util.*;
 import java.util.function.Consumer;
+
+import util.Utils;
 
 public class Environment<E> implements Cloneable {
 

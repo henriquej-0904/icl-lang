@@ -7,20 +7,24 @@ import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.FrameCodeBlock;
 import compiler.MainCodeBlock;
+import environment.Environment;
+import environment.EnvironmentEntry;
+import environment.ITypeEnvEntry;
+import environment.IValueEnvEntry;
+import typeError.TypeErrorException;
 import types.IType;
-import types.ITypeEnvEntry;
 import util.Bind;
-import util.Environment;
-import util.EnvironmentEntry;
 import util.Pair;
 import util.Utils;
 import values.IValue;
-import values.IValueEnvEntry;
+
 import java.util.Iterator;
-public class ASTDef extends ASTNodeAbstract {
+public class ASTDef extends ASTNodeAbstract
+{
 	private List<Bind> init;
 	private ASTNode body;
 	private List<IType> types;
+
 	public ASTDef(List<Bind> init, ASTNode body) {
 		this.init = init;
 		this.body = body;
@@ -38,9 +42,7 @@ public class ASTDef extends ASTNodeAbstract {
 		Environment<IValue> env = e.beginScope();
 
 		for (Bind bind : this.init)
-		{
 			env.assoc(new IValueEnvEntry(bind.getLeft(), bind.getRight().eval(env)));
-		}
 
 		IValue value = body.eval(env);
 		env.endScope();
@@ -56,8 +58,17 @@ public class ASTDef extends ASTNodeAbstract {
 	
 		for (Bind bind : this.init)
 		{
-			env.assoc(new ITypeEnvEntry(bind.getLeft(), it.next()));
-			bind.getRight().typecheck(env);
+			IType declaredType = it.next();
+			env.assoc(new ITypeEnvEntry(bind.getLeft(), declaredType));
+			
+			IType actualType = bind.getRight().typecheck(env);
+			// Check if declared type equals the actual type
+			if (!declaredType.equals(actualType))
+				throw new TypeErrorException(
+					String.format("Illegal expression type in def for bind with id '%s'. " +
+						"Declared type is '%s' and got '%s'.", bind.getLeft(), declaredType.show(),
+						actualType.show())
+				);
 		}
 
 		IType bodyType = body.typecheck(env);
@@ -89,7 +100,6 @@ public class ASTDef extends ASTNodeAbstract {
 			bind.getRight().compile(c, newEnv);
 			c.emit(String.format("putfield f%d/%s %s", frame.getFrameId(), varCoord.getRight(), jvmType));
 
-			
 			i++;
 		}
 
@@ -114,5 +124,4 @@ public class ASTDef extends ASTNodeAbstract {
 		return builder;
 	}
 
-	
 }

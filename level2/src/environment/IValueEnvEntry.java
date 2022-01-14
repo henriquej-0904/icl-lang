@@ -1,10 +1,10 @@
-package types;
+package environment;
 
-import util.EnvironmentEntry;
+import values.IValue;
 
-public class ITypeEnvEntry extends EnvironmentEntry<IType> {
+public class IValueEnvEntry extends EnvironmentEntry<IValue> {
 
-    public ITypeEnvEntry(String id, IType value) {
+    public IValueEnvEntry(String id, IValue value) {
         super(id, value);
     }
     

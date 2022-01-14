@@ -1,4 +1,6 @@
-package util;
+package environment;
+
+import util.Pair;
 
 /**
  * Represents an entry in the environment.

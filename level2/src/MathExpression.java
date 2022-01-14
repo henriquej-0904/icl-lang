@@ -1,10 +1,10 @@
 import compiler.*;
+import environment.Environment;
+import environment.ITypeEnvEntry;
+import environment.IValueEnvEntry;
 import typeError.TypeErrorException;
 import types.IType;
-import types.ITypeEnvEntry;
-import util.Environment;
 import values.IValue;
-import values.IValueEnvEntry;
 
 import java.io.*;
 import java.nio.file.Files;

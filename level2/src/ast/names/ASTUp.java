@@ -2,13 +2,12 @@ package ast.names;
 
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
+import environment.Environment;
 import types.IType;
-import util.Environment;
 import values.IValue;
 
 public class ASTUp extends ASTId
 {
-
     protected int upDepth;
 
     /**
@@ -47,7 +46,4 @@ public class ASTUp extends ASTId
         builder.append("up" + this.upDepth + " ");
         return super.toString(builder);
     }
-
-    
-
 }

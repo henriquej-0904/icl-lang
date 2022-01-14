@@ -9,17 +9,18 @@ import ast.ASTNodeAbstract;
 import compiler.ClosureInterfaceCodeBlock;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
+import environment.Environment;
+import environment.IValueEnvEntry;
 import typeError.TypeErrorException;
 import types.IType;
 import types.TypeFunction;
-import util.Environment;
 import util.FunctionArg;
 import util.Utils;
 import values.IValue;
-import values.IValueEnvEntry;
 import values.VFunction;
 
-public class ASTApply extends ASTNodeAbstract{
+public class ASTApply extends ASTNodeAbstract
+{
     private ASTNode function;
     private List<ASTNode> args;
 
@@ -29,49 +30,63 @@ public class ASTApply extends ASTNodeAbstract{
     }
     
     @Override
-    public IValue eval(Environment<IValue> e) {
+    public IValue eval(Environment<IValue> e)
+    {
         IValue toReturn = null;
         VFunction fun = checkRuntimeTypeVFunction(function.eval(e));
+
         Environment<IValue> funEnv = fun.getEnv().beginScope();
         Iterator<ASTNode> it = args.iterator();
         Iterator<FunctionArg> names = fun.getArgs().iterator();
-        if(args.size() != fun.getArgs().size()){
-            throw new TypeErrorException("Incorrect number of args for function call. Expected " +  fun.getArgs().size() +" and got " + args.size() + " arguments.");
-        }
-        while(it.hasNext() && names.hasNext()){
-          funEnv.assoc(new IValueEnvEntry(names.next().id, it.next().eval(e)));
-        }
+
+        if(args.size() != fun.getArgs().size())
+            throw new TypeErrorException("Incorrect number of args for function call. Expected " + 
+                fun.getArgs().size() +" and got " + args.size() + " arguments.");
+
+        while(it.hasNext())
+            funEnv.assoc(new IValueEnvEntry(names.next().id, it.next().eval(e)));
+        
         toReturn = fun.getBody().eval(funEnv);
         funEnv.endScope();
+
         return toReturn;
 
     }
 
     @Override
-    public void compile(MainCodeBlock c, Environment<Coordinates> e) {
+    public void compile(MainCodeBlock c, Environment<Coordinates> e)
+    {
        function.compile(c, e);
        ClosureInterfaceCodeBlock closureInterface = c.getClosureInterface((TypeFunction)function.getType());
        c.emit("checkcast " + closureInterface.className);
-       for (ASTNode astNode : args) {
+
+       for (ASTNode astNode : args)
            astNode.compile(c, e);
-       }
-        c.emit("invokeinterface " + closureInterface.className + "/" + closureInterface.getApplySignature() + " " + (args.size() + 1));
+
+        c.emit("invokeinterface " + closureInterface.className + "/" +
+            closureInterface.getApplySignature() + " " + (args.size() + 1));
     }
 
     @Override
-    public IType typecheck(Environment<IType> e) {
+    public IType typecheck(Environment<IType> e)
+    {
         TypeFunction typeFunction = typeCheckFunction(function.typecheck(e));
         Iterator<IType>  itFunTypes = typeFunction.getArgs().iterator();
         Iterator<ASTNode>  it = args.iterator();
-        if(args.size() != typeFunction.getArgs().size()){
-            throw new TypeErrorException("Incorrect number of args for function call. Expected " +  typeFunction.getArgs().size() +" and got " + args.size() + " arguments.");
-        }
+
+        if(args.size() != typeFunction.getArgs().size())
+            throw new TypeErrorException("Incorrect number of args for function call. Expected " +
+                typeFunction.getArgs().size() +" and got " + args.size() + " arguments.");
+        
         while(it.hasNext()){
             IType toCheck = it.next().typecheck(e);
             IType expected = itFunTypes.next();
+
             if(!toCheck.equals(expected))
-                throw new TypeErrorException("Argument types dont match. Expected " + expected.show() + " and got " + toCheck.show());
+                throw new TypeErrorException("Argument types dont match. Expected " +
+                    expected.show() + " and got " + toCheck.show());
         }
+
         this.type = typeFunction.getReturnType();
         return this.type;
     }

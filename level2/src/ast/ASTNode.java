@@ -2,8 +2,8 @@ package ast;
 
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
+import environment.Environment;
 import types.IType;
-import util.Environment;
 import values.IValue;
 
 public interface ASTNode {

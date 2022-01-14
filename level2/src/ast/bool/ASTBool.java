@@ -3,15 +3,16 @@ package ast.bool;
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
+import environment.Environment;
 import types.IType;
 import types.primitives.TypeBool;
-import util.Environment;
 import values.IValue;
 import values.primitive.VBool;
 
 public class ASTBool extends ASTNodeAbstract {
 
 	private boolean val;
+	
 	public ASTBool(boolean val) {
 		this.val = val;
 		type = TypeBool.TYPE;

@@ -5,11 +5,11 @@ import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import compiler.RefCodeBlock;
+import environment.Environment;
 import typeError.IllegalOperatorException;
 import typeError.TypeErrorException;
 import types.IType;
 import types.TypeRef;
-import util.Environment;
 import util.Utils;
 import values.IValue;
 import values.VCell;
@@ -56,10 +56,12 @@ public class ASTAssign extends ASTNodeAbstract
 
         // check if the type of the value in this reference equals the valueType
         boolean checked = ref.getValueType().equals(valueType);
+
         if (!checked)
             throw new TypeErrorException(
                 String.format("Incompatible type for assignment - %s.\nExpected value type: %s\n",
                     valueType.show(), ref.getValueType().show()));
+                    
         type = valueType;
         return valueType;
     }

@@ -4,10 +4,10 @@ import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
+import environment.Environment;
 import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitives.TypeInt;
-import util.Environment;
 import util.Utils;
 import values.IValue;
 import values.primitive.VInt;
@@ -80,9 +80,8 @@ public class ASTNumberArithmeticBinaryOperation extends ASTNodeAbstract
     @Override
     public IType typecheck(Environment<IType> e) {
         checkType(this.left.typecheck(e));
-      
-         checkType(this.rigth.typecheck(e));
-         return type;
+        checkType(this.rigth.typecheck(e));
+        return type;
     }
 
     protected VInt checkRuntimeType(IValue val)
@@ -113,7 +112,4 @@ public class ASTNumberArithmeticBinaryOperation extends ASTNodeAbstract
 
         return builder;
     }
-
-
-    
 }

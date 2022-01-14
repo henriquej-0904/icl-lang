@@ -15,6 +15,4 @@ public class ASTUminus extends ASTNumberArithmeticBinaryOperation
         this.rigth.toString(builder);
         return builder;
     }
-
-    
 }

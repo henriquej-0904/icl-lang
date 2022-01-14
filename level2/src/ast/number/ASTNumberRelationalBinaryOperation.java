@@ -4,11 +4,11 @@ import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
+import environment.Environment;
 import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitives.TypeBool;
 import types.primitives.TypeInt;
-import util.Environment;
 import util.Utils;
 import values.IValue;
 import values.primitive.VBool;
@@ -32,9 +32,8 @@ public class ASTNumberRelationalBinaryOperation extends ASTNodeAbstract
     }
 
     @Override
-    public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        
-
+    public void compile(MainCodeBlock c, Environment<Coordinates> e)
+    {
         this.left.compile(c, e);
         this.rigth.compile(c, e);
         String l1 = c.getNewLabelId();
@@ -90,7 +89,6 @@ public class ASTNumberRelationalBinaryOperation extends ASTNodeAbstract
             c.emit(l2 + ":");
                 break;
         } 
-
     }
 
     @Override
@@ -160,6 +158,4 @@ public class ASTNumberRelationalBinaryOperation extends ASTNodeAbstract
 
         return builder;
     }
-
-    
 }

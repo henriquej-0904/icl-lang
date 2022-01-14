@@ -3,12 +3,12 @@ package ast.names;
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
+import environment.Environment;
 import types.IType;
-import util.Environment;
 import values.IValue;
 
-public class ASTId extends ASTNodeAbstract{
-
+public class ASTId extends ASTNodeAbstract
+{
     protected String id;
 
     public ASTId(String id){
@@ -60,7 +60,5 @@ public class ASTId extends ASTNodeAbstract{
     public StringBuilder toString(StringBuilder builder) {
         return builder.append(this.id);
     }
-
-    
-    
+   
 }

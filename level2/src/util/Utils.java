@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import types.IType;
-import types.TypeFunction;
 
 public class Utils
 {
@@ -76,16 +75,9 @@ public class Utils
         return builder;
     }
 
-   public static <T> boolean checkType(IType type, Class<T> toCheck){
-    if(toCheck.isInstance(type))
-        return true;
-    else if(type instanceof TypeFunction){
-       TypeFunction typeFunction = (TypeFunction) type;
-       if(toCheck.isInstance(typeFunction.getReturnType()))
-        return true;  
-    }
-    return false;
-
+   public static <T> boolean checkType(IType type, Class<T> toCheck)
+   {
+        return toCheck.isInstance(type);
    }
 
     /**
