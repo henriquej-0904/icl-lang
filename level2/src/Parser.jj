@@ -239,6 +239,23 @@ Token tok;
      { return t1; }
 }
 
+ASTNode Apply() :
+{
+  ASTNode t1;
+  List <ASTNode> al;
+}
+{
+  t1=Fact() ( <LPAR> al = AL()  <RPAR>
+                {
+                  t1 = new ASTApply(t1,al);
+                } 
+            )*
+
+  {
+    return t1;
+  }
+}
+
 ASTNode Term() :
 {
 ASTNode t1,t2;
@@ -246,8 +263,8 @@ List<ASTNode> al;
 Token tok;
 }
 {
-     t1=Fact() ( ( tok=<MUL> | tok=<DIV> ) t2=Fact()
-
+      ( t1=Apply() 
+              ( ( tok=<MUL> | tok=<DIV> ) t2=Apply()
                 {
                   NumberArithmeticBinaryOperator operator;
                   if (tok.kind == MUL)
@@ -257,10 +274,8 @@ Token tok;
 
                   t1 = new ASTNumberArithmeticBinaryOperation(t1, t2, operator);
                 }
-        | <LPAR> al = AL()  <RPAR>
-        {
-          t1 = new ASTApply(t1,al);
-        }) *
+              )*
+      )
       
      { return t1; } 
 	
@@ -425,7 +440,8 @@ int upDepth = 0;
 
     <WHILE> t1=Program() <DO> t2=Program() <END> { t1 = new ASTWhileLoop(t1, t2); } |
 
-    <PRINT> t1=Fact() { t1 = new ASTPrintln(t1); } |
+    <PRINT> <LPAR> t1=Assign() <RPAR> { t1 = new ASTPrintln(t1); } |
+
     <FUN> { List<FunctionArg> args; 
       if(interpreting)
               args = PL_Interpreter();
