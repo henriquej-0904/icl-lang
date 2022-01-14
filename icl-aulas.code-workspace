@@ -17,6 +17,9 @@
 		},
 		{
 			"path": "icl-tools"
+		},
+		{
+			"path": "level3"
 		}
 	],
 	"settings": {
