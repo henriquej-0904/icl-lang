@@ -2,6 +2,9 @@ package environment;
 
 import types.IType;
 
+/**
+ * An entry in the environment for types.
+ */
 public class ITypeEnvEntry extends EnvironmentEntry<IType> {
 
     public ITypeEnvEntry(String id, IType value) {

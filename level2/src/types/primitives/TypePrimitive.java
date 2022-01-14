@@ -2,6 +2,9 @@ package types.primitives;
 
 import types.IType;
 
+/**
+ * Represents primitive types.
+ */
 public abstract class TypePrimitive implements IType
 {
     protected Class<?> classType;

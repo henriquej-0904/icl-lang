@@ -8,6 +8,9 @@ import environment.Environment;
 import util.FunctionArg;
 import util.Utils;
 
+/**
+ * Represents a closure value [args, body, env].
+ */
 public class VFunction implements IValue {
 
     private static boolean showActive = false;

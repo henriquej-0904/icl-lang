@@ -1,5 +1,8 @@
 package types;
 
+/**
+ * Represents a reference type.
+ */
 public class TypeRef implements IType
 {
     public static final String TYPE = "Ref";

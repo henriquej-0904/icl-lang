@@ -3,6 +3,10 @@ package types;
 
 public interface IType
 {
+    /**
+     * A string representation of this type.
+     * @return
+     */
     String show();
     
     /**

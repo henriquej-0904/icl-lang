@@ -4,6 +4,9 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a frame.
+ */
 public class FrameCodeBlock extends CodeBlock{
     
     private static final String CLASS_NAME = "f%d";
@@ -61,7 +64,10 @@ public class FrameCodeBlock extends CodeBlock{
         return frameId;
     } 
 
-
+    /**
+     * Add a field to this frame
+     * @param jvmType
+     */
     public void addFieldType(String jvmType)
     {
         this.fieldsTypes.add(jvmType);

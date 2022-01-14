@@ -4,6 +4,9 @@ import java.io.PrintStream;
 
 import types.IType;
 
+/**
+ * Represents a reference.
+ */
 public class RefCodeBlock extends CodeBlock {
     
     private static final String CLASS_NAME = "ref_of_%s";

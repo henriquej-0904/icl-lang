@@ -7,13 +7,19 @@ import types.IType;
 import types.TypeFunction;
 import util.Utils;
 
-public class ClosureInterfaceCodeBlock extends CodeBlock{
-    public static String CODE = ".interface	public %s\n" +
+/**
+ * Represents an Interface for all closures with the same signature.
+ */
+public class ClosureInterfaceCodeBlock extends CodeBlock
+{
+    private static String CODE = ".interface	public %s\n" +
     ".super	java/lang/Object\n" +
     ".method public	abstract %s\n" +
     ".end method";
 
-    
+    /**
+     * The closure signature type.
+     */
     public final TypeFunction typeFunction;
  
     public final String returnTypeString;
@@ -50,9 +56,7 @@ public class ClosureInterfaceCodeBlock extends CodeBlock{
         StringBuilder toReturn = new StringBuilder();
         return Utils.toStringList(typeFunction.getArgs(), (Function<IType,String>)((arg) -> arg.getJvmType()),
         "", Utils.DEFAULT_DELIMITERS, toReturn).toString();
-    }
-
-    
+    }    
 
     public int getNumArgs(){
         return typeFunction.getArgs().size();
@@ -70,25 +74,6 @@ public class ClosureInterfaceCodeBlock extends CodeBlock{
         applySignature = builder.toString();
 
         return applySignature;
-    }
-
-
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this)
-            return true;
-
-        if (!(obj instanceof ClosureInterfaceCodeBlock))
-            return false;
-
-        ClosureInterfaceCodeBlock other = (ClosureInterfaceCodeBlock)obj;
-        return className.equals(other.className);
-    }
-
-    @Override
-    public int hashCode() {
-        return className.hashCode();
     }
 
 }

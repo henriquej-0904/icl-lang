@@ -6,11 +6,14 @@ import environment.Environment;
 import types.IType;
 import values.IValue;
 
+/**
+ * Represents an Abstract Syntax Node.
+ */
 public interface ASTNode {
 
     /**
      * Calculates the result of this node using the specified Environment.
-     * @param e - A Environment for the interpreter, an id maps to a result.
+     * @param e - An Environment for the interpreter, an id maps to a result.
      * @return The calculated result.
      */
     IValue eval(Environment<IValue> e);
@@ -26,12 +29,16 @@ public interface ASTNode {
 
     /**
      * Checks the types.
-     * @param e
-     * @return
+     * @param e - The Environment for the typechecker, an id maps to Type.
+     * 
+     * @return The type of the expression.
      */
     IType typecheck(Environment<IType> e);
 
-
+    /**
+     * Gets the type of this node.
+     * @return The type of this node.
+     */
     IType getType();
 
     

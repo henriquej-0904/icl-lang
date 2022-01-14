@@ -2,6 +2,9 @@ package environment;
 
 import values.IValue;
 
+/**
+ * An entry in the environment for values.
+ */
 public class IValueEnvEntry extends EnvironmentEntry<IValue> {
 
     public IValueEnvEntry(String id, IValue value) {

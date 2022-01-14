@@ -4,6 +4,9 @@ import java.util.List;
 
 import util.Utils;
 
+/**
+ * Represents a type Closure[args, return type].
+ */
 public class TypeFunction implements IType {
     private List<IType> args;
     private IType returnType;

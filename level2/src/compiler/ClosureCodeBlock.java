@@ -8,8 +8,13 @@ import java.util.function.Function;
 import types.IType;
 import types.primitives.TypePrimitive;
 
-
-public class ClosureCodeBlock extends CodeBlock{
+/**
+ * Represents a Closure that implements a specific apply signature.
+ * 
+ * @see ClosureInterfaceCodeBlock
+ */
+public class ClosureCodeBlock extends CodeBlock
+{
     public static final String START = ".class public %s\n" + 
     ".super	java/lang/Object\n" +	
     ".implements %s\n" + 
@@ -19,8 +24,6 @@ public class ClosureCodeBlock extends CodeBlock{
          "invokenonvirtual	java/lang/Object/<init>()V\n " + 	
          "return\n" + 	
     ".end method\n";
-
-    public static final String APPLY = "";
 
     public final ClosureCodeBlock previousClosure;
 
@@ -117,9 +120,5 @@ public class ClosureCodeBlock extends CodeBlock{
             f.println(string);
         }
     }
-
-
-
-
 
 }
