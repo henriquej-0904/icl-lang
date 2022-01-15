@@ -12,7 +12,7 @@ import types.primitives.TypeBool;
 import types.primitives.TypeInt;
 import values.IValue;
 import values.primitive.VBool;
-import values.primitive.VInt;
+import values.primitive.VPrimitive;
 
 public class ASTRelationalBinaryOperation extends ASTNodeAbstract
 {
@@ -94,33 +94,46 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        VInt val1 = checkRuntimeType(this.left.eval(e));
-        VInt val2 = checkRuntimeType(this.rigth.eval(e));
+        VPrimitive<?> val1 = checkRuntimeType(this.left.eval(e));
+        VPrimitive<?> val2 = checkRuntimeType(this.rigth.eval(e));
+
+        // Check if val1 type equals val2 type
+        if (!val1.getClass().equals(val2.getClass()))
+            throw new IllegalOperatorException("The type of the 2 expressions must be equal.",
+                this.operator.getOperator(), val1.getPrimitiveType().show(), val2.getPrimitiveType().show());
 
         IValue result = null;
         switch(this.operator)
         {
             case EQUALS:
-                result = new VBool(val1.getValue() == val2.getValue());
+                result = new VBool(val1.equals(val2));
                 break;
             case GREATER_THAN:
-                result = new VBool(val1.getValue() > val2.getValue());
+                result = new VBool(vPrimitiveCompareTo(val1, val2) > 0);
                 break;
             case GREATER_THAN_OR_EQUAL_TO:
-                result = new VBool(val1.getValue() >= val2.getValue());
+                result = new VBool(vPrimitiveCompareTo(val1, val2) >= 0);
                 break;
             case LESS_THAN:
-                result = new VBool(val1.getValue() < val2.getValue());
+                result = new VBool(vPrimitiveCompareTo(val1, val2) < 0);
                 break;
             case LESS_THAN_OR_EQUAL_TO:
-                result = new VBool(val1.getValue() <= val2.getValue());
+                result = new VBool(vPrimitiveCompareTo(val1, val2) <= 0);
                 break;
             case NOT_EQUALS:
-                result = new VBool(val1.getValue() != val2.getValue());
+                result = new VBool(!val1.equals(val2));
                 break;
         }
 
         return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static int vPrimitiveCompareTo(VPrimitive<?> value1, VPrimitive<?> value2)
+    {
+        VPrimitive val1 = (VPrimitive)value1;
+        VPrimitive val2 = (VPrimitive)value2;
+        return val1.compareTo(val2);
     }
 
     @Override
@@ -130,13 +143,14 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract
         return  type;
     }
 
-    protected VInt checkRuntimeType(IValue val)
+    protected VPrimitive<?> checkRuntimeType(IValue val)
     {
-        boolean checked = val instanceof VInt;
-        if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator(), TypeInt.TYPE.show(), val.show());
+        boolean checked = (val instanceof VPrimitive);
 
-        return (VInt)val;
+        if (!checked)
+            throw new IllegalOperatorException(this.operator.getOperator(), "Primitive", val.getType().show());
+
+        return (VPrimitive<?>)val;
     }
     
     protected IType checkType(IType type)

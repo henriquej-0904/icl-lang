@@ -70,8 +70,8 @@ public class ASTAssign extends ASTNodeAbstract
         boolean checked = value instanceof VCell;
 
         if (!checked)
-            throw new IllegalOperatorException(OPERATOR, "Cannot assign a value to a non reference type.",
-                "Ref", value.show());
+            throw new IllegalOperatorException("Cannot assign a value to a non reference type.", OPERATOR,
+                TypeRef.TYPE_NAME, value.show());
 
         return (VCell)value;
     }
@@ -81,8 +81,8 @@ public class ASTAssign extends ASTNodeAbstract
         boolean checked =  type instanceof TypeRef;
 
         if (!checked)
-            throw new IllegalOperatorException(OPERATOR, "Cannot assign a value to a non reference type.",
-                "Ref", type.show());
+            throw new IllegalOperatorException("Cannot assign a value to a non reference type.", OPERATOR,
+                TypeRef.TYPE_NAME, type.show());
 
         return (TypeRef)type;
     }

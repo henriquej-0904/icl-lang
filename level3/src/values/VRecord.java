@@ -1,10 +1,11 @@
 package values;
 
 import environment.Environment;
+import types.IType;
 
 public class VRecord implements IValue
 {
-    private Environment<IValue> env;
+    private final Environment<IValue> env;
 
     public VRecord(Environment<IValue> env)
     {
@@ -20,5 +21,29 @@ public class VRecord implements IValue
     public String show() {
         return this.env.printLastScope();
     }
+
+    @Override
+    public IType getType() {
+        return TYPE;
+    }
+
+    public static final IType TYPE = new IType() {
+
+        @Override
+        public String show() {
+            return this.toString();
+        }
+
+        @Override
+        public String getJvmType() {
+            return "";
+        }
+
+        @Override
+        public String toString() {
+
+            return "Record";
+        }
+    };
     
 }

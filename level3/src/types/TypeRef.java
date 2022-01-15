@@ -5,7 +5,7 @@ package types;
  */
 public class TypeRef implements IType
 {
-    public static final String TYPE = "Ref";
+    public static final String TYPE_NAME = "Ref";
 
     protected IType valueType;
 
@@ -18,7 +18,7 @@ public class TypeRef implements IType
 
     @Override
     public String show() {
-        return TYPE + " ( " + valueType.show() + " ) ";
+        return TYPE_NAME + " ( " + valueType.show() + " ) ";
     }
 
     public IType getValueType()

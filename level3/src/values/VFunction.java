@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 
 import ast.ASTNode;
 import environment.Environment;
+import types.IType;
 import util.FunctionArg;
 import util.Utils;
 
@@ -59,5 +60,29 @@ public class VFunction implements IValue {
     public Environment<IValue> getEnv() {
         return env;
     }
+
+    @Override
+    public IType getType() {
+        return TYPE;
+    }
+
+    public static final IType TYPE = new IType() {
+
+        @Override
+        public String show() {
+            return this.toString();
+        }
+
+        @Override
+        public String getJvmType() {
+            return "";
+        }
+        
+        @Override
+        public String toString() {
+
+            return "Function closure";
+        }
+    };
 
 }

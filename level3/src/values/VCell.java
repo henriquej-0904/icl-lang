@@ -1,5 +1,8 @@
 package values;
 
+import types.IType;
+import types.TypeRef;
+
 /**
  * Represents a memory cell.
  */
@@ -31,5 +34,10 @@ public class VCell implements IValue
      */
     public void setValue(IValue value) {
         this.value = value;
+    }
+
+    @Override
+    public IType getType() {
+        return new TypeRef(this.value.getType());
     }
 }

@@ -113,7 +113,7 @@ public class ASTIfThenElse extends ASTNodeAbstract {
         boolean checked = value instanceof VBool;
 
         if (!checked)
-            throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), value.show());
+            throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), value.getType().show());
 
         return (VBool) value;
     }

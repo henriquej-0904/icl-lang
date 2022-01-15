@@ -7,7 +7,11 @@ import util.Utils;
 /**
  * Represents a type Closure[args, return type].
  */
-public class TypeFunction implements IType {
+public class TypeFunction implements IType
+{
+    public static final String TYPE_NAME = "Function closure";
+    public static final String JVM_TYPE = "Ljava/lang/Object;";
+
     private List<IType> args;
     private IType returnType;
 
@@ -30,7 +34,7 @@ public class TypeFunction implements IType {
 
     @Override
     public String getJvmType() {
-        return "Ljava/lang/Object;";
+        return JVM_TYPE;
     }
 
     @Override

@@ -15,9 +15,7 @@ public class TypeBool extends TypePrimitive
 
     @Override
     public int hashCode() {
-        // TODO Auto-generated method stub
         return 2;
-        
     }
 
     @Override

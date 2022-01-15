@@ -9,6 +9,7 @@ import environment.Environment;
 import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitives.TypeInt;
+import types.primitives.TypeString;
 import values.IValue;
 import values.primitive.VBool;
 import values.primitive.VInt;
@@ -60,36 +61,47 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
         VPrimitive<?> val1 = checkRuntimeType(this.left.eval(e));
         VPrimitive<?> val2 = checkRuntimeType(this.rigth.eval(e));
 
-        VInt val1Int = null;
-        VInt val2Int = null;
+        if (val1 instanceof VInt)
+            return evalInt((VInt)val1, val2);
+        
+        return evalString((VString)val1, val2);
+    }
+
+    private IValue evalInt(VInt value1, VPrimitive<?> value2)
+    {
+        VInt valueInt2 = checkRuntimeTypeInt(value2);
         IValue result = null;
+
         switch(this.operator)
         {
             case ADD:
-                if (val1 instanceof VInt)
-                {
-                    val1Int = (VInt)val1;
-                    val2Int = checkRuntimeTypeInt(val2);
-                    result = new VInt(val1Int.getValue() + val2Int.getValue());
-                }
-                else
-                    result = new VString((String)val1.getValue() + val2.getValue());
+                result = new VInt(value1.getValue() + valueInt2.getValue());
                 break;
             case DIV:
-                val1Int = checkRuntimeTypeInt(val1);
-                val2Int = checkRuntimeTypeInt(val2);
-                result = new VInt(val1Int.getValue() / val2Int.getValue());
+                result = new VInt(value1.getValue() / valueInt2.getValue());
                 break;
             case MUL:
-                val1Int = checkRuntimeTypeInt(val1);
-                val2Int = checkRuntimeTypeInt(val2);
-                result = new VInt(val1Int.getValue() * val2Int.getValue());
+                result = new VInt(value1.getValue() * valueInt2.getValue());
                 break;
             case SUB:
-                val1Int = checkRuntimeTypeInt(val1);
-                val2Int = checkRuntimeTypeInt(val2);
-                result = new VInt(val1Int.getValue() - val2Int.getValue());
+                result = new VInt(value1.getValue() - valueInt2.getValue());
                 break;
+        }
+
+        return result;
+    }
+
+    private IValue evalString(VString value1, VPrimitive<?> value2)
+    {
+        IValue result = null;
+
+        switch(this.operator)
+        {
+            case ADD:
+                result = new VString(value1.getValue() + value2.getValue());
+                break;
+            default:
+                throw new IllegalOperatorException(operator.getOperator(), TypeString.TYPE.show());
         }
 
         return result;
@@ -107,7 +119,7 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
         boolean checked = (val instanceof VPrimitive) && !(val instanceof VBool);
 
         if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator(), "Integer or String", val.show());
+            throw new IllegalOperatorException(this.operator.getOperator(), "Integer or String", val.getType().show());
 
         return (VPrimitive<?>)val;
     }
@@ -117,7 +129,7 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
         boolean checked = (val instanceof VInt);
 
         if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator(), TypeInt.TYPE.show(), val.show());
+            throw new IllegalOperatorException(this.operator.getOperator(), TypeInt.TYPE.show(), val.getType().show());
 
         return (VInt)val;
     }

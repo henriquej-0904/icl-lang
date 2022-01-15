@@ -15,9 +15,7 @@ public class TypeInt extends TypePrimitive
 
     @Override
     public int hashCode() {
-        // TODO Auto-generated method stub
-        return 1;
-        
+        return 1;        
     }
 
     @Override

@@ -56,7 +56,7 @@ public class ASTGetRecordValue extends ASTNodeAbstract
         boolean checked = val instanceof VRecord;
 
         if (!checked)
-            throw new IllegalOperatorException(OPERATOR, "Record", val.show());
+            throw new IllegalOperatorException(OPERATOR, "Record", val.getType().show());
 
         return (VRecord)val;
     }

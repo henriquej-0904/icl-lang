@@ -11,6 +11,7 @@ import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
 import environment.IValueEnvEntry;
+import typeError.IllegalOperatorException;
 import typeError.TypeErrorException;
 import types.IType;
 import types.TypeFunction;
@@ -75,7 +76,7 @@ public class ASTApply extends ASTNodeAbstract
         Iterator<ASTNode>  it = args.iterator();
 
         if(args.size() != typeFunction.getArgs().size())
-            throw new TypeErrorException("Incorrect number of args for function call. Expected " +
+            throw new TypeErrorException("Incorrect number of arguments for function call. Expected " +
                 typeFunction.getArgs().size() +" and got " + args.size() + " arguments.");
         
         while(it.hasNext()){
@@ -83,7 +84,7 @@ public class ASTApply extends ASTNodeAbstract
             IType expected = itFunTypes.next();
 
             if(!toCheck.equals(expected))
-                throw new TypeErrorException("Argument types dont match. Expected " +
+                throw new TypeErrorException("Argument types don't match. Expected " +
                     expected.show() + " and got " + toCheck.show());
         }
 
@@ -96,7 +97,8 @@ public class ASTApply extends ASTNodeAbstract
         boolean checked = value instanceof VFunction;
 
         if (!checked)
-            throw new TypeErrorException("Unexpected type. Type expected - function");
+            throw new IllegalOperatorException("The apply operator can only be used for function calls.",
+                "Function apply - ()", TypeFunction.TYPE_NAME, value.getType().show());
 
         return (VFunction)value;
     }
@@ -106,8 +108,8 @@ public class ASTApply extends ASTNodeAbstract
         boolean checked = type instanceof TypeFunction;
    
         if (!checked)
-            throw new TypeErrorException("Unexpected type. Type expected - function");
-
+            throw new IllegalOperatorException("The apply operator can only be used for function calls.",
+                "Function apply - ()", TypeFunction.TYPE_NAME, type.show());
         return (TypeFunction)type;
     }
 
