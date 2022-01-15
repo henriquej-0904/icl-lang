@@ -1,7 +1,8 @@
-package ast.number;
+package ast.binaryOperations;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import ast.binaryOperations.operators.RelationalBinaryOperator;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
@@ -13,17 +14,17 @@ import values.IValue;
 import values.primitive.VBool;
 import values.primitive.VInt;
 
-public class ASTNumberRelationalBinaryOperation extends ASTNodeAbstract
+public class ASTRelationalBinaryOperation extends ASTNodeAbstract
 {
     protected final ASTNode left, rigth;
 
-    protected final NumberRelationalBinaryOperator operator;
+    protected final RelationalBinaryOperator operator;
 
     /**
      * @param left
      * @param rigth
      */
-    public ASTNumberRelationalBinaryOperation(ASTNode left, ASTNode rigth, NumberRelationalBinaryOperator operator) {
+    public ASTRelationalBinaryOperation(ASTNode left, ASTNode rigth, RelationalBinaryOperator operator) {
         this.left = left;
         this.rigth = rigth;
         this.operator = operator;

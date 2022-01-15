@@ -13,8 +13,13 @@ import ast.names.*;
 import ast.number.*;
 import ast.print.*;
 import ast.functions.*;
+import ast.string.*;
+import ast.record.*;
+import ast.binaryOperations.*;
+import ast.binaryOperations.operators.*;
 import types.*;
 import types.primitives.*;
+
 /** ID lister. */
 public class Parser {
   static boolean interpreting;
@@ -31,7 +36,9 @@ SKIP :
 }
 
 TOKEN :
-{ // token types
+{ <STRING: "\"" (~["\""])* "\"" >
+  |
+  // token types
   < TYPE_INT: "int">
   |
   <TYPE_BOOL: "bool">
@@ -58,6 +65,8 @@ TOKEN :
   < ASSIGN : ":=" >
   |
   < DEREFERENCE : "!" >
+  |
+  < DOT : ".">
   |
   < DOTS : ":">
   |
@@ -90,6 +99,12 @@ TOKEN :
   < LPAR : "(" >
   |
   < RPAR : ")" >
+  |
+  < L_SQUARE_PAR : "[" >
+  |
+  < R_SQUARE_PAR : "]" >
+  |
+  < QUOTATION_MARK: "\"" >
   |
   < EQUALS : "=" >
   |
@@ -203,12 +218,12 @@ ASTNode RelationalOps() :
 {
     (t1 = Exp() ( ( tok=<EQUALS_COMP> | tok=<NOT_EQUALS> | 
                   tok=<GREATER_THAN> | tok=<GREATER_THAN_OR_EQUAL_TO> |
-                  tok=<LESS_THAN> | tok=<LESS_THAN_OR_EQUAL_TO>) t2=Exp() 
+                  tok=<LESS_THAN> | tok=<LESS_THAN_OR_EQUAL_TO>) t2=Exp()
 
                  {
-                    NumberRelationalBinaryOperator operator =
-                        NumberRelationalBinaryOperator.parseOperator(tok.image);
-                    t1 = new ASTNumberRelationalBinaryOperation(t1, t2, operator);
+                    RelationalBinaryOperator operator =
+                        RelationalBinaryOperator.parseOperator(tok.image);
+                    t1 = new ASTRelationalBinaryOperation(t1, t2, operator);
                  }
 
                  )?
@@ -225,18 +240,34 @@ Token tok;
     (t1 = Term() ( ( tok=<PLUS> | tok=<MINUS> ) t2=Term() 
 
                  {
-                   NumberArithmeticBinaryOperator operator;
+                   ArithmeticBinaryOperator operator;
                    if (tok.kind == PLUS)
-                      operator = NumberArithmeticBinaryOperator.ADD;
+                      operator = ArithmeticBinaryOperator.ADD;
                    else 
-                      operator = NumberArithmeticBinaryOperator.SUB;
+                      operator = ArithmeticBinaryOperator.SUB;
 
-                    t1 = new ASTNumberArithmeticBinaryOperation(t1, t2, operator);
+                    t1 = new ASTArithmeticBinaryOperation(t1, t2, operator);
                  }
 
                  )*
     )
      { return t1; }
+}
+
+ASTNode RecordOps() :
+{
+  ASTNode t1;
+  Token tok;
+}
+{
+  t1=Fact() ( <DOT> tok=<Id>
+              {
+                t1 = new ASTGetRecordValue(t1, tok.image);
+              })*
+
+  {
+    return t1;
+  }
 }
 
 ASTNode Apply() :
@@ -245,7 +276,7 @@ ASTNode Apply() :
   List <ASTNode> al;
 }
 {
-  t1=Fact() ( <LPAR> al = AL()  <RPAR>
+  t1=RecordOps() ( <LPAR> al = AL()  <RPAR>
                 {
                   t1 = new ASTApply(t1,al);
                 } 
@@ -266,13 +297,13 @@ Token tok;
       ( t1=Apply() 
               ( ( tok=<MUL> | tok=<DIV> ) t2=Apply()
                 {
-                  NumberArithmeticBinaryOperator operator;
+                  ArithmeticBinaryOperator operator;
                   if (tok.kind == MUL)
-                      operator = NumberArithmeticBinaryOperator.MUL;
+                      operator = ArithmeticBinaryOperator.MUL;
                   else
-                      operator = NumberArithmeticBinaryOperator.DIV;
+                      operator = ArithmeticBinaryOperator.DIV;
 
-                  t1 = new ASTNumberArithmeticBinaryOperation(t1, t2, operator);
+                  t1 = new ASTArithmeticBinaryOperation(t1, t2, operator);
                 }
               )*
       )
@@ -393,6 +424,8 @@ int upDepth = 0;
 
     <LOGICAL_NOT> t1=Fact() {t1 = new ASTBoolNot(t1);} |
 
+    tok=<STRING> {t1 = new ASTString(tok.image.substring(1, tok.image.length()-1));} |
+
     <DEF>
           {
             List<Bind> init = new LinkedList<Bind>(); 
@@ -448,6 +481,28 @@ int upDepth = 0;
             else
               args = PL_Compiler();} <ARROW> t2 = Program() <END> {
        t1 = new ASTFun(args, t2);
+    } |
+
+    // Parse Record
+    <L_SQUARE_PAR>
+      {
+        List<Bind> binds = new LinkedList<Bind>();
+        Pair<Bind, IType> bindWithType = null;
+      }
+
+      bindWithType=ParseBind()
+      {
+        binds.add(bindWithType.getLeft());
+      }
+
+      ( <COMMA> bindWithType=ParseBind()
+        {
+          binds.add(bindWithType.getLeft());
+        }
+      )*
+
+    <R_SQUARE_PAR> {
+      t1 = new ASTRecord(binds);
     }
 
    )

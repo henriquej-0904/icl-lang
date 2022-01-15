@@ -63,9 +63,9 @@ public class Environment<E> implements Cloneable {
 			throw new NoSuchElementException(id + " not declared.");
 	}
 
-	public E find(String id, int upDepth) {
+	public E find(String id, int depth) {
 
-		if (upDepth >= this.scopeStack.size())
+		if (depth >= this.scopeStack.size())
 			throw new NoSuchElementException();
 
 		ListIterator<List<EnvironmentEntry<E>>> ite = scopeStack.listIterator(scopeStack.size());
@@ -73,17 +73,17 @@ public class Environment<E> implements Cloneable {
 		EnvironmentEntry<E> pair = null;
 		int currDepth = 0;
 
-		while (ite.hasPrevious() && !found && upDepth < this.scopeStack.size() - currDepth){
+		while (ite.hasPrevious() && !found && depth < this.scopeStack.size() - currDepth){
 			List<EnvironmentEntry<E>> scope = ite.previous();
 			Iterator<EnvironmentEntry<E>> it = scope.iterator();
 			while (it.hasNext() && !found) {
 				pair = it.next();
 				if (pair.getLeft().equals(id))
 				{
-					if (upDepth == 0)
+					if (depth == 0)
 						found = true;
 					else
-						upDepth--;
+						depth--;
 				}	
 			}
 			currDepth++;
@@ -120,6 +120,11 @@ public class Environment<E> implements Cloneable {
 					scopeId++;
 				})	, null, Utils.DEFAULT_DELIMITERS, builder);
 		return builder;
+	}
+
+	public String printLastScope()
+	{
+		return this.scopeStack.peek().toString();
 	}
 
 }

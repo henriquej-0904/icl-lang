@@ -5,7 +5,7 @@ import values.IValue;
 /**
  * Represents a primitive value.
  */
-abstract class VPrimitive<E> implements IValue
+public abstract class VPrimitive<E> implements IValue
 {
     private E value;
 
