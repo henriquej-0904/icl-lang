@@ -5,9 +5,9 @@ package typeError;
  */
 public class IllegalOperatorException extends TypeErrorException
 {
-    protected final static String DEFAULT_ERROR_MSG_FORMAT = "Illegal arguments to %s operator.";
+    protected final static String DEFAULT_ERROR_MSG_FORMAT = "Illegal arguments to '%s' operator.";
 
-    protected final static String EXPECTED_FORMAT = "Expected %s and got %s";
+    protected final static String EXPECTED_FORMAT = "Expected '%s' and got '%s'";
 
     protected final static String ILLEGAL_TYPE_FORMAT = "Illegal arguments to '%s' operator for type '%s'.";
 
@@ -28,7 +28,7 @@ public class IllegalOperatorException extends TypeErrorException
      */
     public IllegalOperatorException(String message, String operator, String typeExpected, String typeGot) {
         super(
-            new StringBuilder(DEFAULT_ERROR_MSG_FORMAT)
+            new StringBuilder(String.format(DEFAULT_ERROR_MSG_FORMAT, operator))
                 .append('\n')
                 .append(message)
                 .append('\n')
