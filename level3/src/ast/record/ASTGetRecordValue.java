@@ -7,6 +7,7 @@ import compiler.MainCodeBlock;
 import environment.Environment;
 import typeError.IllegalOperatorException;
 import types.IType;
+import types.TypeRecord;
 import values.IValue;
 import values.VRecord;
 
@@ -41,8 +42,9 @@ public class ASTGetRecordValue extends ASTNodeAbstract
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        // TODO Auto-generated method stub
-        return null;
+     TypeRecord type = checkTypeRecord(record.typecheck(e));
+        return this.type = type.getFieldTypeFromRecord(id);
+
     }
 
     @Override
@@ -56,9 +58,19 @@ public class ASTGetRecordValue extends ASTNodeAbstract
         boolean checked = val instanceof VRecord;
 
         if (!checked)
-            throw new IllegalOperatorException(OPERATOR, "Record", val.getType().show());
+            throw new IllegalOperatorException(OPERATOR, TypeRecord.TYPE_NAME, val.getType().show());
 
         return (VRecord)val;
+    }
+
+    protected TypeRecord checkTypeRecord(IType type)
+    {
+        boolean checked = type instanceof TypeRecord;
+
+        if (!checked)
+            throw new IllegalOperatorException(OPERATOR, TypeRecord.TYPE_NAME,type.show());
+
+        return (TypeRecord)type;
     }
     
 }

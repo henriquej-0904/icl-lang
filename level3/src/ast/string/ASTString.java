@@ -1,10 +1,13 @@
 package ast.string;
 
+import java.sql.Types;
+
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
 import types.IType;
+import types.primitives.TypeString;
 import values.IValue;
 import values.primitive.VString;
 
@@ -18,6 +21,7 @@ public class ASTString extends ASTNodeAbstract
      */
     public ASTString(String value) {
         this.value = value;
+        this.type = TypeString.TYPE;
     }
 
     @Override
@@ -33,8 +37,7 @@ public class ASTString extends ASTNodeAbstract
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        // TODO Auto-generated method stub
-        return null;
+        return this.type;
     }
 
     @Override

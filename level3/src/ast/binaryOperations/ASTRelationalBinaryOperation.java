@@ -10,32 +10,33 @@ import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitives.TypeBool;
 import types.primitives.TypeInt;
+import types.primitives.TypePrimitive;
 import values.IValue;
 import values.primitive.VBool;
 import values.primitive.VPrimitive;
 
 public class ASTRelationalBinaryOperation extends ASTNodeAbstract
 {
-    protected final ASTNode left, rigth;
+    protected final ASTNode left, right;
 
     protected final RelationalBinaryOperator operator;
 
     /**
      * @param left
-     * @param rigth
+     * @param right
      */
-    public ASTRelationalBinaryOperation(ASTNode left, ASTNode rigth, RelationalBinaryOperator operator) {
+    public ASTRelationalBinaryOperation(ASTNode left, ASTNode right, RelationalBinaryOperator operator) {
         this.left = left;
-        this.rigth = rigth;
+        this.right = right;
         this.operator = operator;
-        type = TypeBool.TYPE;
+        this.type = TypeBool.TYPE;
     }
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e)
     {
         this.left.compile(c, e);
-        this.rigth.compile(c, e);
+        this.right.compile(c, e);
         String l1 = c.getNewLabelId();
         String l2 = c.getNewLabelId();
         switch(this.operator)
@@ -95,7 +96,7 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract
     public IValue eval(Environment<IValue> e)
     {
         VPrimitive<?> val1 = checkRuntimeType(this.left.eval(e));
-        VPrimitive<?> val2 = checkRuntimeType(this.rigth.eval(e));
+        VPrimitive<?> val2 = checkRuntimeType(this.right.eval(e));
 
         // Check if val1 type equals val2 type
         if (!val1.getClass().equals(val2.getClass()))
@@ -138,9 +139,13 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        checkType(this.left.typecheck(e));
-        checkType(this.rigth.typecheck(e));
-        return  type;
+        IType type1 = checkType(this.left.typecheck(e));
+        IType type2 = checkType(this.right.typecheck(e));
+        if(!type1.equals(type2))
+            throw new IllegalOperatorException("The type of the 2 expressions must be equal.",
+            this.operator.getOperator(), type1.show(), type2.show());
+            
+        return this.type; 
     }
 
     protected VPrimitive<?> checkRuntimeType(IValue val)
@@ -155,9 +160,9 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract
     
     protected IType checkType(IType type)
     {
-        boolean checked =  type instanceof TypeInt;
+        boolean checked =  type instanceof TypePrimitive;
         if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator(), TypeInt.TYPE.show(), type.show());
+            throw new IllegalOperatorException(this.operator.getOperator(), "Primitive", type.show());
 
         return type;
     }
@@ -168,7 +173,7 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract
         builder.append(' ');
         builder.append(this.operator.getOperator());
         builder.append(' ');
-        this.rigth.toString(builder);
+        this.right.toString(builder);
 
         return builder;
     }

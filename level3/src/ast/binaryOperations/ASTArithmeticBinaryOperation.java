@@ -8,7 +8,9 @@ import compiler.MainCodeBlock;
 import environment.Environment;
 import typeError.IllegalOperatorException;
 import types.IType;
+import types.primitives.TypeBool;
 import types.primitives.TypeInt;
+import types.primitives.TypePrimitive;
 import types.primitives.TypeString;
 import values.IValue;
 import values.primitive.VBool;
@@ -30,7 +32,7 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
         this.left = left;
         this.rigth = rigth;
         this.operator = operator;
-        type = TypeInt.TYPE;
+       
     }
 
     @Override
@@ -109,9 +111,19 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        checkType(this.left.typecheck(e));
-        checkType(this.rigth.typecheck(e));
-        return type;
+       TypePrimitive type1 =  checkType(this.left.typecheck(e));
+       TypePrimitive type2 = checkType(this.rigth.typecheck(e));
+       if( type1 instanceof TypeString)
+            return this.type = TypeString.TYPE;
+        else{
+            // type 1 is TypeInt
+            if(type2 instanceof TypeInt)
+                return this.type = TypeInt.TYPE;
+            
+            else 
+             throw new IllegalOperatorException(this.operator.getOperator(), TypeInt.TYPE.show(), type2.show());
+
+        }
     }
 
     protected VPrimitive<?> checkRuntimeType(IValue val)
@@ -134,13 +146,14 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
         return (VInt)val;
     }
 
-    protected IType checkType(IType type)
+    protected TypePrimitive checkType(IType type)
     {
-        boolean checked =  type instanceof TypeInt;
-        if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator(), TypeInt.TYPE.show(), type.show());
+        boolean checked = (type instanceof TypePrimitive) && !(type instanceof TypeBool);
 
-        return type;
+        if (!checked)
+            throw new IllegalOperatorException(this.operator.getOperator(), "Integer or String", type.show());
+
+        return (TypePrimitive)type;
     }
 
     @Override

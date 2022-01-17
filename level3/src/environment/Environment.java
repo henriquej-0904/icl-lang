@@ -100,6 +100,10 @@ public class Environment<E> implements Cloneable {
 		return scopeStack.size();
 	}
 
+	public Iterable<EnvironmentEntry<E>> getLastScope(){
+		return scopeStack.peek();
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public Object clone() {

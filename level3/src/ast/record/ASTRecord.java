@@ -1,25 +1,30 @@
 package ast.record;
 
+import java.util.Iterator;
 import java.util.List;
 
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
+import environment.ITypeEnvEntry;
 import environment.IValueEnvEntry;
+import typeError.TypeErrorException;
 import types.IType;
+import types.TypeRecord;
 import util.Bind;
+import util.Pair;
 import values.IValue;
 import values.VRecord;
 
 public class ASTRecord extends ASTNodeAbstract
 {
-    private List<Bind> fields;
+    private List<Pair<Bind,IType>> fields;
 
     /**
      * @param fields
      */
-    public ASTRecord(List<Bind> fields) {
+    public ASTRecord(List<Pair<Bind,IType>> fields) {
         this.fields = fields;
     }
 
@@ -28,8 +33,11 @@ public class ASTRecord extends ASTNodeAbstract
     {
         Environment<IValue> recordEnv = e.beginScope();
 
-        for (Bind bind : fields)
+        for (Pair<Bind,IType> field : fields){
+            Bind bind = field.getLeft();
             recordEnv.assoc(new IValueEnvEntry(bind.getLeft(), bind.getRight().eval(recordEnv)));
+        }
+           
 
         return new VRecord(recordEnv);
     }
@@ -37,13 +45,33 @@ public class ASTRecord extends ASTNodeAbstract
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
         // TODO Auto-generated method stub
+      
         
     }
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        // TODO Auto-generated method stub
-        return null;
+       
+        Environment<IType> env = e.beginScope();
+
+	
+		for (Pair<Bind,IType> field : this.fields)
+		{
+			IType declaredType = field.getRight();
+            Bind bind = field.getLeft();
+			env.assoc(new ITypeEnvEntry(bind.getLeft(), declaredType));
+			
+			IType actualType = bind.getRight().typecheck(env);
+			// Check if declared type equals the actual type
+			if (!declaredType.equals(actualType))
+				throw new TypeErrorException(
+					String.format("Illegal expression type in record definition for bind with id '%s'. " +
+						"Declared type is '%s' and got '%s'.", bind.getLeft(), declaredType.show(),
+						actualType.show())
+				);
+		}
+
+		return this.type =  new TypeRecord(env);
     }
 
     @Override

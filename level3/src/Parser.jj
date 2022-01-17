@@ -45,6 +45,8 @@ TOKEN :
   |
   <TYPE_REF: "ref_">
   |
+  <TYPE_String: "string">
+  |
   < DEF: "def" >
   |
   < IN: "in" >
@@ -486,18 +488,18 @@ int upDepth = 0;
     // Parse Record
     <L_SQUARE_PAR>
       {
-        List<Bind> binds = new LinkedList<Bind>();
+        List<Pair<Bind,IType>> binds = new LinkedList<Pair<Bind,IType>>();
         Pair<Bind, IType> bindWithType = null;
       }
 
       bindWithType=ParseBind()
       {
-        binds.add(bindWithType.getLeft());
+        binds.add(bindWithType);
       }
 
       ( <COMMA> bindWithType=ParseBind()
         {
-          binds.add(bindWithType.getLeft());
+          binds.add(bindWithType);
         }
       )*
 
@@ -518,6 +520,7 @@ IType parseType() :
 { (
   tok = <TYPE_INT> {type = TypeInt.TYPE;} |
   tok = <TYPE_BOOL> {type = TypeBool.TYPE;}|
+  tok = <TYPE_String> {type = TypeString.TYPE;}|
   <TYPE_REF> {type = new TypeRef(parseType());}|
   <LPAR> {List <IType> argTypes = new LinkedList<IType>();} 
   
