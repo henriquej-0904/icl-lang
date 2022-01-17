@@ -104,6 +104,7 @@ public class Environment<E> implements Cloneable {
 		return scopeStack.peek();
 	}
 
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public Object clone() {

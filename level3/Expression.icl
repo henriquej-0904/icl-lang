@@ -1,1 +1,1 @@
-def x = "ola" y = "adeus" in println(x < y) end;;
+def x = [ teste = [num = 20], name = "gg"] in println(x.teste.num) end;;

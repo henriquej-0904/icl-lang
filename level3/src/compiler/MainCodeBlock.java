@@ -11,6 +11,7 @@ import java.util.Map;
 import environment.Environment;
 import types.IType;
 import types.TypeFunction;
+import types.TypeRecord;
 import util.Pair;
 
 public class MainCodeBlock
@@ -80,6 +81,7 @@ public class MainCodeBlock
     private Map<String, ClosureInterfaceCodeBlock> closureInterfaces;
 
     private Map<Integer, ClosureCodeBlock> closures;
+    private Map<TypeRecord, RecordCodeBlock> records;
 
     /**
      * The active closure or null.
@@ -103,6 +105,7 @@ public class MainCodeBlock
 
         closureInterfaces = new HashMap<>();
         closures = new HashMap<>();
+        records = new HashMap<>();
     }
 
     public String getNewLabelId(){
@@ -249,6 +252,23 @@ public class MainCodeBlock
         return activeClosure;
     }
 
+    public RecordCodeBlock createRecord(TypeRecord type){
+
+        RecordCodeBlock record = getRecord(type);
+        emit("new " + record.className);
+        emit("dup");
+        emit("invokespecial " + record.className + "/<init>()V");
+        emit("dup");
+
+        return record;
+
+    }
+
+    public RecordCodeBlock getRecord(TypeRecord type){
+       return records.computeIfAbsent(type, (name)-> {return new RecordCodeBlock(records.size(),type);});
+      
+    }
+
     public ClosureCodeBlock getActiveClosure(){
         return activeClosure;
     }
@@ -279,7 +299,9 @@ public class MainCodeBlock
         for( ClosureInterfaceCodeBlock closureInterface: closureInterfaces.values()){
             dumpCodeBlock(closureInterface, outputFolder);
         }
-
+        for( RecordCodeBlock record: records.values()){
+            dumpCodeBlock(record, outputFolder);
+        }
         File mainClassFile = createFile(outputFolder, generatedClassName);
         
         try (PrintStream printMainClassFile = new PrintStream(mainClassFile);) {

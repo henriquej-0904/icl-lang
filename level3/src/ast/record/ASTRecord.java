@@ -6,7 +6,9 @@ import java.util.List;
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
+import compiler.RecordCodeBlock;
 import environment.Environment;
+import environment.EnvironmentEntry;
 import environment.ITypeEnvEntry;
 import environment.IValueEnvEntry;
 import typeError.TypeErrorException;
@@ -44,9 +46,17 @@ public class ASTRecord extends ASTNodeAbstract
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-      
-      
-        
+       RecordCodeBlock record =  c.createRecord((TypeRecord)this.type);
+       int i = 0;
+       for (Pair<Bind,IType> pair : fields) {
+           Bind bind = pair.getLeft();
+           bind.getRight().compile(c, e);
+           c.emit(String.format("putfield %s/%s %s", record.className,bind.getLeft(), bind.getRight().getType().getJvmType()));
+           c.emit("dup");
+           i ++;
+       }
+       c.emit("pop");
+
     }
 
     @Override

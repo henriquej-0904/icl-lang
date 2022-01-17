@@ -4,6 +4,7 @@ import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
+import compiler.RecordCodeBlock;
 import environment.Environment;
 import typeError.IllegalOperatorException;
 import types.IType;
@@ -36,7 +37,11 @@ public class ASTGetRecordValue extends ASTNodeAbstract
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        // TODO Auto-generated method stub
+        record.compile(c, e);
+      
+     RecordCodeBlock record = c.getRecord((TypeRecord)this.record.getType());
+     c.emit("checkcast " + record.className);
+     c.emit(String.format("getfield %s/%s %s", record.className, id, this.type.getJvmType()));
         
     }
 

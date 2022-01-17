@@ -1,6 +1,7 @@
 package types;
 
 import environment.Environment;
+import environment.EnvironmentEntry;
 
 public class TypeRecord  implements IType {
 
@@ -18,7 +19,7 @@ public class TypeRecord  implements IType {
     @Override
     public String getJvmType() {
       
-        return "java/lang/Object";
+        return "Ljava/lang/Object;";
     }
 
     @Override
@@ -42,6 +43,10 @@ public class TypeRecord  implements IType {
         TypeRecord other = (TypeRecord)obj;
         return this.fields.getLastScope().equals(other.fields.getLastScope());
 
+    }
+
+    public Iterable<EnvironmentEntry<IType>> getFields(){
+        return fields.getLastScope();
     }
 
     public IType getFieldTypeFromRecord(String id){
