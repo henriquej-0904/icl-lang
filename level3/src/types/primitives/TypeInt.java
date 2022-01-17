@@ -1,6 +1,6 @@
 package types.primitives;
 
-public class TypeInt extends TypePrimitive
+public class TypeInt extends TypePrimitive implements TypeJavaPrimitive
 {
     private static final String JVM_TYPE = "I";
 

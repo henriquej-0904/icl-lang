@@ -3,7 +3,6 @@ package ast.binaryOperations;
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import ast.binaryOperations.operators.ArithmeticBinaryOperator;
-import ast.number.ASTNum;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import types.IType;
+import types.primitives.TypeJavaPrimitive;
 import types.primitives.TypePrimitive;
 
 /**
@@ -106,7 +107,7 @@ public class ClosureCodeBlock extends CodeBlock
     }
 
     public void endClosure(){
-        if(closureInterface.typeFunction.getReturnType() instanceof TypePrimitive)
+        if(closureInterface.typeFunction.getReturnType() instanceof TypeJavaPrimitive)
             emit("ireturn");
         else
             emit("areturn");

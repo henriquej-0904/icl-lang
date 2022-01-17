@@ -1,7 +1,5 @@
 package ast.string;
 
-import java.sql.Types;
-
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;

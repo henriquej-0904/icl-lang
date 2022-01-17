@@ -9,7 +9,6 @@ import environment.Environment;
 import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitives.TypeBool;
-import types.primitives.TypeInt;
 import types.primitives.TypePrimitive;
 import types.primitives.TypeString;
 import values.IValue;

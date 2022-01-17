@@ -1,6 +1,6 @@
 package types.primitives;
 
-public class TypeBool extends TypePrimitive
+public class TypeBool extends TypePrimitive implements TypeJavaPrimitive
 {
     private static final String JVM_TYPE = "I";
 
