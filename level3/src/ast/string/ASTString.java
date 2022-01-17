@@ -31,7 +31,7 @@ public class ASTString extends ASTNodeAbstract
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        // TODO Auto-generated method stub
+        c.emit(String.format("ldc \"%s\"", value));
         
     }
 

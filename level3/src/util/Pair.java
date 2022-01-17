@@ -16,4 +16,14 @@ public class Pair<K,V> {
     public V getRight(){
         return item2;
     }
+
+    @Override
+    public boolean equals(Object other){
+        if(this == other)
+            return true;
+        if(!(other instanceof Pair))
+            return false;
+        Pair<?,?> pair = (Pair<?,?>)other;
+        return this.getLeft().equals(pair.getLeft()) && this.getRight().equals(pair.getRight());
+    }
 }

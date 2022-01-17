@@ -18,31 +18,28 @@ import util.Pair;
 import util.Utils;
 import values.IValue;
 
-import java.util.Iterator;
 public class ASTDef extends ASTNodeAbstract
 {
-	private List<Bind> init;
+	private List<Pair<Bind,IType>> init;
 	private ASTNode body;
-	private List<IType> types;
 
-	public ASTDef(List<Bind> init, ASTNode body) {
+	public ASTDef(List<Pair<Bind,IType>> init, ASTNode body) {
 		this.init = init;
 		this.body = body;
 	}
 
-	public ASTDef(List<Bind> init, ASTNode body, List<IType> types) {
-		this.init = init;
-		this.body = body;
-		this.types = types;
-	}
+	
 
 	@Override
 	public IValue eval(Environment<IValue> e)
 	{
 		Environment<IValue> env = e.beginScope();
 
-		for (Bind bind : this.init)
+		for (Pair<Bind,IType> field : this.init){
+			Bind bind = field.getLeft();
 			env.assoc(new IValueEnvEntry(bind.getLeft(), bind.getRight().eval(env)));
+		}
+			
 
 		IValue value = body.eval(env);
 		env.endScope();
@@ -54,14 +51,19 @@ public class ASTDef extends ASTNodeAbstract
 	{
 		Environment<IType> env = e.beginScope();
 
-		Iterator<IType> it = types.iterator();
 	
-		for (Bind bind : this.init)
+		for (Pair<Bind,IType> field : this.init)
 		{
-			IType declaredType = it.next();
-			env.assoc(new ITypeEnvEntry(bind.getLeft(), declaredType));
-			
-			IType actualType = bind.getRight().typecheck(env);
+			IType declaredType = field.getRight();
+			Bind bind = field.getLeft();
+			IType actualType  = null;
+			if(declaredType == null){
+				actualType = bind.getRight().typecheck(env);
+				env.assoc(new ITypeEnvEntry(bind.getLeft(), actualType));
+			}
+			else{
+				env.assoc(new ITypeEnvEntry(bind.getLeft(), declaredType));
+			 actualType = bind.getRight().typecheck(env);
 			// Check if declared type equals the actual type
 			if (!declaredType.equals(actualType))
 				throw new TypeErrorException(
@@ -69,6 +71,7 @@ public class ASTDef extends ASTNodeAbstract
 						"Declared type is '%s' and got '%s'.", bind.getLeft(), declaredType.show(),
 						actualType.show())
 				);
+			}
 		}
 
 		IType bodyType = body.typecheck(env);
@@ -87,8 +90,9 @@ public class ASTDef extends ASTNodeAbstract
 		IType type;
 		String jvmType;
 		int i = 0;
-		for (Bind bind : this.init)
+		for (Pair<Bind,IType> field : this.init)
 		{
+			Bind bind = field.getLeft();
 			type = bind.getRight().getType();
 			jvmType = type.getJvmType();
 			frame.addFieldType(jvmType);
@@ -111,10 +115,10 @@ public class ASTDef extends ASTNodeAbstract
 	public StringBuilder toString(StringBuilder builder) {
 		builder.append("def ");
 		Utils.toStringList(this.init, 
-			(bind) -> {
-				builder.append(bind.getLeft());
+			(field) -> {
+				builder.append(field.getLeft().getLeft());
 				builder.append('=');
-				bind.getRight().toString(builder);
+				field.getLeft().getRight().toString(builder);
 			},
 			" ", null, builder);
 		builder.append(" in\n\t");

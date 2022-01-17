@@ -172,13 +172,13 @@ public class MathExpression {
 			
 			System.out.println(String.format("The expression type is: %s\n", type.show()));
 			
-			/* //Compile expression and dump to tmp file.
+			 //Compile expression and dump to tmp file.
 			MainCodeBlock c = new MainCodeBlock(expressionFileName);
 			ast.compile(c, new Environment<Coordinates>());
 			c.dump(tmpFolder);
 
 			callJasmin(jasminJarPath, tmpFolder, expressionFileName);
-			buildJar(destFolder, expressionFileName, tmpFolder); */
+			buildJar(destFolder, expressionFileName, tmpFolder); 
 			 
 		} catch (ParseException e) {
 			//System.err.println("Syntax Error!");

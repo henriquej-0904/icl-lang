@@ -19,7 +19,7 @@ import ast.binaryOperations.*;
 import ast.binaryOperations.operators.*;
 import types.*;
 import types.primitives.*;
-
+import environment.*;
 /** ID lister. */
 public class Parser {
   static boolean interpreting;
@@ -46,6 +46,8 @@ TOKEN :
   <TYPE_REF: "ref_">
   |
   <TYPE_String: "string">
+  |
+  <TYPE_RECORD: "record">
   |
   < DEF: "def" >
   |
@@ -380,17 +382,8 @@ Pair<Bind, IType> ParseBind():
     (tok = <Id>) (<DOTS> type = parseType())? <EQUALS> t1=Program()
       {
         bind = new Bind(tok.image, t1);
+        result = new Pair<Bind, IType>(bind, type);
 
-        if (!interpreting)
-        {
-          // check if bind has a type
-          if (type == null)
-            throw new ParseException("Expected type for bind.", tok);
-
-          result = new Pair<Bind, IType>(bind, type);
-        }
-        else
-          result = new Pair<Bind, IType>(bind, null);
       }
   )
 
@@ -430,28 +423,22 @@ int upDepth = 0;
 
     <DEF>
           {
-            List<Bind> init = new LinkedList<Bind>(); 
-            List<IType> types = null;
+            List<Pair<Bind,IType>> init = new LinkedList<Pair<Bind,IType>>(); 
             
-            if (!interpreting)
-              types = new LinkedList<IType>();
             
             Pair<Bind, IType> bindWithType = null;
           }
 
             ( bindWithType = ParseBind()
               {
-                init.add(bindWithType.getLeft());
+                init.add(bindWithType);
 
-                if(!interpreting)
-                  types.add(bindWithType.getRight());
               }
             )+ (<IN> t1 = Program() <END> 
               {
-                if(interpreting)
+               
                   t1 = new ASTDef(init, t1);
-                else
-                  t1 = new ASTDef(init,t1,types);
+               
               }
            )
     |
@@ -522,6 +509,16 @@ IType parseType() :
   tok = <TYPE_BOOL> {type = TypeBool.TYPE;}|
   tok = <TYPE_String> {type = TypeString.TYPE;}|
   <TYPE_REF> {type = new TypeRef(parseType());}|
+  <TYPE_RECORD> {
+    Environment<IType> env = new Environment<IType>().beginScope();
+
+  }<LPAR> tok = <Id> <DOTS> type = parseType() {
+    env.assoc(new ITypeEnvEntry(tok.image, type));
+  }(<COMMA> tok = <Id> <DOTS> type = parseType(){
+     env.assoc(new ITypeEnvEntry(tok.image, type));
+  })*<RPAR>{
+    type = new TypeRecord(env);
+  }|
   <LPAR> {List <IType> argTypes = new LinkedList<IType>();} 
   
   (type = parseType() {argTypes.add(type);} (<COMMA> type = parseType() { argTypes.add(type);} )* )? 

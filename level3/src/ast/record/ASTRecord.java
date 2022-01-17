@@ -44,7 +44,7 @@ public class ASTRecord extends ASTNodeAbstract
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-        // TODO Auto-generated method stub
+      
       
         
     }
@@ -58,18 +58,26 @@ public class ASTRecord extends ASTNodeAbstract
 		for (Pair<Bind,IType> field : this.fields)
 		{
 			IType declaredType = field.getRight();
-            Bind bind = field.getLeft();
-			env.assoc(new ITypeEnvEntry(bind.getLeft(), declaredType));
-			
-			IType actualType = bind.getRight().typecheck(env);
+			Bind bind = field.getLeft();
+			IType actualType  = null;
+			if(declaredType == null){
+				actualType = bind.getRight().typecheck(env);
+				env.assoc(new ITypeEnvEntry(bind.getLeft(), actualType));
+			}
+			else{
+				env.assoc(new ITypeEnvEntry(bind.getLeft(), declaredType));
+			 actualType = bind.getRight().typecheck(env);
 			// Check if declared type equals the actual type
 			if (!declaredType.equals(actualType))
 				throw new TypeErrorException(
-					String.format("Illegal expression type in record definition for bind with id '%s'. " +
+					String.format("Illegal expression type in record def for bind with id '%s'. " +
 						"Declared type is '%s' and got '%s'.", bind.getLeft(), declaredType.show(),
 						actualType.show())
 				);
+			}
 		}
+
+        
 
 		return this.type =  new TypeRecord(env);
     }

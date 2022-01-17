@@ -3,6 +3,7 @@ package ast.binaryOperations;
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import ast.binaryOperations.operators.ArithmeticBinaryOperator;
+import ast.number.ASTNum;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
@@ -37,9 +38,15 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
+        if( left.getType() instanceof TypeInt)
+            compileInt(c, e);
+        else 
+            compileString(c, e);
+    }
+
+    private void compileInt(MainCodeBlock c, Environment<Coordinates> e){
         this.left.compile(c, e);
         this.rigth.compile(c, e);
-        
         switch(this.operator)
         {
             case ADD:
@@ -55,6 +62,22 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
                 c.emit("isub");
                 break;
         }
+    }
+
+    private void compileString(MainCodeBlock c, Environment<Coordinates> e){
+        
+        c.emit("new java/lang/StringBuilder");
+        c.emit("dup");
+        c.emit("invokespecial java/lang/StringBuilder/<init>()V");
+        this.left.compile(c, e);
+        c.emit("invokevirtual java/lang/StringBuilder/append(Ljava/lang/String;)Ljava/lang/StringBuilder;");
+        this.rigth.compile(c, e);
+        if(rigth.getType() instanceof TypeInt)
+            c.emit("invokestatic java/lang/String/valueOf(I)Ljava/lang/String;");
+        c.emit("invokevirtual java/lang/StringBuilder/append(Ljava/lang/String;)Ljava/lang/StringBuilder;");
+        c.emit("invokevirtual java/lang/StringBuilder/toString()Ljava/lang/String;");
+           
+
     }
 
     @Override
@@ -113,8 +136,14 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
     public IType typecheck(Environment<IType> e) {
        TypePrimitive type1 =  checkType(this.left.typecheck(e));
        TypePrimitive type2 = checkType(this.rigth.typecheck(e));
-       if( type1 instanceof TypeString)
-            return this.type = TypeString.TYPE;
+       if( type1 instanceof TypeString){
+           if(this.operator == ArithmeticBinaryOperator.ADD)
+                return this.type = TypeString.TYPE;
+            
+            else
+                throw new IllegalOperatorException(operator.getOperator(), TypeString.TYPE.show());
+       }
+           
         else{
             // type 1 is TypeInt
             if(type2 instanceof TypeInt)

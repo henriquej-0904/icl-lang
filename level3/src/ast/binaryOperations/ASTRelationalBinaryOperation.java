@@ -11,6 +11,7 @@ import types.IType;
 import types.primitives.TypeBool;
 import types.primitives.TypeInt;
 import types.primitives.TypePrimitive;
+import types.primitives.TypeString;
 import values.IValue;
 import values.primitive.VBool;
 import values.primitive.VPrimitive;
@@ -35,6 +36,14 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e)
     {
+        if(left.getType() instanceof TypeString)
+            compileString(c, e);
+        else   
+            compileIntOrBool(c, e);
+
+    }
+
+    private void compileIntOrBool(MainCodeBlock c, Environment<Coordinates> e){
         this.left.compile(c, e);
         this.right.compile(c, e);
         String l1 = c.getNewLabelId();
@@ -88,6 +97,64 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract
             c.emit(l1 + ":");
             c.emit("sipush 1");
             c.emit(l2 + ":");
+                break;
+        } 
+    }
+
+    private void compileString(MainCodeBlock c, Environment<Coordinates> e){
+        this.left.compile(c, e);
+        this.right.compile(c, e);
+        String l1 = c.getNewLabelId();
+        String l2 = c.getNewLabelId();
+        switch(this.operator)
+        {
+            case EQUALS:
+            c.emit("invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z");
+                break;
+            case GREATER_THAN:
+            c.emit("invokevirtual java/lang/String/compareTo(Ljava/lang/String;)I");
+            c.emit("sipush 0");
+            c.emit("if_icmpgt " + l1);
+            c.emit("sipush 0");
+            c.emit("goto " + l2);
+            c.emit(l1 + ":");
+            c.emit("sipush 1");
+            c.emit(l2 + ":");
+                break;
+            case GREATER_THAN_OR_EQUAL_TO:
+            c.emit("invokevirtual java/lang/String/compareTo(Ljava/lang/String;)I");
+            c.emit("sipush 0");
+            c.emit("if_icmpge" + l1);
+            c.emit("sipush 0");
+            c.emit("goto " + l2);
+            c.emit(l1 + ":");
+            c.emit("sipush 1");
+            c.emit(l2 + ":");
+                break;
+            case LESS_THAN:
+            c.emit("invokevirtual java/lang/String/compareTo(Ljava/lang/String;)I");
+            c.emit("sipush 0");
+            c.emit("if_icmplt " + l1);
+            c.emit("sipush 0");
+            c.emit("goto " + l2);
+            c.emit(l1 + ":");
+            c.emit("sipush 1");
+            c.emit(l2 + ":");
+                break;
+            case LESS_THAN_OR_EQUAL_TO:
+            c.emit("invokevirtual java/lang/String/compareTo(Ljava/lang/String;)I");
+            c.emit("sipush 0");
+            c.emit("if_icmple " + l1);
+            c.emit("sipush 0");
+            c.emit("goto " + l2);
+            c.emit(l1 + ":");
+            c.emit("sipush 1");
+            c.emit(l2 + ":");
+                break;
+            case NOT_EQUALS:
+            c.emit("invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z");
+            c.emit("sipush 1");
+            c.emit("ixor");
                 break;
         } 
     }

@@ -9,6 +9,7 @@ import compiler.MainCodeBlock;
 import environment.Environment;
 import typeError.TypeErrorException;
 import types.IType;
+import types.primitives.TypeBool;
 import types.primitives.TypeInt;
 import types.primitives.TypePrimitive;
 import values.IValue;
@@ -59,9 +60,10 @@ public class ASTPrintln extends ASTNodeAbstract
 
         if (this.type instanceof TypeInt)
             this.compilerPrintlnFunc = ASTPrintln::printInt;
-        else
+        else if( this.type instanceof TypeBool)
             this.compilerPrintlnFunc = ASTPrintln::printBoolean;
-
+        else 
+            this.compilerPrintlnFunc = ASTPrintln::printString;
         return this.type;
     }
 
@@ -93,6 +95,10 @@ public class ASTPrintln extends ASTNodeAbstract
         c.emit("  ; convert to String;");
         c.emit("invokestatic java/lang/String/valueOf(I)Ljava/lang/String;");
         c.emit("; call println ");
+        c.emit("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
+    }
+
+    private static void printString(MainCodeBlock c){
         c.emit("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
     }
     

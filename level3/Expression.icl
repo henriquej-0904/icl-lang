@@ -1,1 +1,1 @@
-[name:string = "Ola", age:int = 20, masculino:bool = true].name;;
+def x = "ola" y = "adeus" in println(x < y) end;;
