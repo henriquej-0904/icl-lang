@@ -61,9 +61,14 @@ public class ParseException extends Exception {
 
   /** Constructor with message. */
   public ParseException(String message, Token currentToken) {
+    this(message, currentToken, false);
+  }
+
+  public ParseException(String message, Token currentToken, boolean illegalToken) {
     super(new StringBuilder("Syntax error")
-          .append(currentToken.next != null ? " at line " +
-            currentToken.next.beginLine + ", column " + currentToken.next.beginColumn :
+          .append((illegalToken ? currentToken : currentToken.next) != null ? " at line " +
+          (illegalToken ? currentToken : currentToken.next).beginLine + ", column "
+          + (illegalToken ? currentToken : currentToken.next).beginColumn :
             "")
           .append("\n" + message)
           .toString());

@@ -49,6 +49,8 @@ TOKEN :
   |
   <TYPE_RECORD: "record">
   |
+  < REC: "rec" >
+  |
   < DEF: "def" >
   |
   < IN: "in" >
@@ -372,18 +374,41 @@ List<FunctionArg> result = new LinkedList<FunctionArg>();
 Pair<Bind, IType> ParseBind():
 {
   ASTNode t1;
-  Token tok;
+  Token tokId, tokRec;
+  tokId = tokRec = null;
   Bind bind;
   IType type = null;
   Pair<Bind, IType> result;
+  boolean funcRec = false;
 }
 {
   (
-    (tok = <Id>) (<DOTS> type = parseType())? <EQUALS> t1=Program()
+    (tokRec=<REC> {funcRec = true;})? (tokId = <Id>) (<DOTS> type = parseType())? <EQUALS> t1=Program()
       {
-        bind = new Bind(tok.image, t1);
-        result = new Pair<Bind, IType>(bind, type);
+        if (funcRec)
+        {
+          if (interpreting)
+            throw new ParseException("There is no need to mark a function as recursive.\n"+
+            "All functions are recursive in interpreting mode.", tokRec, true);
 
+          if (type == null)
+            throw new ParseException("Recursive function type must be declared.", tokId);
+
+          IType checkType = type;
+
+          boolean checked = checkType instanceof TypeFunction;
+          if (!checked && checkType instanceof TypeRef)
+            checkType = ((TypeRef)checkType).getInnerType();
+          
+          checked = checkType instanceof TypeFunction;
+          if (!checked)
+            throw new ParseException("Invalid type for recursive function.", tokId);
+
+          ((TypeFunction)checkType).setRecursive();
+        }
+
+        bind = new Bind(tokId.image, t1);
+        result = new Pair<Bind, IType>(bind, type);
       }
   )
 

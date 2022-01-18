@@ -13,6 +13,8 @@ import environment.ITypeEnvEntry;
 import environment.IValueEnvEntry;
 import typeError.TypeErrorException;
 import types.IType;
+import types.TypeFunction;
+import types.TypeRef;
 import util.Bind;
 import util.Pair;
 import util.Utils;
@@ -57,20 +59,40 @@ public class ASTDef extends ASTNodeAbstract
 			IType declaredType = field.getRight();
 			Bind bind = field.getLeft();
 			IType actualType  = null;
-			if(declaredType == null){
+
+			if(declaredType == null)
+			{
 				actualType = bind.getRight().typecheck(env);
 				env.assoc(new ITypeEnvEntry(bind.getLeft(), actualType));
 			}
-			else{
-				env.assoc(new ITypeEnvEntry(bind.getLeft(), declaredType));
-			 actualType = bind.getRight().typecheck(env);
-			// Check if declared type equals the actual type
-			if (!declaredType.equals(actualType))
-				throw new TypeErrorException(
-					String.format("Illegal expression type in def for bind with id '%s'. " +
-						"Declared type is '%s' and got '%s'.", bind.getLeft(), declaredType.show(),
-						actualType.show())
-				);
+			else
+			{
+				IType innerType = declaredType;
+				if (innerType instanceof TypeRef)
+					innerType = ((TypeRef)innerType).getInnerType();
+				
+				boolean funcRecursive = (innerType instanceof TypeFunction) &&
+					((TypeFunction)innerType).isRecursive();
+				
+				if (funcRecursive) {
+					env.assoc(new ITypeEnvEntry(bind.getLeft(), declaredType));
+					actualType = bind.getRight().typecheck(env);
+					// Check if declared type equals the actual type
+					if (!declaredType.equals(actualType))
+						throw new TypeErrorException(
+								String.format("Illegal expression type in def for bind with id '%s'. " +
+										"Declared type is '%s' and got '%s'.", bind.getLeft(), declaredType.show(),
+										actualType.show()));
+				} else {
+					actualType = bind.getRight().typecheck(env);
+					if (!declaredType.equals(actualType))
+						throw new TypeErrorException(
+								String.format("Illegal expression type in def for bind with id '%s'. " +
+										"Declared type is '%s' and got '%s'.", bind.getLeft(), declaredType.show(),
+										actualType.show()));
+
+					env.assoc(new ITypeEnvEntry(bind.getLeft(), declaredType));
+				}
 			}
 		}
 

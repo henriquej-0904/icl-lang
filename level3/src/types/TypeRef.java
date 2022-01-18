@@ -21,9 +21,30 @@ public class TypeRef implements IType
         return TYPE_NAME + " ( " + valueType.show() + " ) ";
     }
 
+    /**
+     * The type this reference points to.
+     * @return
+     */
     public IType getValueType()
     {
         return this.valueType;
+    }
+
+    /**
+     * Gets the inner type of this reference, i.e.,
+     * if {@link #getValueType()} is a reference then calls
+     * {@link #getInnerType()} in it, otherwise returns the type of {@link #getValueType()}.
+     * @return The inner type of this reference
+     */
+    public IType getInnerType()
+    {
+        IType type = getValueType();
+        while (type instanceof TypeRef)
+        {
+            type = ((TypeRef)type).getValueType();
+        }
+
+        return type;
     }
 
     @Override

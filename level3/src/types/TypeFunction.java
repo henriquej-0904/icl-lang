@@ -15,9 +15,12 @@ public class TypeFunction implements IType
     private List<IType> args;
     private IType returnType;
 
+    private boolean recursive;
+
     public TypeFunction(List<IType> args, IType returnType) {
         this.args = args;
         this.returnType = returnType;
+        recursive = false;
     }
 
     @Override
@@ -69,7 +72,20 @@ public class TypeFunction implements IType
         
     }
 
-    
+    /**
+     * If this function is recursive.
+     * @return True if this function is recursive.
+     */
+    public boolean isRecursive() {
+        return recursive;
+    }
 
+    /**
+     * Sets this function as recursive.
+     * @param recursive true if recursive.
+     */
+    public void setRecursive() {
+        this.recursive = true;
+    }
 
 }
