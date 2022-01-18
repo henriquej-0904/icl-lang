@@ -78,21 +78,15 @@ public class ASTPrintln extends ASTNodeAbstract
 
     private static void printBoolean(MainCodeBlock c)
     {
-        String l1,l2;
-        l1 = c.getNewLabelId();
-        l2 = c.getNewLabelId();
-        c.emit("ifeq " + l1);
-		c.emit("ldc \"true\"");
-        c.emit("goto " + l2);
-		c.emit(l1 + ": ");
-		c.emit("ldc \"false\"");
-		c.emit(l2 + ":");
-		c.emit("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
+        c.emit("; convert to String;");
+        c.emit("invokestatic java/lang/String/valueOf(Z)Ljava/lang/String;");
+        c.emit("; call println ");
+        c.emit("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
     }
 
     private static void printInt(MainCodeBlock c)
     {
-        c.emit("  ; convert to String;");
+        c.emit("; convert to String;");
         c.emit("invokestatic java/lang/String/valueOf(I)Ljava/lang/String;");
         c.emit("; call println ");
         c.emit("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");

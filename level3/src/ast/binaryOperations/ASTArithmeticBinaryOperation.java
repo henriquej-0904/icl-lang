@@ -63,27 +63,24 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
         }
     }
 
-    private void compileString(MainCodeBlock c, Environment<Coordinates> e){
-        
-        c.emit("new java/lang/StringBuilder");
-        c.emit("dup");
-        c.emit("invokespecial java/lang/StringBuilder/<init>()V");
+    private void compileString(MainCodeBlock c, Environment<Coordinates> e)
+    {
         this.left.compile(c, e);
-        c.emit("invokevirtual java/lang/StringBuilder/append(Ljava/lang/String;)Ljava/lang/StringBuilder;");
         this.rigth.compile(c, e);
+
         if(rigth.getType() instanceof TypeInt)
             c.emit("invokestatic java/lang/String/valueOf(I)Ljava/lang/String;");
-        c.emit("invokevirtual java/lang/StringBuilder/append(Ljava/lang/String;)Ljava/lang/StringBuilder;");
-        c.emit("invokevirtual java/lang/StringBuilder/toString()Ljava/lang/String;");
-           
-
+        else if (rigth.getType() instanceof TypeBool)
+            c.emit("invokestatic java/lang/String/valueOf(Z)Ljava/lang/String;");
+        
+        c.emit("invokevirtual java/lang/String/concat(Ljava/lang/String;)Ljava/lang/String;");
     }
 
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        VPrimitive<?> val1 = checkRuntimeType(this.left.eval(e));
-        VPrimitive<?> val2 = checkRuntimeType(this.rigth.eval(e));
+        VPrimitive<?> val1 = checkRuntimeTypeLeft(this.left.eval(e));
+        IValue val2 = this.rigth.eval(e);
 
         if (val1 instanceof VInt)
             return evalInt((VInt)val1, val2);
@@ -91,7 +88,7 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
         return evalString((VString)val1, val2);
     }
 
-    private IValue evalInt(VInt value1, VPrimitive<?> value2)
+    private IValue evalInt(VInt value1, IValue value2)
     {
         VInt valueInt2 = checkRuntimeTypeInt(value2);
         IValue result = null;
@@ -115,14 +112,18 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
         return result;
     }
 
-    private IValue evalString(VString value1, VPrimitive<?> value2)
+    private IValue evalString(VString value1, IValue value2)
     {
         IValue result = null;
 
         switch(this.operator)
         {
             case ADD:
-                result = new VString(value1.getValue() + value2.getValue());
+                if (!(value2 instanceof VPrimitive))
+                    throw new IllegalOperatorException(this.operator.getOperator(),
+                        "Primitive", value2.getType().show());
+                
+                result = new VString(value1.getValue() + ((VPrimitive<?>)value2).getValue());
                 break;
             default:
                 throw new IllegalOperatorException(operator.getOperator(), TypeString.TYPE.show());
@@ -133,33 +134,33 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
 
     @Override
     public IType typecheck(Environment<IType> e) {
-       TypePrimitive type1 =  checkType(this.left.typecheck(e));
-       TypePrimitive type2 = checkType(this.rigth.typecheck(e));
-       if( type1 instanceof TypeString){
-           if(this.operator == ArithmeticBinaryOperator.ADD)
-                return this.type = TypeString.TYPE;
-            
-            else
-                throw new IllegalOperatorException(operator.getOperator(), TypeString.TYPE.show());
-       }
-           
-        else{
-            // type 1 is TypeInt
-            if(type2 instanceof TypeInt)
-                return this.type = TypeInt.TYPE;
-            
-            else 
-             throw new IllegalOperatorException(this.operator.getOperator(), TypeInt.TYPE.show(), type2.show());
+        TypePrimitive type1 = checkTypeLeft(this.left.typecheck(e));
+        IType type2 = this.rigth.typecheck(e);
 
+        if (type1 instanceof TypeString) {
+            if (this.operator == ArithmeticBinaryOperator.ADD) {
+                if (!(type2 instanceof TypePrimitive))
+                    throw new IllegalOperatorException(this.operator.getOperator(),
+                            "Primitive", type2.show());
+
+                return this.type = TypeString.TYPE;
+            } else
+                throw new IllegalOperatorException(operator.getOperator(), TypeString.TYPE.show());
+        } else {
+            // type 1 is TypeInt
+            if (type2 instanceof TypeInt)
+                return this.type = TypeInt.TYPE;
+            else
+                throw new IllegalOperatorException(this.operator.getOperator(), TypeInt.TYPE.show(), type2.show());
         }
     }
 
-    protected VPrimitive<?> checkRuntimeType(IValue val)
+    protected VPrimitive<?> checkRuntimeTypeLeft(IValue val)
     {
         boolean checked = (val instanceof VPrimitive) && !(val instanceof VBool);
 
         if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator(), "Integer or String", val.getType().show());
+            throw new IllegalOperatorException(operator.getOperator(), val.getType().show());
 
         return (VPrimitive<?>)val;
     }
@@ -174,12 +175,12 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
         return (VInt)val;
     }
 
-    protected TypePrimitive checkType(IType type)
+    protected TypePrimitive checkTypeLeft(IType type)
     {
         boolean checked = (type instanceof TypePrimitive) && !(type instanceof TypeBool);
 
         if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator(), "Integer or String", type.show());
+            throw new IllegalOperatorException(operator.getOperator(), type.show());
 
         return (TypePrimitive)type;
     }
