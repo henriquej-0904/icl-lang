@@ -2,6 +2,7 @@ package ast.bool;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import ast.ASTNodeShortCircuit;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
@@ -11,7 +12,7 @@ import types.primitives.TypeBool;
 import values.IValue;
 import values.primitive.VBool;
 
-public class ASTBoolNot extends ASTNodeAbstract
+public class ASTBoolNot extends ASTNodeAbstract implements ASTNodeShortCircuit
 {
     public static final String OPERATOR = "~";
 
@@ -30,6 +31,19 @@ public class ASTBoolNot extends ASTNodeAbstract
         node.compile(c, e);
         c.emit("sipush 1");
         c.emit("ixor");
+    }
+
+    @Override
+    public void compile(MainCodeBlock c, Environment<Coordinates> e, String tl, String fl)
+    {
+        if (this.node instanceof ASTNodeShortCircuit)
+            ((ASTNodeShortCircuit)this.node).compile(c, e, fl, tl);
+        else
+        {
+            this.node.compile(c, e);
+            c.emit("ifeq " + tl);
+            c.emit("goto " + fl);
+        }
     }
 
     @Override
@@ -69,7 +83,4 @@ public class ASTBoolNot extends ASTNodeAbstract
         this.node.toString(builder);
         return builder;
     }
-
-    
-
 }

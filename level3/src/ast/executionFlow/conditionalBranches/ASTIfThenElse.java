@@ -2,6 +2,7 @@ package ast.executionFlow.conditionalBranches;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import ast.ASTNodeShortCircuit;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
@@ -13,7 +14,8 @@ import values.IValue;
 import values.VNull;
 import values.primitive.VBool;
 
-public class ASTIfThenElse extends ASTNodeAbstract {
+public class ASTIfThenElse extends ASTNodeAbstract
+{
     public static final String OPERATOR = "if then else";
 
     protected ASTNode ifNode, thenNode, elseNode;
@@ -30,8 +32,16 @@ public class ASTIfThenElse extends ASTNodeAbstract {
     }
 
     @Override
-    public void compile(MainCodeBlock c, Environment<Coordinates> e) {
+    public void compile(MainCodeBlock c, Environment<Coordinates> e)
+    {
+        if (this.ifNode instanceof ASTNodeShortCircuit)
+            compileWithShortCircuit(c, e);
+        else
+            compileDefault(c, e);
+    }
 
+    public void compileDefault(MainCodeBlock c, Environment<Coordinates> e)
+    {
         String l1 = c.getNewLabelId();
         String l2 = null;
         
@@ -54,6 +64,27 @@ public class ASTIfThenElse extends ASTNodeAbstract {
         {
             c.emit("sipush 0");
             c.emit(l2 + ":");
+        }
+    }
+
+    public void compileWithShortCircuit(MainCodeBlock c, Environment<Coordinates> e) {
+
+        String tl = c.getNewLabelId();
+        String fl = c.getNewLabelId();
+
+        String exitLabel = this.elseNode == null ? null : c.getNewLabelId();
+        
+        ((ASTNodeShortCircuit)ifNode).compile(c, e, tl, fl);
+
+        c.emit(tl + ":");
+        thenNode.compile(c, e);
+        c.emit("goto " + (exitLabel == null ? fl : exitLabel) );
+        c.emit(fl + ":");
+
+        if (this.elseNode != null)
+        {
+            elseNode.compile(c, e);
+            c.emit(exitLabel + ":");
         }
     }
 

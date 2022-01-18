@@ -1,4 +1,4 @@
-package ast.bool;
+package ast.binaryOperations.operators;
 
 public enum LogicalBinaryOperator
 {

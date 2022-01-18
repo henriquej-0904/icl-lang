@@ -2,6 +2,7 @@ package ast.executionFlow.loops;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import ast.ASTNodeShortCircuit;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
@@ -28,7 +29,16 @@ public class ASTWhileLoop extends ASTNodeAbstract
     }
 
     @Override
-    public void compile(MainCodeBlock c, Environment<Coordinates> e) {
+    public void compile(MainCodeBlock c, Environment<Coordinates> e)
+    {
+        if (this.whileConditionNode instanceof ASTNodeShortCircuit)
+            compileWithShortCircuit(c, e);
+        else
+            compileDefault(c, e);
+    }
+
+    public void compileDefault(MainCodeBlock c, Environment<Coordinates> e)
+    {
         String l1, l2;
         l1 = c.getNewLabelId();
         l2 = c.getNewLabelId();
@@ -40,6 +50,28 @@ public class ASTWhileLoop extends ASTNodeAbstract
         c.emit("pop");
         c.emit("goto " + l1);
         c.emit(l2 + ":");
+
+        // Push something to the stack.
+        c.emit("sipush 0");
+    }
+
+    public void compileWithShortCircuit(MainCodeBlock c, Environment<Coordinates> e)
+    {
+        String lStart, tl, fl;
+        lStart = c.getNewLabelId();
+        tl = c.getNewLabelId();
+        fl = c.getNewLabelId();
+
+        c.emit(lStart + ":");
+        ((ASTNodeShortCircuit)this.whileConditionNode).compile(c, e, tl, fl);
+        c.emit(tl + ":");
+        this.bodyNode.compile(c, e);
+        c.emit("pop");
+        c.emit("goto " + lStart);
+        c.emit(fl + ":");
+
+        // Push something to the stack.
+        c.emit("sipush 0");
     }
 
     @Override

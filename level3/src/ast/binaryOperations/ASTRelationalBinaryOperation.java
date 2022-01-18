@@ -2,6 +2,7 @@ package ast.binaryOperations;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
+import ast.ASTNodeShortCircuit;
 import ast.binaryOperations.operators.RelationalBinaryOperator;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
@@ -15,7 +16,7 @@ import values.IValue;
 import values.primitive.VBool;
 import values.primitive.VPrimitive;
 
-public class ASTRelationalBinaryOperation extends ASTNodeAbstract
+public class ASTRelationalBinaryOperation extends ASTNodeAbstract implements ASTNodeShortCircuit
 {
     protected final ASTNode left, right;
 
@@ -112,8 +113,7 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract
                 break;
             case GREATER_THAN:
             c.emit("invokevirtual java/lang/String/compareTo(Ljava/lang/String;)I");
-            c.emit("sipush 0");
-            c.emit("if_icmpgt " + l1);
+            c.emit("ifgt " + l1);
             c.emit("sipush 0");
             c.emit("goto " + l2);
             c.emit(l1 + ":");
@@ -122,8 +122,7 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract
                 break;
             case GREATER_THAN_OR_EQUAL_TO:
             c.emit("invokevirtual java/lang/String/compareTo(Ljava/lang/String;)I");
-            c.emit("sipush 0");
-            c.emit("if_icmpge" + l1);
+            c.emit("ifge" + l1);
             c.emit("sipush 0");
             c.emit("goto " + l2);
             c.emit(l1 + ":");
@@ -132,8 +131,7 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract
                 break;
             case LESS_THAN:
             c.emit("invokevirtual java/lang/String/compareTo(Ljava/lang/String;)I");
-            c.emit("sipush 0");
-            c.emit("if_icmplt " + l1);
+            c.emit("iflt " + l1);
             c.emit("sipush 0");
             c.emit("goto " + l2);
             c.emit(l1 + ":");
@@ -142,8 +140,7 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract
                 break;
             case LESS_THAN_OR_EQUAL_TO:
             c.emit("invokevirtual java/lang/String/compareTo(Ljava/lang/String;)I");
-            c.emit("sipush 0");
-            c.emit("if_icmple " + l1);
+            c.emit("ifle " + l1);
             c.emit("sipush 0");
             c.emit("goto " + l2);
             c.emit(l1 + ":");
@@ -156,6 +153,80 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract
             c.emit("ixor");
                 break;
         } 
+    }
+
+    @Override
+    public void compile(MainCodeBlock c, Environment<Coordinates> e, String tl, String fl) {
+        if(left.getType() instanceof TypeString)
+            compileString(c, e, tl, fl);
+        else   
+            compileIntOrBool(c, e, tl, fl);
+    }
+
+    public void compileIntOrBool(MainCodeBlock c, Environment<Coordinates> e, String tl, String fl)
+    {
+        this.left.compile(c, e);
+        this.right.compile(c, e);
+
+        switch(this.operator)
+        {
+            case EQUALS:
+                c.emit("if_icmpeq " + tl);
+                break;
+            case GREATER_THAN:
+                c.emit("if_icmpgt " + tl);
+                break;
+            case GREATER_THAN_OR_EQUAL_TO:
+                c.emit("if_icmpge " + tl);
+                break;
+            case LESS_THAN:
+                c.emit("if_icmplt " + tl);
+                break;
+            case LESS_THAN_OR_EQUAL_TO:
+                c.emit("if_icmple " + tl);
+                break;
+            case NOT_EQUALS:
+                c.emit("if_icmpne " + tl);
+                break;
+        }
+
+        c.emit("goto " + fl);
+    }
+
+    public void compileString(MainCodeBlock c, Environment<Coordinates> e, String tl, String fl)
+    {
+        this.left.compile(c, e);
+        this.right.compile(c, e);
+
+        switch(this.operator)
+        {
+            case EQUALS:
+                c.emit("invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z");
+                c.emit("ifne " + tl);
+                break;
+            case GREATER_THAN:
+                c.emit("invokevirtual java/lang/String/compareTo(Ljava/lang/String;)I");
+                c.emit("ifgt " + tl);
+                break;
+            case GREATER_THAN_OR_EQUAL_TO:
+                c.emit("invokevirtual java/lang/String/compareTo(Ljava/lang/String;)I");
+                c.emit("ifge " + tl);
+                break;
+            case LESS_THAN:
+                c.emit("invokevirtual java/lang/String/compareTo(Ljava/lang/String;)I");
+                c.emit("iflt " + tl);
+                break;
+            case LESS_THAN_OR_EQUAL_TO:
+                c.emit("invokevirtual java/lang/String/compareTo(Ljava/lang/String;)I");
+                c.emit("ifle " + tl);
+                break;
+            case NOT_EQUALS:
+                c.emit("invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z");
+                c.emit("ifeq " + tl);
+                break;
+        }
+
+        c.emit("goto " + fl);
     }
 
     @Override

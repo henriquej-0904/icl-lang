@@ -1,6 +1,7 @@
 package ast.bool;
 
 import ast.ASTNodeAbstract;
+import ast.ASTNodeShortCircuit;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
@@ -9,7 +10,8 @@ import types.primitives.TypeBool;
 import values.IValue;
 import values.primitive.VBool;
 
-public class ASTBool extends ASTNodeAbstract {
+public class ASTBool extends ASTNodeAbstract implements ASTNodeShortCircuit
+{
 
 	private boolean val;
 	
@@ -28,6 +30,15 @@ public class ASTBool extends ASTNodeAbstract {
 			c.emit("sipush 1");
 		else
 			c.emit("sipush 0");
+	}
+
+	@Override
+	public void compile(MainCodeBlock c, Environment<Coordinates> e, String tl, String fl)
+	{
+		if (this.val)
+			c.emit("goto " + tl);
+		else
+			c.emit("goto " + fl);
 	}
 
 	@Override
