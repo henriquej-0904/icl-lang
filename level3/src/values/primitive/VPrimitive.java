@@ -34,6 +34,11 @@ public abstract class VPrimitive<E extends Comparable<E>> implements IValue, Com
     {
         return getValue().toString();
     }
+    
+    @Override
+    public String toString() {
+        return show();
+    }
 
     /**
      * Gets the primitive type of this primitive value.

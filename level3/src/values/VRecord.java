@@ -1,6 +1,8 @@
 package values;
 
-import environment.Environment;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
 import types.IType;
 import types.TypeRecord;
 
@@ -8,21 +10,25 @@ public class VRecord implements IValue
 {
     public final static String TYPE_NAME = TypeRecord.TYPE_NAME;
 
-    private final Environment<IValue> env;
+    private Map<String, IValue> record;
 
-    public VRecord(Environment<IValue> env)
+    public VRecord(Map<String, IValue> record)
     {
-        this.env = env;
+        this.record = record;
     }
 
     public IValue getValue(String id)
     {
-        return this.env.find(id, 0);
+        IValue value = this.record.get(id);
+        if (value == null)
+            throw new NoSuchElementException(id + " not declared.");
+
+        return value;
     }
 
     @Override
     public String show() {
-        return this.env.printLastScope();
+        return record.toString();
     }
 
     @Override

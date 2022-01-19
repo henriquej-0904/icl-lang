@@ -1,6 +1,9 @@
 package ast.record;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
@@ -8,7 +11,6 @@ import compiler.MainCodeBlock;
 import compiler.RecordCodeBlock;
 import environment.Environment;
 import environment.ITypeEnvEntry;
-import environment.IValueEnvEntry;
 import typeError.TypeErrorException;
 import types.IType;
 import types.TypeFunction;
@@ -33,15 +35,18 @@ public class ASTRecord extends ASTNodeAbstract
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        Environment<IValue> recordEnv = e.beginScope();
-
-        for (Pair<Bind,IType> field : fields){
+        Function<Pair<Bind,IType>, Map.Entry<String, IValue>> mapFunction =
+        (field) ->
+        {
             Bind bind = field.getLeft();
-            recordEnv.assoc(new IValueEnvEntry(bind.getLeft(), bind.getRight().eval(recordEnv)));
-        }
-           
+            return Map.entry(bind.getLeft(), bind.getRight().eval(e));
+        };
 
-        return new VRecord(recordEnv);
+        Map<String, IValue> recordMap = fields.stream()
+        .map(mapFunction)
+        .collect(Collectors.toUnmodifiableMap((entry) -> entry.getKey(), (entry) -> entry.getValue()));
+    
+        return new VRecord(recordMap);
     }
 
     @Override
