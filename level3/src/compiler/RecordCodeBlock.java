@@ -1,9 +1,10 @@
 package compiler;
 
 import java.io.PrintStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
-import environment.EnvironmentEntry;
 import types.IType;
 import types.TypeRecord;
 
@@ -52,11 +53,10 @@ public class RecordCodeBlock extends CodeBlock {
 
         f.printf(START, this.recordId);
 
-        for ( EnvironmentEntry<IType> entry : type.getFields()) {
-            f.printf(FIELD_FORMAT, entry.getLeft(), entry.getRight().getJvmType());
+        for ( Map.Entry<String,IType> entry : type) {
+            f.printf(FIELD_FORMAT, entry.getKey(), entry.getValue().getJvmType());
             
         }
-
         f.print(END);
 
         f.flush();

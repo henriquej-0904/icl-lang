@@ -535,14 +535,14 @@ IType parseType() :
   tok = <TYPE_String> {type = TypeString.TYPE;}|
   <TYPE_REF> {type = new TypeRef(parseType());}|
   <TYPE_RECORD> {
-    Environment<IType> env = new Environment<IType>().beginScope();
+    Map<String,IType> record = new LinkedHashMap<String,IType>();
 
   }<LPAR> tok = <Id> <DOTS> type = parseType() {
-    env.assoc(new ITypeEnvEntry(tok.image, type));
+   record.put(tok.image, type);
   }(<COMMA> tok = <Id> <DOTS> type = parseType(){
-     env.assoc(new ITypeEnvEntry(tok.image, type));
+      record.put(tok.image, type);
   })*<RPAR>{
-    type = new TypeRecord(env);
+    type = new TypeRecord(record);
   }|
   <LPAR> {List <IType> argTypes = new LinkedList<IType>();} 
   

@@ -1,18 +1,22 @@
 package types;
 
-import environment.Environment;
-import environment.EnvironmentEntry;
 
-public class TypeRecord  implements IType {
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+
+public class TypeRecord  implements IType,Iterable<Entry<String,IType>> {
 
     public static final String TYPE_NAME = "Record";
-    protected Environment<IType> fields;
-    public TypeRecord(Environment<IType> fields){
-        this.fields = fields;
+    protected Map<String,IType> fields;
+    public TypeRecord(Map<String,IType> fields){
+        this.fields = Collections.unmodifiableMap(fields);
     }
     @Override
     public String show() {
-      return TYPE_NAME + " " +  fields.printLastScope();
+      return TYPE_NAME + " " +  fields.toString();
        
     }
 
@@ -41,15 +45,16 @@ public class TypeRecord  implements IType {
         if(!(obj instanceof TypeRecord))
             return false;
         TypeRecord other = (TypeRecord)obj;
-        return this.fields.getLastScope().equals(other.fields.getLastScope());
+       return this.fields.equals(other.fields);
 
-    }
-
-    public Iterable<EnvironmentEntry<IType>> getFields(){
-        return fields.getLastScope();
     }
 
     public IType getFieldTypeFromRecord(String id){
-        return fields.find(id, 0);
+        return fields.get(id);
+    }
+    @Override
+    public Iterator<Entry<String, IType>> iterator() {
+        // TODO Auto-generated method stub
+        return fields.entrySet().iterator();
     }
 }
