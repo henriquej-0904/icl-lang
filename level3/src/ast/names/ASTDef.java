@@ -14,6 +14,7 @@ import environment.IValueEnvEntry;
 import typeError.TypeErrorException;
 import types.IType;
 import types.TypeFunction;
+import types.TypeRecord;
 import types.TypeRef;
 import util.Bind;
 import util.Pair;
@@ -74,7 +75,8 @@ public class ASTDef extends ASTNodeAbstract
 				boolean funcRecursive = (innerType instanceof TypeFunction) &&
 					((TypeFunction)innerType).isRecursive();
 				
-				if (funcRecursive) {
+				// allows to define recursive functions inside records.
+				if (funcRecursive || innerType instanceof TypeRecord) {
 					env.assoc(new ITypeEnvEntry(bind.getLeft(), declaredType));
 					actualType = bind.getRight().typecheck(env);
 					// Check if declared type equals the actual type
