@@ -158,6 +158,9 @@ public class MathExpression {
 			{
 				tmpFolder = new File("MathExpressionJfiles");
 				tmpFolder.mkdirs();
+				for (File file : tmpFolder.listFiles()) {
+					file.delete();
+				}
 			}
 			else
 			{
