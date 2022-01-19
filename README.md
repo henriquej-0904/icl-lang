@@ -4,6 +4,11 @@ Aulas práticas de Interpretação e Compilação de Linguagens.
 
 O projeto foi desenvolvido em diferentes fases, sendo que a versão mais completa é a linguagem de nível 3, disponível na pasta [level3](https://github.com/henriquej-0904/icl-aulas/tree/main/level3).
 
+Trabalho realizado por:
+
+- Henrique Campos Ferreira - 55065
+- José Dias - 55015
+
 
 ## Intruções para correr o programa
 
