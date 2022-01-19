@@ -28,7 +28,12 @@ public class VRecord implements IValue
 
     @Override
     public String show() {
-        return record.toString();
+        return "Record = "  + record.toString();
+    }
+
+    @Override
+    public String toString() {
+       return show();
     }
 
     @Override
@@ -52,6 +57,12 @@ public class VRecord implements IValue
         public String toString() {
 
             return "Record";
+        }
+
+        @Override
+        public String getSimpleName() {
+            // TODO Auto-generated method stub
+            return null;
         }
     };
     

@@ -25,4 +25,10 @@ public class TypeNull implements IType
     public String toString() {
         return "null";
     }
+
+    @Override
+    public String getSimpleName() {
+        // TODO Auto-generated method stub
+        return "null";
+    }
 }

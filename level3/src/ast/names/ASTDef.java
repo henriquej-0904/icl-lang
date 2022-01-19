@@ -40,7 +40,7 @@ public class ASTDef extends ASTNodeAbstract
 
 		for (Pair<Bind,IType> field : this.init){
 			Bind bind = field.getLeft();
-			env.assoc(new IValueEnvEntry(bind.getLeft(), bind.getRight().eval(env)));
+			env.assoc(bind.getLeft(), bind.getRight().eval(env));
 		}
 			
 
@@ -64,7 +64,7 @@ public class ASTDef extends ASTNodeAbstract
 			if(declaredType == null)
 			{
 				actualType = bind.getRight().typecheck(env);
-				env.assoc(new ITypeEnvEntry(bind.getLeft(), actualType));
+				env.assoc(bind.getLeft(), actualType);
 			}
 			else
 			{
@@ -77,7 +77,7 @@ public class ASTDef extends ASTNodeAbstract
 				
 				// allows to define recursive functions inside records.
 				if (funcRecursive || innerType instanceof TypeRecord) {
-					env.assoc(new ITypeEnvEntry(bind.getLeft(), declaredType));
+					env.assoc(bind.getLeft(), declaredType);
 					actualType = bind.getRight().typecheck(env);
 					// Check if declared type equals the actual type
 					if (!declaredType.equals(actualType))
@@ -93,7 +93,7 @@ public class ASTDef extends ASTNodeAbstract
 										"Declared type is '%s' and got '%s'.", bind.getLeft(), declaredType.show(),
 										actualType.show()));
 
-					env.assoc(new ITypeEnvEntry(bind.getLeft(), declaredType));
+					env.assoc(bind.getLeft(), declaredType);
 				}
 			}
 		}
@@ -122,7 +122,7 @@ public class ASTDef extends ASTNodeAbstract
 			frame.addFieldType(jvmType);
 
 			Coordinates varCoord = new Coordinates(frame.getFrameId(), String.format(FrameCodeBlock.FIELD_NAME_FORMAT, i));
-			newEnv.assoc(new EnvironmentEntry<>(bind.getLeft(), varCoord));
+			newEnv.assoc(bind.getLeft(), varCoord);
 			
 			c.emitCurrentFrame();
 			bind.getRight().compile(c, newEnv);

@@ -15,4 +15,6 @@ public interface IType
      */
     String getJvmType();
 
+    String getSimpleName();
+
 }

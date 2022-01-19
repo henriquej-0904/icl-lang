@@ -68,8 +68,13 @@ public class TypeRef implements IType
     }
 
     @Override
-    public String toString(){
+    public String getSimpleName(){
        return "ref_of_" + valueType;
+    }
+
+    @Override
+    public String toString(){
+        return show();
     }
 
     @Override

@@ -43,6 +43,13 @@ public class TypeFunction implements IType
     @Override
     public String toString() {
 
+        return show();
+    }
+
+
+    @Override
+    public String getSimpleName() {
+        // TODO Auto-generated method stub
         return "closure";
     }
 

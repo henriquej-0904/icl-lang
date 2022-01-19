@@ -52,6 +52,11 @@ public class VFunction implements IValue {
         return builder.toString();
     }
 
+    @Override
+    public String toString() {
+       return show();
+    }
+
     public List<FunctionArg> getArgs() {
         return args;
     }
@@ -85,6 +90,12 @@ public class VFunction implements IValue {
         public String toString() {
 
             return "Function closure";
+        }
+
+        @Override
+        public String getSimpleName() {
+            // TODO Auto-generated method stub
+            return null;
         }
     };
 

@@ -46,7 +46,7 @@ public class ASTFun extends ASTNodeAbstract
        int i = 0;
        for (FunctionArg functionArg : args) {
         Coordinates varCoord = new Coordinates(frameId, String.format(FrameCodeBlock.FIELD_NAME_FORMAT, i));
-           newEnv.assoc(new EnvironmentEntry<Coordinates>(functionArg.id, varCoord));
+           newEnv.assoc(functionArg.id, varCoord);
            i++;
        }
        body.compile(c, newEnv);
@@ -64,7 +64,7 @@ public class ASTFun extends ASTNodeAbstract
       Environment<IType> env = e.beginScope();
       List<IType> types = new ArrayList<>(args.size());
       for (FunctionArg arg : args) {
-          env.assoc(new ITypeEnvEntry(arg.id, arg.type));
+          env.assoc(arg.id, arg.type);
           types.add(arg.type);
       }
       IType funReturnType = body.typecheck(env);

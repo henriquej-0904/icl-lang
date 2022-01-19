@@ -42,4 +42,9 @@ public class VCell implements IValue
     public IType getType() {
         return new TypeRef(this.value.getType());
     }
+
+    @Override
+    public String toString() {
+       return show();
+    }
 }

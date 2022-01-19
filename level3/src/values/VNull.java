@@ -24,6 +24,10 @@ public class VNull implements IValue
     public IType getType() {
         return TypeNull.TYPE;
     }
+    @Override
+    public String toString() {
+       return show();
+    }
 
     
 }

@@ -51,7 +51,7 @@ public class ASTApply extends ASTNodeAbstract
                 fun.getArgs().size() +" and got " + args.size() + " arguments.");
 
         while(it.hasNext())
-            funEnv.assoc(new IValueEnvEntry(names.next().id, it.next().eval(e)));
+            funEnv.assoc(names.next().id, it.next().eval(e));
         
         toReturn = fun.getBody().eval(funEnv);
         funEnv.endScope();

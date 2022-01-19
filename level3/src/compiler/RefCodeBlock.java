@@ -36,7 +36,7 @@ public class RefCodeBlock extends CodeBlock {
      */
     public RefCodeBlock(IType valueType)
     {
-        super(String.format(CLASS_NAME, valueType));
+        super(String.format(CLASS_NAME, valueType.getSimpleName()));
         valueFieldType = valueType.getJvmType();
     }
  

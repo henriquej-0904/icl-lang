@@ -1,6 +1,7 @@
 package environment;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import util.Utils;
@@ -9,127 +10,92 @@ public class Environment<E> implements Cloneable {
 
 	// TODO: Add reference to previous environment instead of calling clone: private Environment<E> previous;
 
-	private Stack<List<EnvironmentEntry<E>>> scopeStack;
+	private Map<String,E> scope;
+	private Environment<E> previous;
+	
 
-	public Environment() {
-		scopeStack = new Stack<List<EnvironmentEntry<E>>>();
+	public Environment (){}
+	private Environment(Environment<E> previous) {
+		this.previous = previous;
+		scope = new HashMap<>();
+		
 	}
 
-	private Environment(Stack<List<EnvironmentEntry<E>>> scopeStack) {
-		this.scopeStack = scopeStack;
-	}
-
-	@SuppressWarnings("unchecked")
+	
 	public Environment<E> beginScope() {
-		Environment<E> e = (Environment<E>) this.clone();
-		e.scopeStack.push(new LinkedList<>());
-		return e;
+		
+		return new Environment<>(this);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Environment<E> endScope() {
-		Environment<E> e = (Environment<E>) this.clone();
-		e.scopeStack.pop();
-		return e;
+		return previous;
 	}
 
-	public void assoc(EnvironmentEntry<E> entry) {
-		List<EnvironmentEntry<E>> scope = scopeStack.peek();
-		for (EnvironmentEntry<E> pair : scope) {
-			if (pair.getLeft().equals(entry.getLeft()))
-				throw new IllegalArgumentException();
-		}
+	public void assoc(String id, E value) {
+	assert scope != null;
 
-		scope.add(entry);
+	E aux =	scope.putIfAbsent(id, value);
+	if(aux != null)
+		throw new IllegalArgumentException("Bind already defined for key " + id);
+		
 	}
+	
 
 	public E find(String id) {
-		ListIterator<List<EnvironmentEntry<E>>> ite = scopeStack.listIterator(scopeStack.size());
-		boolean found = false;
-		EnvironmentEntry<E> pair = null;
-		while (ite.hasPrevious() && !found) {
-			List<EnvironmentEntry<E>> scope = ite.previous();
-			Iterator<EnvironmentEntry<E>> it = scope.iterator();
-			while (it.hasNext() && !found) {
-				pair = it.next();
-				if (pair.getLeft().equals(id))
-					found = true;
-			}
-		}
 
-		if (found)
-			return pair.getRight();
-		else
+		E value = scope.get(id);
+		if( value != null)
+			return value;
+		if(previous == null)
 			throw new NoSuchElementException(id + " not declared.");
+		return previous.find(id);
 	}
 
 	public E find(String id, int depth) {
 
-		if (depth >= this.scopeStack.size())
-			throw new NoSuchElementException();
-
-		ListIterator<List<EnvironmentEntry<E>>> ite = scopeStack.listIterator(scopeStack.size());
-		boolean found = false;
-		EnvironmentEntry<E> pair = null;
-		int currDepth = 0;
-
-		while (ite.hasPrevious() && !found && depth < this.scopeStack.size() - currDepth){
-			List<EnvironmentEntry<E>> scope = ite.previous();
-			Iterator<EnvironmentEntry<E>> it = scope.iterator();
-			while (it.hasNext() && !found) {
-				pair = it.next();
-				if (pair.getLeft().equals(id))
-				{
-					if (depth == 0)
-						found = true;
-					else
-						depth--;
-				}	
-			}
-			currDepth++;
-		}
-
-		if (found)
-			return pair.getRight();
-		else
-			throw new NoSuchElementException(id + " not declared.");
+			E value = scope.get(id);
+			if( value != null)
+				return value;
+			if(previous == null || depth == 0)
+				throw new NoSuchElementException(id + " not declared.");
+			return previous.find(id, depth-1);
 	}
 
 	public int getDepth()
 	{
-		return scopeStack.size();
+		if (previous == null)
+			return 0;
+		else
+			return previous.getDepth() + 1;
 	}
 
-	public Iterable<EnvironmentEntry<E>> getLastScope(){
-		return scopeStack.peek();
+	public Iterable<Entry<String, E>> getLastScope(){
+		return scope.entrySet();
 	}
-
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public Object clone() {
-		return new Environment<>((Stack<List<EnvironmentEntry<E>>>) scopeStack.clone());
-	}
-
-	private int scopeId;
 
 	public StringBuilder toString(StringBuilder builder)
 	{
-		scopeId = 0;
 
-		Utils.toStringList(this.scopeStack, 
-			(Consumer<List<EnvironmentEntry<E>>>) ((scope) -> 
-				{
-					builder.append("\nScope " + scopeId + " = ");
+		 printScopes(builder);
+		 return builder.append("\n");
+			
+		
+				
+	}
+
+	private int printScopes(StringBuilder builder){
+		if(previous == null)
+			return 0;
+		int id = previous.printScopes(builder) + 1;
+
+		builder.append("\nScope " + id + " = ");
 					builder.append(scope.toString());
-					scopeId++;
-				})	, null, Utils.DEFAULT_DELIMITERS, builder);
-		return builder;
+		return id;
 	}
 
 	public String printLastScope()
 	{
-		return this.scopeStack.peek().toString();
+		return this.scope.toString();
 	}
 
 }

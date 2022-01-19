@@ -29,8 +29,15 @@ public class TypeRecord  implements IType,Iterable<Entry<String,IType>> {
     @Override
 
     public String toString(){
+        return  show();
+    }
+
+    @Override
+    public String getSimpleName() {
+        // TODO Auto-generated method stub
         return  TYPE_NAME;
     }
+    
 
     @Override
     public int hashCode() {
@@ -57,4 +64,5 @@ public class TypeRecord  implements IType,Iterable<Entry<String,IType>> {
         // TODO Auto-generated method stub
         return fields.entrySet().iterator();
     }
+   
 }

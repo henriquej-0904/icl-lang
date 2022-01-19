@@ -35,4 +35,9 @@ public abstract class TypePrimitive implements IType
     public String toString(){
         return show();
     }
+
+    @Override
+    public String getSimpleName(){
+        return show();
+    }
 }

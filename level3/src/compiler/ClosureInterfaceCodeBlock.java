@@ -48,8 +48,8 @@ public class ClosureInterfaceCodeBlock extends CodeBlock
 
     public static String generateInterfaceName(TypeFunction typeFunction){
         StringBuilder toReturn = new StringBuilder( "closure_interface_");
-       return Utils.toStringList(typeFunction.getArgs(), (Function<IType,String>)((arg) -> arg.toString())
-        , "_", null, toReturn).append("_" + typeFunction.getReturnType()).toString();
+       return Utils.toStringList(typeFunction.getArgs(), (Function<IType,String>)((arg) -> arg.getSimpleName())
+        , "_", null, toReturn).append("_" + typeFunction.getReturnType().getSimpleName()).toString();
     }
 
     private String generateArgsList(){
