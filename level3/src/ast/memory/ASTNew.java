@@ -8,6 +8,7 @@ import compiler.RefCodeBlock;
 import environment.Environment;
 import types.IType;
 import types.TypeRef;
+import util.Utils;
 import values.IValue;
 import values.VCell;
 
@@ -37,12 +38,12 @@ public class ASTNew extends ASTNodeAbstract
 
     @Override
     public IValue eval(Environment<IValue> e) {
-        return new VCell(this.val.eval(e));
+        return new VCell(Utils.requireNonNull(this.val.eval(e)));
     }
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        type = new TypeRef(this.val.typecheck(e));
+        type = new TypeRef(Utils.requireNonNull(this.val.typecheck(e)));
         return type;
     }
 

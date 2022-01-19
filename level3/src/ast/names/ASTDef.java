@@ -40,7 +40,8 @@ public class ASTDef extends ASTNodeAbstract
 
 		for (Pair<Bind,IType> field : this.init){
 			Bind bind = field.getLeft();
-			env.assoc(bind.getLeft(), bind.getRight().eval(env));
+			
+			env.assoc(bind.getLeft(), Utils.requireNonNull(bind.getRight().eval(env)));
 		}
 			
 
@@ -64,6 +65,7 @@ public class ASTDef extends ASTNodeAbstract
 			if(declaredType == null)
 			{
 				actualType = bind.getRight().typecheck(env);
+				Utils.requireNonNull(actualType);
 				env.assoc(bind.getLeft(), actualType);
 			}
 			else
@@ -79,6 +81,7 @@ public class ASTDef extends ASTNodeAbstract
 				if (funcRecursive || innerType instanceof TypeRecord) {
 					env.assoc(bind.getLeft(), declaredType);
 					actualType = bind.getRight().typecheck(env);
+					Utils.requireNonNull(actualType);
 					// Check if declared type equals the actual type
 					if (!declaredType.equals(actualType))
 						throw new TypeErrorException(
@@ -87,6 +90,7 @@ public class ASTDef extends ASTNodeAbstract
 										actualType.show()));
 				} else {
 					actualType = bind.getRight().typecheck(env);
+					Utils.requireNonNull(actualType);
 					if (!declaredType.equals(actualType))
 						throw new TypeErrorException(
 								String.format("Illegal expression type in def for bind with id '%s'. " +

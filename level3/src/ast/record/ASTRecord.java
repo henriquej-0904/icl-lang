@@ -16,6 +16,7 @@ import types.TypeRecord;
 
 import util.Bind;
 import util.Pair;
+import util.Utils;
 import values.IValue;
 import values.VRecord;
 
@@ -37,7 +38,7 @@ public class ASTRecord extends ASTNodeAbstract
         Map<String, IValue> recordMap = fields.stream()
         .collect(Collectors.toMap(
             (field) -> field.getLeft().getLeft(),
-            (field) -> field.getLeft().getRight().eval(e),
+            (field) -> Utils.requireNonNull(field.getLeft().getRight().eval(e)),
             (field1,field2) -> field1,
             ()-> {
                 return new LinkedHashMap<>(fields.size());
@@ -73,20 +74,16 @@ public class ASTRecord extends ASTNodeAbstract
             (field) -> {
                 IType declaredType = field.getRight();
                 Bind bind = field.getLeft();
-                IType actualType  = null;
-                if(declaredType == null){
-                    actualType = bind.getRight().typecheck(e);
-                }
-                else
-                {
-                actualType = bind.getRight().typecheck(e);
+                IType actualType  = Utils.requireNonNull(bind.getRight().typecheck(e));
+                if(declaredType == null)
+                   return actualType;
                 // Check if declared type equals the actual type
                 if (!declaredType.equals(actualType))
                     throw new TypeErrorException(
                         String.format("Illegal expression type in record def for bind with id '%s'. " +
                         "Declared type is '%s' and got '%s'.", bind.getLeft(), declaredType.show(),
                         actualType.show()));
-                } 
+                
                 return actualType;           
             },
             (field1,field2) -> field1,

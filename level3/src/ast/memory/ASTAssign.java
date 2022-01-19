@@ -47,6 +47,7 @@ public class ASTAssign extends ASTNodeAbstract
     {
         VCell cell = Utils.checkValueForOperation(this.left.eval(e), VCell.class, OPERATOR, ERROR_MSG);
         IValue value = this.right.eval(e);
+        Utils.requireNonNull(value.getType());
         cell.setValue(value);
         return value;
     }
@@ -55,7 +56,7 @@ public class ASTAssign extends ASTNodeAbstract
     public IType typecheck(Environment<IType> e) {
         TypeRef ref = Utils.checkTypeForOperation(this.left.typecheck(e), TypeRef.class,OPERATOR, ERROR_MSG);
         IType valueType = this.right.typecheck(e);
-
+        Utils.requireNonNull(valueType);
         // check if the type of the value in this reference equals the valueType
         boolean checked = ref.getValueType().equals(valueType);
 

@@ -43,7 +43,7 @@ public class ASTDereference extends ASTNodeAbstract
 
     @Override
     public IType typecheck(Environment<IType> e) {
-         type = Utils.checkTypeForOperation(this.reference.typecheck(e), TypeRef.class, OPERATOR);
+         type = Utils.checkTypeForOperation(this.reference.typecheck(e), TypeRef.class, OPERATOR).getValueType();
          return type;
     }
 
