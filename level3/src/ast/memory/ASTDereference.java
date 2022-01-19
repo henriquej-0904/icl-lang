@@ -1,5 +1,7 @@
 package ast.memory;
 
+import javax.management.openmbean.OpenDataException;
+
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
@@ -41,18 +43,8 @@ public class ASTDereference extends ASTNodeAbstract
 
     @Override
     public IType typecheck(Environment<IType> e) {
-         type = checkType(this.reference.typecheck(e)).getValueType();
+         type = Utils.checkTypeForOperation(this.reference.typecheck(e), TypeRef.class, OPERATOR);
          return type;
-    }
-
-    protected TypeRef checkType(IType type)
-    {
-        boolean checked =  type instanceof TypeRef;
-
-        if (!checked)
-            throw new IllegalOperatorException(OPERATOR, TypeRef.TYPE_NAME, type.show());
-
-        return (TypeRef)type;
     }
 
     @Override

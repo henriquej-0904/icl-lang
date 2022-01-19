@@ -116,18 +116,11 @@ public class ASTLogicalBinaryOperation extends ASTNodeAbstract implements ASTNod
     @Override
     public IType typecheck(Environment<IType> e) {
         
-       checkType(this.left.typecheck(e));
-        return checkType(this.right.typecheck(e));
+       Utils.checkTypeForOperation(this.left.typecheck(e), TypeBool.class, operator.getOperator());
+        return Utils.checkTypeForOperation(this.right.typecheck(e), TypeBool.class, operator.getOperator());
     }
 
-    protected IType checkType(IType type)
-    {
-        boolean checked = type instanceof TypeBool;
-        if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator(), TypeBool.TYPE.show(), type.show());
-
-        return type;
-    }
+  
 
     @Override
     public StringBuilder toString(StringBuilder builder) {

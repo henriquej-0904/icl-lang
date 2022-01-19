@@ -2,6 +2,7 @@ package types.primitives;
 
 public class TypeInt extends TypePrimitive implements TypeJavaPrimitive
 {
+    public static final String TYPE_NAME = "Integer";
     private static final String JVM_TYPE = "I";
 
     /**

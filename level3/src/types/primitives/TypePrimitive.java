@@ -7,6 +7,7 @@ import types.IType;
  */
 public abstract class TypePrimitive implements IType
 {
+    public static final String TYPE_NAME = "Primitive";
     protected Class<?> classType;
 
     /**

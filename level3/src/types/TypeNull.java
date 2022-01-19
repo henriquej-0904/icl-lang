@@ -6,6 +6,7 @@ package types;
  */
 public class TypeNull implements IType
 {
+    public static final String TYPE_NAME = "Null";
     public static final TypeNull TYPE = new TypeNull();
 
     private TypeNull() {}

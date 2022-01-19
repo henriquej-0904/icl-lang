@@ -277,8 +277,8 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract implements AST
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        IType type1 = checkType(this.left.typecheck(e));
-        IType type2 = checkType(this.right.typecheck(e));
+        IType type1 = Utils.checkTypeForOperation(this.left.typecheck(e), TypePrimitive.class, operator.getOperator());
+        IType type2 =Utils.checkTypeForOperation(this.right.typecheck(e), TypePrimitive.class, operator.getOperator());
         if(!type1.equals(type2))
             throw new IllegalOperatorException("The type of the 2 expressions must be equal.",
             this.operator.getOperator(), type1.show(), type2.show());
@@ -286,14 +286,7 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract implements AST
         return this.type; 
     }
     
-    protected IType checkType(IType type)
-    {
-        boolean checked =  type instanceof TypePrimitive;
-        if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator(), "Primitive", type.show());
 
-        return type;
-    }
 
     @Override
     public StringBuilder toString(StringBuilder builder) {

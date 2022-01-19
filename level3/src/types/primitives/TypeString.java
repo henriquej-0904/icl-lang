@@ -2,6 +2,7 @@ package types.primitives;
 
 public class TypeString extends TypePrimitive
 {
+    public static final String TYPE_NAME = "String";
     private static final String JVM_TYPE = "Ljava/lang/String;";
 
     public static final TypeString TYPE = new TypeString();

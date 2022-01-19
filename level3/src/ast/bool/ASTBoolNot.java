@@ -56,29 +56,8 @@ public class ASTBoolNot extends ASTNodeAbstract implements ASTNodeShortCircuit
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        return checkType(this.node.typecheck(e));
+        return Utils.checkTypeForOperation(this.node.typecheck(e), TypeBool.class, OPERATOR);
         
-    }
-
-    @Override
-    protected IValue check(IValue value) {
-        return super.check(value);
-    }
-
-    @Override
-    protected IType check(IType type) {
-        // TODO Auto-generated method stub
-        return super.check(type);
-    }
-
-    protected IType checkType(IType type)
-    {
-        boolean checked =  type instanceof TypeBool;
-        if (!checked){
-            throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), type.show());    
-        }
-            
-        return type;
     }
 
     @Override

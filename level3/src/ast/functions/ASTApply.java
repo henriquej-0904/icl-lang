@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
+import javax.management.openmbean.OpenDataException;
+
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.ClosureInterfaceCodeBlock;
@@ -75,7 +77,7 @@ public class ASTApply extends ASTNodeAbstract
     @Override
     public IType typecheck(Environment<IType> e)
     {
-        TypeFunction typeFunction = typeCheckFunction(function.typecheck(e));
+        TypeFunction typeFunction = Utils.checkTypeForOperation(this.function.typecheck(e), TypeFunction.class, OPERATOR,ERROR_MSG);
         Iterator<IType>  itFunTypes = typeFunction.getArgs().iterator();
         Iterator<ASTNode>  it = args.iterator();
 
@@ -96,15 +98,6 @@ public class ASTApply extends ASTNodeAbstract
         return this.type;
     }
 
-    protected TypeFunction typeCheckFunction(IType type)
-    {
-        boolean checked = type instanceof TypeFunction;
-   
-        if (!checked)
-            throw new IllegalOperatorException("The apply operator can only be used for function calls.",
-                "Function apply - ()", TypeFunction.TYPE_NAME, type.show());
-        return (TypeFunction)type;
-    }
 
     @Override
     public StringBuilder toString(StringBuilder builder) {

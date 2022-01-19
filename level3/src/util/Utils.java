@@ -158,6 +158,19 @@ public class Utils
         return check.cast(value);
     }
 
+
+    public static <T extends IType> T checkType(IType type, Class<T> check,
+        Function<Void, TypeErrorException> exception)
+    {
+        requireNonNull(type);
+        boolean checked = check.isInstance(type);
+
+        if (!checked)
+            throw exception.apply(null);
+
+        return check.cast(type);
+    }
+
     public static <T extends IValue> T checkValueForOperation(IValue value, Class<T> check,
         String operator)
     {
@@ -170,6 +183,20 @@ public class Utils
 
         return checkValue(value, check,
             (vVoid) -> new IllegalOperatorException(operator, expectedType, value.getType().show()));
+    }
+
+    public static <T extends IType> T checkTypeForOperation(IType type, Class<T> check,
+        String operator)
+    {
+        String expectedType;
+        try {
+            expectedType = (String)check.getField("TYPE_NAME").get(null);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+
+        return checkType(type, check,
+            (vVoid) -> new IllegalOperatorException(operator, expectedType, type.show()));
     }
 
     public static <T extends IValue> T checkValueForOperation(IValue value, Class<T> check,
@@ -185,4 +212,18 @@ public class Utils
         return checkValue(value, check,
             (vVoid) -> new IllegalOperatorException(message, operator, expectedType, value.getType().show()));
     }
+
+    public static <T extends IType> T checkTypeForOperation(IType type, Class<T> check,
+    String operator, String message)
+{
+    String expectedType;
+    try {
+        expectedType = (String)check.getField("TYPE_NAME").get(null);
+    } catch (Exception e) {
+        throw new Error(e);
+    }
+
+    return checkType(type, check,
+        (vVoid) -> new IllegalOperatorException(message, operator, expectedType, type.show()));
+}
 }

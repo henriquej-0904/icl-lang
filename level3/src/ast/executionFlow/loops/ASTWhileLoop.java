@@ -8,9 +8,11 @@ import compiler.MainCodeBlock;
 import environment.Environment;
 import typeError.IllegalOperatorException;
 import types.IType;
+import types.TypeNull;
 import types.primitives.TypeBool;
 import util.Utils;
 import values.IValue;
+import values.VNull;
 import values.primitive.VBool;
 
 public class ASTWhileLoop extends ASTNodeAbstract
@@ -87,26 +89,17 @@ public class ASTWhileLoop extends ASTNodeAbstract
         }
 
         // while always returns false
-        return new VBool(false);
+        return  VNull.VALUE;
     }
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        checkTypeWhile(this.whileConditionNode.typecheck(e));
+        Utils.checkTypeForOperation(this.whileConditionNode.typecheck(e), TypeBool.class,OPERATOR);
         this.bodyNode.typecheck(e);
       
-        return TypeBool.TYPE;
+        return TypeNull.TYPE;
     }
 
-    protected TypeBool checkTypeWhile(IType type)
-    {
-        boolean checked =  type instanceof TypeBool;
-
-        if (!checked)
-            throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), type.show());
-
-        return (TypeBool)type;
-    }
 
     @Override
     public StringBuilder toString(StringBuilder builder) {

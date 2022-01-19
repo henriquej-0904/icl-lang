@@ -9,6 +9,7 @@ import environment.Environment;
 import typeError.IllegalOperatorException;
 import typeError.TypeErrorException;
 import types.IType;
+import types.TypeNull;
 import types.primitives.TypeBool;
 import util.Utils;
 import values.IValue;
@@ -110,7 +111,7 @@ public class ASTIfThenElse extends ASTNodeAbstract
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        checkTypeIf(this.ifNode.typecheck(e));
+        Utils.checkTypeForOperation(this.ifNode.typecheck(e), TypeBool.class, OPERATOR);
 
         IType thenType = this.thenNode.typecheck(e);
 
@@ -135,20 +136,12 @@ public class ASTIfThenElse extends ASTNodeAbstract
              */
 
             // TODO: type =
-            type = TypeBool.TYPE;
+            type = TypeNull.TYPE;
         }
 
         return thenType;
     }
 
-    protected TypeBool checkTypeIf(IType type) {
-        boolean checked = type instanceof TypeBool;
-
-        if (!checked)
-            throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), type.show());
-
-        return (TypeBool) type;
-    }
 
     @Override
     public StringBuilder toString(StringBuilder builder) {

@@ -17,7 +17,8 @@ import values.IValue;
 
 public class ASTPrintln extends ASTNodeAbstract
 {
-    public static final String OPERATOR = "println";
+
+    private static final String OPERATOR = "println - ()";
 
     protected ASTNode node;
 
@@ -55,9 +56,7 @@ public class ASTPrintln extends ASTNodeAbstract
         this.type = this.node.typecheck(e);
 
         // Check if the type can be printed
-        if (!(type instanceof TypePrimitive))
-            throw new TypeErrorException(String.format("Illegal argument type to println.\n" + 
-            "Only primitive types are allowed and got type '%s'.", this.type.show()));
+        Utils.checkTypeForOperation(type, TypePrimitive.class,OPERATOR);
 
         if (this.type instanceof TypeInt)
             this.compilerPrintlnFunc = ASTPrintln::printInt;

@@ -48,7 +48,7 @@ public class ASTGetRecordValue extends ASTNodeAbstract
 
     @Override
     public IType typecheck(Environment<IType> e) {
-     TypeRecord type = checkTypeRecord(record.typecheck(e));
+     TypeRecord type = Utils.checkTypeForOperation(this.record.typecheck(e), TypeRecord.class, OPERATOR);
         return this.type = type.getFieldTypeFromRecord(id);
 
     }
@@ -59,14 +59,5 @@ public class ASTGetRecordValue extends ASTNodeAbstract
         return null;
     }
 
-    protected TypeRecord checkTypeRecord(IType type)
-    {
-        boolean checked = type instanceof TypeRecord;
-
-        if (!checked)
-            throw new IllegalOperatorException(OPERATOR, TypeRecord.TYPE_NAME,type.show());
-
-        return (TypeRecord)type;
-    }
     
 }

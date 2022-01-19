@@ -53,7 +53,7 @@ public class ASTAssign extends ASTNodeAbstract
 
     @Override
     public IType typecheck(Environment<IType> e) {
-        TypeRef ref = checkTypeRef(this.left.typecheck(e));
+        TypeRef ref = Utils.checkTypeForOperation(this.left.typecheck(e), TypeRef.class,OPERATOR, ERROR_MSG);
         IType valueType = this.right.typecheck(e);
 
         // check if the type of the value in this reference equals the valueType
@@ -66,17 +66,6 @@ public class ASTAssign extends ASTNodeAbstract
                     
         this.type = valueType;
         return valueType;
-    }
-
-    protected TypeRef checkTypeRef(IType type)
-    {
-        boolean checked =  type instanceof TypeRef;
-
-        if (!checked)
-            throw new IllegalOperatorException("Cannot assign a value to a non reference type.", OPERATOR,
-                TypeRef.TYPE_NAME, type.show());
-
-        return (TypeRef)type;
     }
 
     @Override
