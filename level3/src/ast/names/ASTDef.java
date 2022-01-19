@@ -8,9 +8,6 @@ import compiler.Coordinates;
 import compiler.FrameCodeBlock;
 import compiler.MainCodeBlock;
 import environment.Environment;
-import environment.EnvironmentEntry;
-import environment.ITypeEnvEntry;
-import environment.IValueEnvEntry;
 import typeError.TypeErrorException;
 import types.IType;
 import types.TypeFunction;
@@ -30,8 +27,6 @@ public class ASTDef extends ASTNodeAbstract
 		this.init = init;
 		this.body = body;
 	}
-
-	
 
 	@Override
 	public IValue eval(Environment<IValue> e)
@@ -155,5 +150,4 @@ public class ASTDef extends ASTNodeAbstract
 
 		return builder;
 	}
-
 }

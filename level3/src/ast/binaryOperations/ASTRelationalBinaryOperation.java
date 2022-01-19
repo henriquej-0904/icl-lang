@@ -285,8 +285,6 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract implements AST
             
         return this.type; 
     }
-    
-
 
     @Override
     public StringBuilder toString(StringBuilder builder) {

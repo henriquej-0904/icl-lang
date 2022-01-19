@@ -31,8 +31,6 @@ public class ASTId extends ASTNodeAbstract
         getFieldFromFrame(c, varFrameId, varId);
     }
 
-    
-
     @Override
     public IType typecheck(Environment<IType> e) {
         this.type = e.find(id);
@@ -60,5 +58,4 @@ public class ASTId extends ASTNodeAbstract
     public StringBuilder toString(StringBuilder builder) {
         return builder.append(this.id);
     }
-   
 }

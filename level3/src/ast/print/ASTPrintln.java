@@ -7,7 +7,6 @@ import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
-import typeError.TypeErrorException;
 import types.IType;
 import types.primitives.TypeBool;
 import types.primitives.TypeInt;
@@ -17,7 +16,6 @@ import values.IValue;
 
 public class ASTPrintln extends ASTNodeAbstract
 {
-
     private static final String OPERATOR = "println - ()";
 
     protected ASTNode node;
@@ -95,5 +93,4 @@ public class ASTPrintln extends ASTNodeAbstract
     private static void printString(MainCodeBlock c){
         c.emit("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
     }
-    
 }

@@ -6,7 +6,6 @@ import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import compiler.RecordCodeBlock;
 import environment.Environment;
-import typeError.IllegalOperatorException;
 import types.IType;
 import types.TypeRecord;
 import util.Utils;
@@ -57,7 +56,5 @@ public class ASTGetRecordValue extends ASTNodeAbstract
     public StringBuilder toString(StringBuilder builder) {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    
+    }    
 }

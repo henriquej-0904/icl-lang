@@ -10,8 +10,6 @@ import compiler.Coordinates;
 import compiler.FrameCodeBlock;
 import compiler.MainCodeBlock;
 import environment.Environment;
-import environment.EnvironmentEntry;
-import environment.ITypeEnvEntry;
 import types.IType;
 import types.TypeFunction;
 import util.FunctionArg;
@@ -72,9 +70,6 @@ public class ASTFun extends ASTNodeAbstract
     return type;
     }
 
-   
-    
-
     @Override
     public StringBuilder toString(StringBuilder builder) {
         builder.append("Function ");
@@ -84,9 +79,5 @@ public class ASTFun extends ASTNodeAbstract
         builder.append("\nend\n");
 
         return builder;
-
     }
-
-    
-    
 }

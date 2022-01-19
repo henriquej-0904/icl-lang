@@ -6,7 +6,6 @@ import ast.ASTNodeShortCircuit;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
-import typeError.IllegalOperatorException;
 import typeError.TypeErrorException;
 import types.IType;
 import types.TypeNull;
@@ -134,14 +133,11 @@ public class ASTIfThenElse extends ASTNodeAbstract
              * part of the program.
              * This construction can only be used to modify state.
              */
-
-            // TODO: type =
             type = TypeNull.TYPE;
         }
 
         return thenType;
     }
-
 
     @Override
     public StringBuilder toString(StringBuilder builder) {
@@ -155,7 +151,4 @@ public class ASTIfThenElse extends ASTNodeAbstract
 
         return builder;
     }
-
-    
-
 }

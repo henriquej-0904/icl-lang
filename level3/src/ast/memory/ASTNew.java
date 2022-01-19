@@ -55,5 +55,4 @@ public class ASTNew extends ASTNodeAbstract
 
         return builder;
     }
-    
 }

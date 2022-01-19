@@ -6,7 +6,6 @@ import ast.ASTNodeShortCircuit;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
-import typeError.IllegalOperatorException;
 import types.IType;
 import types.TypeNull;
 import types.primitives.TypeBool;
@@ -100,7 +99,6 @@ public class ASTWhileLoop extends ASTNodeAbstract
         return TypeNull.TYPE;
     }
 
-
     @Override
     public StringBuilder toString(StringBuilder builder) {
         builder.append("while (");
@@ -111,6 +109,4 @@ public class ASTWhileLoop extends ASTNodeAbstract
 
         return builder;
     }
-
-    
 }

@@ -13,7 +13,6 @@ public class ASTString extends ASTNodeAbstract
 {
     private String value;
 
-
     /**
      * @param value
      */
@@ -30,7 +29,6 @@ public class ASTString extends ASTNodeAbstract
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
         c.emit(String.format("ldc \"%s\"", value));
-        
     }
 
     @Override
@@ -42,5 +40,4 @@ public class ASTString extends ASTNodeAbstract
     public StringBuilder toString(StringBuilder builder) {
         return builder.append(this.value);
     }
-    
 }

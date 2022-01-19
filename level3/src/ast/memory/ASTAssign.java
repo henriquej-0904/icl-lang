@@ -6,7 +6,6 @@ import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import compiler.RefCodeBlock;
 import environment.Environment;
-import typeError.IllegalOperatorException;
 import typeError.TypeErrorException;
 import types.IType;
 import types.TypeRef;
@@ -77,6 +76,4 @@ public class ASTAssign extends ASTNodeAbstract
 
         return builder;
     }
-
-    
 }

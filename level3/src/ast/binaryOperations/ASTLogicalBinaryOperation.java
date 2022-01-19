@@ -7,7 +7,6 @@ import ast.binaryOperations.operators.LogicalBinaryOperator;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
-import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitives.TypeBool;
 import util.Utils;
@@ -119,8 +118,6 @@ public class ASTLogicalBinaryOperation extends ASTNodeAbstract implements ASTNod
        Utils.checkTypeForOperation(this.left.typecheck(e), TypeBool.class, operator.getOperator());
         return Utils.checkTypeForOperation(this.right.typecheck(e), TypeBool.class, operator.getOperator());
     }
-
-  
 
     @Override
     public StringBuilder toString(StringBuilder builder) {

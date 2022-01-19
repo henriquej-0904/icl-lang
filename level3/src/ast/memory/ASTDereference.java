@@ -1,14 +1,11 @@
 package ast.memory;
 
-import javax.management.openmbean.OpenDataException;
-
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import compiler.RefCodeBlock;
 import environment.Environment;
-import typeError.IllegalOperatorException;
 import types.IType;
 import types.TypeRef;
 import util.Utils;
@@ -53,6 +50,4 @@ public class ASTDereference extends ASTNodeAbstract
         this.reference.toString(builder);
         return builder;
     }
-
-    
 }

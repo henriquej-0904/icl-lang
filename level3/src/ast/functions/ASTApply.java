@@ -4,16 +4,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
-import javax.management.openmbean.OpenDataException;
-
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.ClosureInterfaceCodeBlock;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
-import environment.IValueEnvEntry;
-import typeError.IllegalOperatorException;
 import typeError.TypeErrorException;
 import types.IType;
 import types.TypeFunction;
@@ -98,7 +94,6 @@ public class ASTApply extends ASTNodeAbstract
         return this.type;
     }
 
-
     @Override
     public StringBuilder toString(StringBuilder builder) {
         this.function.toString(builder);
@@ -107,6 +102,4 @@ public class ASTApply extends ASTNodeAbstract
 
         return builder;
     }
-
-    
 }

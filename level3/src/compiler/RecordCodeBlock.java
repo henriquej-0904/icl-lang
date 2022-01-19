@@ -1,16 +1,14 @@
 package compiler;
 
 import java.io.PrintStream;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 
 import types.IType;
 import types.TypeRecord;
 
-public class RecordCodeBlock extends CodeBlock {
-   
-
+public class RecordCodeBlock extends CodeBlock
+{
     private static final String CLASS_NAME = "record%d";
 
     private static final String START =

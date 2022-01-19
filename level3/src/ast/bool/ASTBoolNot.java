@@ -6,7 +6,6 @@ import ast.ASTNodeShortCircuit;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
-import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitives.TypeBool;
 import util.Utils;
