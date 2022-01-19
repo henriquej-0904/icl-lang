@@ -9,6 +9,7 @@ import environment.Environment;
 import typeError.IllegalOperatorException;
 import types.IType;
 import types.TypeRef;
+import util.Utils;
 import values.IValue;
 import values.VCell;
 
@@ -35,23 +36,13 @@ public class ASTDereference extends ASTNodeAbstract
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        return checkRuntimeType(this.reference.eval(e)).getValue();
+        return Utils.checkValueForOperation(this.reference.eval(e), VCell.class, OPERATOR).getValue();
     }
 
     @Override
     public IType typecheck(Environment<IType> e) {
          type = checkType(this.reference.typecheck(e)).getValueType();
          return type;
-    }
-
-    protected VCell checkRuntimeType(IValue value)
-    {
-        boolean checked = value instanceof VCell;
-
-        if (!checked)
-            throw new IllegalOperatorException(OPERATOR, TypeRef.TYPE_NAME, value.getType().show());
-
-        return (VCell)value;
     }
 
     protected TypeRef checkType(IType type)

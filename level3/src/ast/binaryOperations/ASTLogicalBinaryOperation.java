@@ -10,6 +10,7 @@ import environment.Environment;
 import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitives.TypeBool;
+import util.Utils;
 import values.IValue;
 import values.primitive.VBool;
 
@@ -96,16 +97,16 @@ public class ASTLogicalBinaryOperation extends ASTNodeAbstract implements ASTNod
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        VBool val1 = checkRuntimeType(this.left.eval(e));
+        VBool val1 = Utils.checkValueForOperation(this.left.eval(e), VBool.class, operator.getOperator());
 
         IValue result = null;
         switch(this.operator)
         {
             case AND:
-                result = new VBool(val1.getValue() && checkRuntimeType(this.right.eval(e)).getValue());
+                result = new VBool(val1.getValue() && Utils.checkValueForOperation(this.left.eval(e), VBool.class, operator.getOperator()).getValue());
                 break;
             case OR:
-                result = new VBool(val1.getValue() || checkRuntimeType(this.right.eval(e)).getValue());
+                result = new VBool(val1.getValue() || Utils.checkValueForOperation(this.left.eval(e), VBool.class, operator.getOperator()).getValue());
                 break;
         }
 
@@ -117,15 +118,6 @@ public class ASTLogicalBinaryOperation extends ASTNodeAbstract implements ASTNod
         
        checkType(this.left.typecheck(e));
         return checkType(this.right.typecheck(e));
-    }
-
-    protected VBool checkRuntimeType(IValue val)
-    {
-        boolean checked = val instanceof VBool;
-        if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator(), TypeBool.TYPE.show(), val.getType().show());
-
-        return (VBool)val;
     }
 
     protected IType checkType(IType type)

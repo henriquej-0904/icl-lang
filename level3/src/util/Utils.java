@@ -5,6 +5,12 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import typeError.IllegalOperatorException;
+import typeError.TypeErrorException;
+import types.IType;
+import types.TypeNull;
+import values.IValue;
+
 public class Utils
 {
 
@@ -112,5 +118,71 @@ public class Utils
             builder.append(delimiters[1]);
 
         return builder;
+    }
+
+    /**
+     * Checks if this value is of type Null.
+     * @param value - The value to check.
+     * @return - The value if the type is not null.
+     */
+    public static IValue requireNonNull(IValue value)
+    {
+        requireNonNull(value.getType());
+        return value;
+    }
+
+    /**
+     * Checks if this type is Null.
+     * @param value - The type to check.
+     * @return - The type if it is not null.
+     */
+    public static IType requireNonNull(IType type)
+    {
+        boolean isNull = type instanceof TypeNull;
+
+        if (isNull)
+            throw new TypeErrorException("Illegal type.\nType Null cannot be used in any operation.");
+
+        return type;
+    }
+
+    public static <T extends IValue> T checkValue(IValue value, Class<T> check,
+        Function<Void, TypeErrorException> exception)
+    {
+        requireNonNull(value);
+        boolean checked = check.isInstance(value);
+
+        if (!checked)
+            throw exception.apply(null);
+
+        return check.cast(value);
+    }
+
+    public static <T extends IValue> T checkValueForOperation(IValue value, Class<T> check,
+        String operator)
+    {
+        String expectedType;
+        try {
+            expectedType = (String)check.getField("TYPE_NAME").get(null);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+
+        return checkValue(value, check,
+            (vVoid) -> new IllegalOperatorException(operator, expectedType, value.getType().show()));
+    }
+
+    public static <T extends IValue> T checkValueForOperation(IValue value, Class<T> check,
+        String operator, String message)
+    {
+        String expectedType;
+        try {
+            expectedType = (String)check.getField("TYPE_NAME").get(null);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+
+        return checkValue(value, check,
+            (vVoid) -> new IllegalOperatorException(message, operator, expectedType, value.getType().show()));
     }
 }

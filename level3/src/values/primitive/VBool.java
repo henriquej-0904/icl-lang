@@ -5,7 +5,7 @@ import types.primitives.TypePrimitive;
 
 public final class VBool extends VPrimitive<Boolean>
 {
-    private final static TypePrimitive type = TypeBool.TYPE;
+    public final static String TYPE_NAME = TypeBool.TYPE.show();
 
     /**
      * @param value
@@ -16,7 +16,7 @@ public final class VBool extends VPrimitive<Boolean>
 
     @Override
     public TypePrimitive getPrimitiveType() {
-        return type;
+        return (TypePrimitive)TypeBool.TYPE;
     }
     
 }

@@ -10,6 +10,7 @@ import typeError.IllegalOperatorException;
 import typeError.TypeErrorException;
 import types.IType;
 import types.primitives.TypeBool;
+import util.Utils;
 import values.IValue;
 import values.VNull;
 import values.primitive.VBool;
@@ -90,7 +91,7 @@ public class ASTIfThenElse extends ASTNodeAbstract
 
     @Override
     public IValue eval(Environment<IValue> e) {
-        Boolean value =  checkIfRuntimeType(this.ifNode.eval(e)).getValue();
+        boolean value =  Utils.checkValueForOperation(this.ifNode.eval(e), VBool.class, OPERATOR).getValue();
 
         IValue returnValue = null;
         if (elseNode == null)
@@ -138,15 +139,6 @@ public class ASTIfThenElse extends ASTNodeAbstract
         }
 
         return thenType;
-    }
-
-    protected VBool checkIfRuntimeType(IValue value) {
-        boolean checked = value instanceof VBool;
-
-        if (!checked)
-            throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), value.getType().show());
-
-        return (VBool) value;
     }
 
     protected TypeBool checkTypeIf(IType type) {

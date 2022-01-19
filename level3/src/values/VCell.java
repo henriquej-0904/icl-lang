@@ -8,6 +8,8 @@ import types.TypeRef;
  */
 public class VCell implements IValue
 {
+    public final static String TYPE_NAME = TypeRef.TYPE_NAME;
+
     protected IValue value;
 
     /**

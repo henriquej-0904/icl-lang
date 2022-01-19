@@ -12,6 +12,7 @@ import types.IType;
 import types.primitives.TypeBool;
 import types.primitives.TypePrimitive;
 import types.primitives.TypeString;
+import util.Utils;
 import values.IValue;
 import values.primitive.VBool;
 import values.primitive.VPrimitive;
@@ -232,8 +233,8 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract implements AST
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        VPrimitive<?> val1 = checkRuntimeType(this.left.eval(e));
-        VPrimitive<?> val2 = checkRuntimeType(this.right.eval(e));
+        VPrimitive<?> val1 = Utils.checkValueForOperation(this.left.eval(e), VPrimitive.class, operator.getOperator());
+        VPrimitive<?> val2 = Utils.checkValueForOperation(this.right.eval(e), VPrimitive.class, operator.getOperator());
 
         // Check if val1 type equals val2 type
         if (!val1.getClass().equals(val2.getClass()))
@@ -283,16 +284,6 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract implements AST
             this.operator.getOperator(), type1.show(), type2.show());
             
         return this.type; 
-    }
-
-    protected VPrimitive<?> checkRuntimeType(IValue val)
-    {
-        boolean checked = (val instanceof VPrimitive);
-
-        if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator(), "Primitive", val.getType().show());
-
-        return (VPrimitive<?>)val;
     }
     
     protected IType checkType(IType type)

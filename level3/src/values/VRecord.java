@@ -2,9 +2,12 @@ package values;
 
 import environment.Environment;
 import types.IType;
+import types.TypeRecord;
 
 public class VRecord implements IValue
 {
+    public final static String TYPE_NAME = TypeRecord.TYPE_NAME;
+
     private final Environment<IValue> env;
 
     public VRecord(Environment<IValue> env)

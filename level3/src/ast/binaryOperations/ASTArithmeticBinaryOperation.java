@@ -12,6 +12,7 @@ import types.primitives.TypeBool;
 import types.primitives.TypeInt;
 import types.primitives.TypePrimitive;
 import types.primitives.TypeString;
+import util.Utils;
 import values.IValue;
 import values.primitive.VBool;
 import values.primitive.VInt;
@@ -90,7 +91,7 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
 
     private IValue evalInt(VInt value1, IValue value2)
     {
-        VInt valueInt2 = checkRuntimeTypeInt(value2);
+        VInt valueInt2 = Utils.checkValueForOperation(value2, VInt.class, operator.getOperator());
         IValue result = null;
 
         switch(this.operator)
@@ -119,11 +120,10 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
         switch(this.operator)
         {
             case ADD:
-                if (!(value2 instanceof VPrimitive))
-                    throw new IllegalOperatorException(this.operator.getOperator(),
-                        "Primitive", value2.getType().show());
+                VPrimitive<?> value2Primitive =
+                    Utils.checkValueForOperation(value2, VPrimitive.class, operator.getOperator());
                 
-                result = new VString(value1.getValue() + ((VPrimitive<?>)value2).getValue());
+                result = new VString(value1.getValue() + value2Primitive.getValue());
                 break;
             default:
                 throw new IllegalOperatorException(operator.getOperator(), TypeString.TYPE.show());
@@ -163,16 +163,6 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
             throw new IllegalOperatorException(operator.getOperator(), val.getType().show());
 
         return (VPrimitive<?>)val;
-    }
-
-    protected VInt checkRuntimeTypeInt(IValue val)
-    {
-        boolean checked = (val instanceof VInt);
-
-        if (!checked)
-            throw new IllegalOperatorException(this.operator.getOperator(), TypeInt.TYPE.show(), val.getType().show());
-
-        return (VInt)val;
     }
 
     protected TypePrimitive checkTypeLeft(IType type)

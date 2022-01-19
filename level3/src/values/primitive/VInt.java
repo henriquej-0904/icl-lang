@@ -5,7 +5,7 @@ import types.primitives.TypePrimitive;
 
 public final class VInt extends VPrimitive<Integer>
 {
-    private static final TypePrimitive type = TypeInt.TYPE;
+    public final static String TYPE_NAME = TypeInt.TYPE.show();
 
     /**
      * @param value
@@ -16,6 +16,6 @@ public final class VInt extends VPrimitive<Integer>
 
     @Override
     public TypePrimitive getPrimitiveType() {
-        return type;
+        return (TypePrimitive)TypeInt.TYPE;
     }
 }

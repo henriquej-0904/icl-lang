@@ -12,6 +12,7 @@ import types.IType;
 import types.primitives.TypeBool;
 import types.primitives.TypeInt;
 import types.primitives.TypePrimitive;
+import util.Utils;
 import values.IValue;
 
 public class ASTPrintln extends ASTNodeAbstract
@@ -42,7 +43,7 @@ public class ASTPrintln extends ASTNodeAbstract
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        IValue result = this.node.eval(e);
+        IValue result = Utils.requireNonNull(this.node.eval(e));
         System.out.println(result.show());
 
         return result;

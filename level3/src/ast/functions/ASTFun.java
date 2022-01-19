@@ -37,8 +37,6 @@ public class ASTFun extends ASTNodeAbstract
         return new VFunction(args, body, e);
     }
 
-  
-
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
        ClosureCodeBlock closure =  c.createClosure((TypeFunction)type);

@@ -10,12 +10,15 @@ import typeError.IllegalOperatorException;
 import typeError.TypeErrorException;
 import types.IType;
 import types.TypeRef;
+import util.Utils;
 import values.IValue;
 import values.VCell;
 
 public class ASTAssign extends ASTNodeAbstract
 {
     public static final String OPERATOR = ":=";
+
+    private static final String ERROR_MSG = "Cannot assign a value to a non reference type.";
 
     protected ASTNode left, right;
 
@@ -42,7 +45,7 @@ public class ASTAssign extends ASTNodeAbstract
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        VCell cell = checkRuntimeTypeVCell(this.left.eval(e));
+        VCell cell = Utils.checkValueForOperation(this.left.eval(e), VCell.class, OPERATOR, ERROR_MSG);
         IValue value = this.right.eval(e);
         cell.setValue(value);
         return value;
@@ -61,19 +64,8 @@ public class ASTAssign extends ASTNodeAbstract
                 String.format("Incompatible type for assignment - %s.\nExpected value type: %s\n",
                     valueType.show(), ref.getValueType().show()));
                     
-        type = valueType;
+        this.type = valueType;
         return valueType;
-    }
-
-    protected VCell checkRuntimeTypeVCell(IValue value)
-    {
-        boolean checked = value instanceof VCell;
-
-        if (!checked)
-            throw new IllegalOperatorException("Cannot assign a value to a non reference type.", OPERATOR,
-                TypeRef.TYPE_NAME, value.show());
-
-        return (VCell)value;
     }
 
     protected TypeRef checkTypeRef(IType type)

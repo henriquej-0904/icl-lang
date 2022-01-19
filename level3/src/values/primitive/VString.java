@@ -5,7 +5,7 @@ import types.primitives.TypeString;
 
 public final class VString extends VPrimitive<String>
 {
-    private final static TypePrimitive type = TypeString.TYPE;
+    public final static String TYPE_NAME = TypeString.TYPE.show();
 
     public VString(String value) {
         super(value);
@@ -18,7 +18,7 @@ public final class VString extends VPrimitive<String>
 
     @Override
     public TypePrimitive getPrimitiveType() {
-        return type;
+        return (TypePrimitive)TypeString.TYPE;
     }
     
 }

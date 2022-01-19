@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import ast.ASTNode;
 import environment.Environment;
 import types.IType;
+import types.TypeFunction;
 import util.FunctionArg;
 import util.Utils;
 
@@ -13,6 +14,8 @@ import util.Utils;
  * Represents a closure value [args, body, env].
  */
 public class VFunction implements IValue {
+
+    public final static String TYPE_NAME = TypeFunction.TYPE_NAME;
 
     private static boolean showActive = false;
 

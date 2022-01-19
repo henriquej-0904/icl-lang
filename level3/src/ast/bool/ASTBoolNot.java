@@ -9,6 +9,7 @@ import environment.Environment;
 import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitives.TypeBool;
+import util.Utils;
 import values.IValue;
 import values.primitive.VBool;
 
@@ -49,7 +50,8 @@ public class ASTBoolNot extends ASTNodeAbstract implements ASTNodeShortCircuit
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        return new VBool( !checkRuntimeType(this.node.eval(e)).getValue() );
+        VBool value = Utils.checkValueForOperation(this.node.eval(e), VBool.class, OPERATOR);
+        return new VBool( !value.getValue() );
     }
 
     @Override
@@ -58,13 +60,15 @@ public class ASTBoolNot extends ASTNodeAbstract implements ASTNodeShortCircuit
         
     }
 
-    protected VBool checkRuntimeType(IValue val)
-    {
-        boolean checked = val instanceof VBool;
-        if (!checked)
-            throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), val.show());
+    @Override
+    protected IValue check(IValue value) {
+        return super.check(value);
+    }
 
-        return (VBool)val;
+    @Override
+    protected IType check(IType type) {
+        // TODO Auto-generated method stub
+        return super.check(type);
     }
 
     protected IType checkType(IType type)

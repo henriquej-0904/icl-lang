@@ -1,38 +1,28 @@
 package values;
 
 import types.IType;
+import types.TypeNull;
 
-public class VNull implements IValue {
-    
+/**
+ * A special value in the language that represents null
+ * This value cannot be used in any operation and throws a Runtime Exception.
+ */
+public class VNull implements IValue
+{
+    public final static String TYPE_NAME = TypeNull.TYPE.show();
+
     private VNull() {}
 
     public static final VNull VALUE = new VNull();
 
     @Override
     public String show() {
-        return "Null";
+        return TypeNull.TYPE.show();
     }
 
     @Override
     public IType getType() {
-        return new IType() {
-
-            @Override
-            public String show() {
-                return this.toString();
-            }
-
-            @Override
-            public String getJvmType() {
-                return "";
-            }
-            
-            @Override
-            public String toString() {
-
-                return VNull.this.show();
-            }
-        };
+        return TypeNull.TYPE;
     }
 
     

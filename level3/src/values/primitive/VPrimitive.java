@@ -9,6 +9,8 @@ import values.IValue;
  */
 public abstract class VPrimitive<E extends Comparable<E>> implements IValue, Comparable<VPrimitive<E>>
 {
+    public static final String TYPE_NAME = "Primitive";
+
     private E value;
 
     /**

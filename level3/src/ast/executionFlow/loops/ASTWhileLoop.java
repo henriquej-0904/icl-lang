@@ -9,6 +9,7 @@ import environment.Environment;
 import typeError.IllegalOperatorException;
 import types.IType;
 import types.primitives.TypeBool;
+import util.Utils;
 import values.IValue;
 import values.primitive.VBool;
 
@@ -77,9 +78,12 @@ public class ASTWhileLoop extends ASTNodeAbstract
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        while (checkWhileConditionRuntimeType(this.whileConditionNode.eval(e)).getValue())
+        VBool condition = Utils.checkValueForOperation(this.whileConditionNode.eval(e), VBool.class, OPERATOR);
+
+        while (condition.getValue())
         {
             this.bodyNode.eval(e);
+            condition = (VBool)this.whileConditionNode.eval(e);
         }
 
         // while always returns false
@@ -92,16 +96,6 @@ public class ASTWhileLoop extends ASTNodeAbstract
         this.bodyNode.typecheck(e);
       
         return TypeBool.TYPE;
-    }
-
-    protected VBool checkWhileConditionRuntimeType(IValue value)
-    {
-        boolean checked = value instanceof VBool;
-
-        if (!checked)
-            throw new IllegalOperatorException(OPERATOR, TypeBool.TYPE.show(), value.getType().show());
-
-        return (VBool)value;
     }
 
     protected TypeBool checkTypeWhile(IType type)

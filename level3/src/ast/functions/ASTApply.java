@@ -22,6 +22,10 @@ import values.VFunction;
 
 public class ASTApply extends ASTNodeAbstract
 {
+    private static final String OPERATOR = "Function apply - ()";
+
+    private static final String ERROR_MSG = "The apply operator can only be used for function calls.";
+
     private ASTNode function;
     private List<ASTNode> args;
 
@@ -34,7 +38,7 @@ public class ASTApply extends ASTNodeAbstract
     public IValue eval(Environment<IValue> e)
     {
         IValue toReturn = null;
-        VFunction fun = checkRuntimeTypeVFunction(function.eval(e));
+        VFunction fun = Utils.checkValueForOperation(function.eval(e), VFunction.class, OPERATOR, ERROR_MSG);
 
         Environment<IValue> funEnv = fun.getEnv().beginScope();
         Iterator<ASTNode> it = args.iterator();
@@ -90,17 +94,6 @@ public class ASTApply extends ASTNodeAbstract
 
         this.type = typeFunction.getReturnType();
         return this.type;
-    }
-    
-    protected VFunction checkRuntimeTypeVFunction(IValue value)
-    {
-        boolean checked = value instanceof VFunction;
-
-        if (!checked)
-            throw new IllegalOperatorException("The apply operator can only be used for function calls.",
-                "Function apply - ()", TypeFunction.TYPE_NAME, value.getType().show());
-
-        return (VFunction)value;
     }
 
     protected TypeFunction typeCheckFunction(IType type)
