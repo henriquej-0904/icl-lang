@@ -77,6 +77,10 @@ end;;
 
 ```
 
+## Otimizações do compilador
+
+O programa otimiza a compilação de expressões booleanas quando estas são utilizadas em contruções do tipo IF ou WHILE (Short Circuit).
+
 ## Funções de biblioteca
 
 As funções de biblioteca, tal como todas as outras, necessitam de parênteses "(...)" para se passar os argumentos.
