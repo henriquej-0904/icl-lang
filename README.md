@@ -86,6 +86,9 @@ end;;
 
 O programa otimiza a compilação de expressões booleanas quando estas são utilizadas em contruções do tipo IF ou WHILE (Short Circuit).
 
+## Otimizações do Environment
+O programa optimiza os environments fazendo com que cada um guarde uma referência para o anterior.
+
 ## Funções de biblioteca
 
 As funções de biblioteca, tal como todas as outras, necessitam de parênteses "(...)" para se passar os argumentos.
@@ -93,6 +96,7 @@ As funções de biblioteca, tal como todas as outras, necessitam de parênteses 
 - println -> Função que recebe um tipo primitivo e imprime a sua representação em texto.
 
 ## Tipos da linguagem
+Na nossa linguagem os tipos defenidos a esquerda devem ser escritos como estão á direita.
 
 - Integer -> int
 - Boolean -> bool
@@ -100,6 +104,9 @@ As funções de biblioteca, tal como todas as outras, necessitam de parênteses 
 - Funções -> (tipo_arg1, tipo_arg2, ...)tipo_resultado
 - Records -> record(id_1:tipo_1, id_2:tipo_2, ...), em que os id's correspondem aos nomes dos campos de um Record.
   
+  
+  Os tipos primitivos da linguagem são inteiros, booleanos e strings e por isso pode-se usar todos os operadores de comparação ( ==, !=, >, >=, <, <=) sobre estes tipos.
+  A concatenação de strings está definida através do operador da soma ( + ).
   
   
   
