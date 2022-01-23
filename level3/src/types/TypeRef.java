@@ -69,7 +69,7 @@ public class TypeRef implements IType
 
     @Override
     public String getSimpleName(){
-       return "ref_of_" + valueType;
+       return "ref_of_" + valueType.getSimpleName();
     }
 
     @Override
@@ -91,7 +91,7 @@ public class TypeRef implements IType
 
     @Override
     public String getJvmType() {
-        return "L" + this + ";";
+        return "L" + getSimpleName() + ";";
     }
 
 }
