@@ -96,16 +96,18 @@ As funções de biblioteca, tal como todas as outras, necessitam de parênteses 
 - println -> Função que recebe um tipo primitivo e imprime a sua representação em texto.
 
 ## Tipos da linguagem
-Na nossa linguagem os tipos defenidos a esquerda devem ser escritos como estão á direita.
+De seguida, apresentam-se os tipos definidos na linguagem. Cada tipo, à esquerda, está associado a uma sintaxe específica que o representa, à direita.
 
 - Integer -> int
 - Boolean -> bool
 - String -> string
-- Funções -> (tipo_arg1, tipo_arg2, ...)tipo_resultado
-- Records -> record(id_1:tipo_1, id_2:tipo_2, ...), em que os id's correspondem aos nomes dos campos de um Record.
+- Reference -> ref_tipo, sendo 'tipo' o tipo que a referência está associada. Por exemplo, ref_int representa uma referência para inteiros.
+- Funções -> (tipo_arg1 , tipo_arg2 , ...)tipo_resultado
+- Records -> record(id_1 : tipo_1 , id_2 : tipo_2 , ...), em que os id's correspondem aos nomes dos campos de um Record.
   
   
   Os tipos primitivos da linguagem são inteiros, booleanos e strings e por isso pode-se usar todos os operadores de comparação ( ==, !=, >, >=, <, <=) sobre estes tipos.
+  Os operadores aritméticos ( +, -, \*, / ) estão definidos para o tipo Integer.
   A concatenação de strings está definida através do operador da soma ( + ).
   
   
