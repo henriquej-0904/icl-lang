@@ -153,10 +153,10 @@ public class MathExpression {
 			if (destFolder != null)
 				destFolder.mkdirs();
 
-			// Create tmp folder for j files.
+			// Create tmp folder for jasmin files.
 			if (DEBUG)
 			{
-				tmpFolder = new File("MathExpressionJfiles");
+				tmpFolder = new File("jFiles");
 				tmpFolder.mkdirs();
 				for (File file : tmpFolder.listFiles()) {
 					file.delete();
