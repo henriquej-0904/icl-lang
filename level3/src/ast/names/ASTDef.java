@@ -106,9 +106,8 @@ public class ASTDef extends ASTNodeAbstract
 	@Override
 	public void compile(MainCodeBlock c, Environment<Coordinates> e)
 	{
-		Pair<Environment<Coordinates>, FrameCodeBlock> pairEnvFrameId = c.addFrame(e, this.init.size());
-		Environment<Coordinates> newEnv = pairEnvFrameId.getLeft();
-		FrameCodeBlock frame = pairEnvFrameId.getRight();
+		Environment<Coordinates> newEnv = e.beginScope();
+		FrameCodeBlock frame = c.addFrame(this.init.size());
 
 		IType type;
 		String jvmType;
@@ -131,7 +130,9 @@ public class ASTDef extends ASTNodeAbstract
 		}
 
 		this.body.compile(c, newEnv);
-		c.endFrame(newEnv);
+		c.endFrame();
+
+		newEnv.endScope();
 	}
 
 	@Override

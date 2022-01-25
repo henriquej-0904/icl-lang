@@ -26,7 +26,7 @@ public class ASTNew extends ASTNodeAbstract
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e)
     {
-        RefCodeBlock ref = c.createRefClass(val.getType());
+        RefCodeBlock ref = c.getRefClass(val.getType());
         String className = ref.getClassName();
         c.emit("new " + className);
         c.emit("dup");

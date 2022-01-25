@@ -39,7 +39,7 @@ public class ASTFun extends ASTNodeAbstract
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
        ClosureCodeBlock closure =  c.createClosure((TypeFunction)type);
        Environment<Coordinates> newEnv = e.beginScope();
-       int frameId = c.getCurrFrameId();
+       int frameId = c.getCurrentFrameId();
 
        int i = 0;
        for (FunctionArg functionArg : args) {
@@ -54,7 +54,7 @@ public class ASTFun extends ASTNodeAbstract
        c.emit(String.format("invokespecial closure_%d/<init>()V", closure.id));
        c.emit("dup");
        c.emitCurrentFrame();
-       c.emit(String.format("putfield closure_%d/sl Lf%d;", closure.id, c.getCurrFrameId()));
+       c.emit(String.format("putfield closure_%d/sl Lf%d;", closure.id, c.getCurrentFrameId()));
     }
 
     @Override

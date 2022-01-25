@@ -8,11 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import environment.Environment;
 import types.IType;
 import types.TypeFunction;
 import types.TypeRecord;
-import util.Pair;
 
 public class MainCodeBlock
 {
@@ -36,9 +34,6 @@ public class MainCodeBlock
     "      .limit locals 10\n" +
     "      .limit stack 256\n\n" +
     
-    "      ;    1 - the PrintStream object held in java.lang.System.out\n" +
-   // "      getstatic java/lang/System/out Ljava/io/PrintStream;\n\n" +
-    
     "       ; place your bytecodes here between START and END\n" +
     "       ; START\n\n" +
 
@@ -49,15 +44,8 @@ public class MainCodeBlock
     private static final String END =
 
     "\n       ; END\n\n" +
-
-    // "       ; convert to String;\n" +
-    // "       invokestatic java/lang/String/valueOf(I)Ljava/lang/String;\n" +
-    // "       ; call println\n" +
-    // "       invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\n" +
-    "       return\n" +
+    "   return\n" +
     ".end method";
-
-
 
     private static final String SL_OBJECT_TYPE = "java/lang/Object";
 
@@ -67,20 +55,18 @@ public class MainCodeBlock
 
     private String generatedClassName;
 
-    /**
-     * List of pairs: previous frameId, Frame
-     */
     private List<FrameCodeBlock> frames;
+
     private Map<IType,RefCodeBlock> refs;
 
     private FrameCodeBlock currentFrame;
 
     private int labelId;
 
-
     private Map<String, ClosureInterfaceCodeBlock> closureInterfaces;
 
     private Map<Integer, ClosureCodeBlock> closures;
+
     private Map<TypeRecord, RecordCodeBlock> records;
 
     /**
@@ -112,7 +98,7 @@ public class MainCodeBlock
         return "L" + labelId++;
     }
 
-    public int getCurrFrameId(){
+    public int getCurrentFrameId(){
         return currentFrame.getFrameId();
     }
 
@@ -133,62 +119,26 @@ public class MainCodeBlock
     }
 
     /**
-     * 
-     * @param env
-     * @return The new Environment.
+     * Creates a new Frame.
+     * @param numFields - The number of fields in the frame.
+     * @return
      */
-    public Environment<Coordinates> endFrame(Environment<Coordinates> env)
-    {
-        int previousFrameId;
-        String previousFrameSlType;
-
-        // Check Environment depth
-        // if depth == 1 then there is no previous frame
-        if (env.getDepth() == 1)
-        {
-            previousFrameSlType = SL_OBJECT_TYPE;
-            previousFrameId = FrameCodeBlock.INVALID_FRAME_ID;
-        }
-        else
-        {
-            previousFrameId = currentFrame.previous.getFrameId();
-            previousFrameSlType = String.format(SL_PREVIOUS_FRAME_TYPE, previousFrameId);
-        }
-
-        String getPreviousSL = String.format("getfield f%d/sl L%s;", currentFrame.getFrameId(), previousFrameSlType);
-
-        emitCurrentFrame();
-        emit(getPreviousSL);
-        emit("astore 4");
-
-       currentFrame = currentFrame.previous;
-
-        return env.endScope();
-    }
-
     private FrameCodeBlock createFrame(int numFields)
     {
-
         // Create frame
         FrameCodeBlock frame = new FrameCodeBlock(this.frames.size(), numFields, currentFrame == null ? null : currentFrame);
-
         frames.add(frame);
-       
         currentFrame = frame;
-        
         return frame;
     }
 
     /**
-     * 
-     * @return Pair(New Environment, new Frame).
+     * Creates a new Frame and emits the necessary instructions.
+     * @param numFields - The number of fields in the frame.
+     * @return Frame
      */
-    public Pair<Environment<Coordinates>, FrameCodeBlock>
-        addFrame(Environment<Coordinates> env, int numFields)
+    public FrameCodeBlock addFrame(int numFields)
     {
-        // new scope
-        Environment<Coordinates> newEnv = env.beginScope();
-
         FrameCodeBlock frame = createFrame(numFields);
 
         emit(String.format(" new f%d", frame.getFrameId()));
@@ -201,12 +151,34 @@ public class MainCodeBlock
         emit("	; update SL");
         saveCurrentFrame();
 
-        return new Pair<>(newEnv, frame);
+        return frame;
+    }
+
+    /**
+     * Go back to the previous frame.
+     */
+    public void endFrame()
+    {
+        assert this.currentFrame != null;
+
+        FrameCodeBlock previous = this.currentFrame.previous;
+
+        String previousFrameSlType = previous == null
+            ? SL_OBJECT_TYPE
+            : String.format(SL_PREVIOUS_FRAME_TYPE, previous.getFrameId());
+
+        String getPreviousSL = String.format("getfield f%d/sl L%s;", currentFrame.getFrameId(), previousFrameSlType);
+
+        emitCurrentFrame();
+        emit(getPreviousSL);
+        saveCurrentFrame();
+
+        currentFrame = currentFrame.previous;
     }
     
     private void saveCurrentFrame(){
-        if(activeClosure != null)
-            activeClosure.saveCurrentFrame();
+        if(this.activeClosure != null)
+            this.activeClosure.saveCurrentFrame();
         else
             emit("astore 4");
     }
@@ -226,34 +198,40 @@ public class MainCodeBlock
             currentFrame = previousFrame;
             previousFrame =currentFrame.previous;
             assert this.currentFrame != null;
-
         }
     }
 
     public ClosureCodeBlock createClosure(TypeFunction type)
-    {
-        // Create closure interface
-        String closureInterfaceName = ClosureInterfaceCodeBlock.generateInterfaceName(type);
-       
-        ClosureInterfaceCodeBlock closureInterface =  
-            closureInterfaces.computeIfAbsent(closureInterfaceName, (name)-> {return new ClosureInterfaceCodeBlock(name,type);});
+    {       
+        ClosureInterfaceCodeBlock closureInterface = getClosureInterface(type);
      
         // Create Closure and update activeClosure
         String sl = currentFrame == null ? "Ljava/lang/Object;" :
             "L" + currentFrame.className + ";";
         
-        ClosureCodeBlock closure = new ClosureCodeBlock(closures.size(), sl, closureInterface, activeClosure);
+        ClosureCodeBlock closure = new ClosureCodeBlock(closures.size(), sl, closureInterface, this.activeClosure);
         closures.put(closure.id, closure);
-        activeClosure = closure;
+        this.activeClosure = closure;
 
         // emit init apply function in activeClosure
-        activeClosure.emitInitApplyFunction((numArgs) -> createFrame(numArgs));
+        this.activeClosure.emitInitApplyFunction((numArgs) -> createFrame(numArgs));
 
-        return activeClosure;
+        return this.activeClosure;
     }
 
-    public RecordCodeBlock createRecord(TypeRecord type){
+    public void endClosure(){
+        activeClosure.endClosure();
+        activeClosure = activeClosure.previousClosure;
+        currentFrame = currentFrame.previous;
+    }
 
+    public ClosureInterfaceCodeBlock getClosureInterface(TypeFunction type){
+        String closureInterfaceName = ClosureInterfaceCodeBlock.generateInterfaceName(type);  
+        return closureInterfaces.computeIfAbsent(closureInterfaceName, (name)-> {return new ClosureInterfaceCodeBlock(name,type);});
+    }
+
+    public RecordCodeBlock createRecord(TypeRecord type)
+    {
         RecordCodeBlock record = getRecord(type);
         emit("new " + record.className);
         emit("dup");
@@ -261,50 +239,47 @@ public class MainCodeBlock
         emit("dup");
 
         return record;
-
     }
 
     public RecordCodeBlock getRecord(TypeRecord type){
        return records.computeIfAbsent(type, (name)-> {return new RecordCodeBlock(records.size(),type);});
-      
     }
 
-    public ClosureCodeBlock getActiveClosure(){
-        return activeClosure;
+    /**
+     * Get a Reference Code Block with the specified value type.
+     * 
+     * @param valueType - The type of value this reference points.
+     * 
+     * @return A Reference Code Block with the specified value type.
+     */
+    public RefCodeBlock getRefClass(IType valueType){
+        return refs.computeIfAbsent(valueType, (name)-> {return new RefCodeBlock(valueType);});
     }
 
-    public void endClosure(){
-        activeClosure.endClosure();
-        activeClosure = activeClosure.previousClosure;
-        currentFrame = currentFrame.previous;
-
-    }
-
-    public void dump(File outputFolder) throws IOException, FileNotFoundException { // dumps code to f
-
+    public void dump(File outputFolder) throws IOException, FileNotFoundException
+    {
         if (!outputFolder.isDirectory())
             throw new IOException("The output folder does not exist.");
 
-        for (FrameCodeBlock frame : this.frames) {
+        for (FrameCodeBlock frame : this.frames)
             dumpCodeBlock(frame, outputFolder);
-        }
 
-        for (RefCodeBlock ref : this.refs.values()) {
+        for (RefCodeBlock ref : this.refs.values())
             dumpCodeBlock(ref, outputFolder);
-        }
-        for( ClosureCodeBlock closure: closures.values()){
+        
+        for( ClosureCodeBlock closure: closures.values())
             dumpCodeBlock(closure, outputFolder);
-        }
 
-        for( ClosureInterfaceCodeBlock closureInterface: closureInterfaces.values()){
+        for( ClosureInterfaceCodeBlock closureInterface: closureInterfaces.values())
             dumpCodeBlock(closureInterface, outputFolder);
-        }
-        for( RecordCodeBlock record: records.values()){
+
+        for( RecordCodeBlock record: records.values())
             dumpCodeBlock(record, outputFolder);
-        }
+        
         File mainClassFile = createFile(outputFolder, generatedClassName);
         
-        try (PrintStream printMainClassFile = new PrintStream(mainClassFile);) {
+        try (PrintStream printMainClassFile = new PrintStream(mainClassFile);)
+        {
             printMainClassFile.printf(START, generatedClassName);
 
             this.code.forEach(
@@ -318,36 +293,6 @@ public class MainCodeBlock
 
             printMainClassFile.flush();
         }
-    }
-
-    /**
-     * Creates a new Reference Code Block with the specified value type.
-     * 
-     * @param valueType - The type of value this reference points.
-     * 
-     * @return A new Reference Code Block with the specified value type.
-     */
-    public RefCodeBlock createRefClass(IType valueType){
-        RefCodeBlock r = new RefCodeBlock(valueType);
-        refs.putIfAbsent(valueType,r );
-        return r;
-    }
-
-    public ClosureInterfaceCodeBlock getClosureInterface(TypeFunction type){
-        String closureInterfaceName = ClosureInterfaceCodeBlock.generateInterfaceName(type);  
-        return closureInterfaces.computeIfAbsent(closureInterfaceName, (name)-> {return new ClosureInterfaceCodeBlock(name,type);});
-
-    }
-
-    /**
-     * Get a Reference Code Block with the specified value type.
-     * 
-     * @param valueType - The type of value this reference points.
-     * 
-     * @return A Reference Code Block with the specified value type.
-     */
-    public RefCodeBlock getRefClass(IType valueType){
-        return refs.get(valueType);
     }
 
     private File createFile(File outputFolder, String fileName)
