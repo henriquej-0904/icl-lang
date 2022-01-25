@@ -106,9 +106,9 @@ TOKEN :
   |
   < RPAR : ")" >
   |
-  < L_SQUARE_PAR : "[" >
+  < L_BRACKET : "{" >
   |
-  < R_SQUARE_PAR : "]" >
+  < R_BRACKET : "}" >
   |
   < QUOTATION_MARK: "\"" >
   |
@@ -429,7 +429,6 @@ int upDepth = 0;
 }
 {
    (
-
     tok=<Num> { t1 = new ASTNum(Integer.parseInt(tok.image)); } |
 
     tok=<Id>  {t1 = new ASTId(tok.image);} |
@@ -448,22 +447,16 @@ int upDepth = 0;
 
     <DEF>
           {
-            List<Pair<Bind,IType>> init = new LinkedList<Pair<Bind,IType>>(); 
-            
-            
+            List<Pair<Bind,IType>> init = new LinkedList<Pair<Bind,IType>>();
             Pair<Bind, IType> bindWithType = null;
           }
-
             ( bindWithType = ParseBind()
               {
                 init.add(bindWithType);
-
               }
             )+ (<IN> t1 = Program() <END> 
               {
-               
                   t1 = new ASTDef(init, t1);
-               
               }
            )
     |
@@ -498,7 +491,7 @@ int upDepth = 0;
     } |
 
     // Parse Record
-    <L_SQUARE_PAR>
+    <L_BRACKET>
       {
         List<Pair<Bind,IType>> binds = new LinkedList<Pair<Bind,IType>>();
         Pair<Bind, IType> bindWithType = null;
@@ -515,7 +508,7 @@ int upDepth = 0;
         }
       )*
 
-    <R_SQUARE_PAR> {
+    <R_BRACKET> {
       t1 = new ASTRecord(binds);
     }
 
