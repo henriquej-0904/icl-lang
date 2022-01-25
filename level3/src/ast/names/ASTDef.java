@@ -142,11 +142,12 @@ public class ASTDef extends ASTNodeAbstract
 			(field) -> {
 				builder.append(field.getLeft().getLeft());
 				builder.append('=');
-				field.getLeft().getRight().toString(builder);
+				((ASTNodeAbstract)field.getLeft().getRight()).toString(builder);
 			},
 			" ", null, builder);
+
 		builder.append(" in\n\t");
-		this.body.toString(builder);
+		((ASTNodeAbstract)this.body).toString(builder);
 		builder.append("\nend\n");
 
 		return builder;

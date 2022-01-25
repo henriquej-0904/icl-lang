@@ -121,11 +121,11 @@ public class ASTLogicalBinaryOperation extends ASTNodeAbstract implements ASTNod
 
     @Override
     public StringBuilder toString(StringBuilder builder) {
-        this.left.toString(builder);
+        ((ASTNodeAbstract)(this.left)).toString(builder);
         builder.append(' ');
         builder.append(this.operator.getOperator());
         builder.append(' ');
-        this.right.toString(builder);
+        ((ASTNodeAbstract)(this.right)).toString(builder);
 
         return builder;
     }

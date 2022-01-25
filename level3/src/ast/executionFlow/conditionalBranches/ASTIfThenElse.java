@@ -140,13 +140,19 @@ public class ASTIfThenElse extends ASTNodeAbstract
     }
 
     @Override
-    public StringBuilder toString(StringBuilder builder) {
+    public StringBuilder toString(StringBuilder builder)
+    {
         builder.append("if (");
-        this.ifNode.toString(builder);
+        ((ASTNodeAbstract)(this.ifNode)).toString(builder);
         builder.append(")\nthen\n\t");
-        this.thenNode.toString(builder);
-        builder.append("\nelse\n\t");
-        this.elseNode.toString(builder);
+        ((ASTNodeAbstract)(this.thenNode)).toString(builder);
+
+        if (this.elseNode != null)
+        {
+            builder.append("\nelse\n\t");
+            ((ASTNodeAbstract)(this.elseNode)).toString(builder);
+        }
+
         builder.append("\nend\n");
 
         return builder;

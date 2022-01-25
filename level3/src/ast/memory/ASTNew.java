@@ -50,7 +50,7 @@ public class ASTNew extends ASTNodeAbstract
     @Override
     public StringBuilder toString(StringBuilder builder) {
         builder.append("new (");
-        this.val.toString(builder);
+        ((ASTNodeAbstract)this.val).toString(builder);
         builder.append(')');
 
         return builder;

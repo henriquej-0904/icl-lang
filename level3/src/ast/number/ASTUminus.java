@@ -1,6 +1,7 @@
 package ast.number;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import ast.binaryOperations.ASTArithmeticBinaryOperation;
 import ast.binaryOperations.operators.ArithmeticBinaryOperator;
 
@@ -14,7 +15,7 @@ public class ASTUminus extends ASTArithmeticBinaryOperation
     @Override
     public StringBuilder toString(StringBuilder builder) {
         builder.append("-");
-        this.rigth.toString(builder);
+        ((ASTNodeAbstract)(this.right)).toString(builder);
         return builder;
     }
 }

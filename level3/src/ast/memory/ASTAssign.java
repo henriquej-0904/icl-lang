@@ -70,9 +70,9 @@ public class ASTAssign extends ASTNodeAbstract
 
     @Override
     public StringBuilder toString(StringBuilder builder) {
-        this.left.toString(builder);
+        ((ASTNodeAbstract)(this.left)).toString(builder);
         builder.append(OPERATOR);
-        this.right.toString(builder);
+        ((ASTNodeAbstract)(this.right)).toString(builder);
 
         return builder;
     }

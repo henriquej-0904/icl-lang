@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import ast.ASTNode;
+import ast.ASTNodeAbstract;
 import environment.Environment;
 import types.IType;
 import types.TypeFunction;
@@ -40,7 +41,7 @@ public class VFunction implements IValue {
             Utils.DEFAULT_DELIMITERS, builder);
 
         builder.append("\n\tbody = ");
-        this.body.toString(builder);
+        ((ASTNodeAbstract)this.body).toString(builder);
 
         builder.append("\n\tenvironment = ");
         showActive = true;
@@ -94,7 +95,6 @@ public class VFunction implements IValue {
 
         @Override
         public String getSimpleName() {
-            // TODO Auto-generated method stub
             return null;
         }
     };

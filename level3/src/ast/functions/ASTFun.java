@@ -75,7 +75,7 @@ public class ASTFun extends ASTNodeAbstract
         builder.append("Function ");
         Utils.toStringList(this.args, null, null, builder);
         builder.append(" ->\n\t");
-        this.body.toString(builder);
+        ((ASTNodeAbstract)this.body).toString(builder);
         builder.append("\nend\n");
 
         return builder;

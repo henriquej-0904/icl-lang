@@ -288,11 +288,11 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract implements AST
 
     @Override
     public StringBuilder toString(StringBuilder builder) {
-        this.left.toString(builder);
+        ((ASTNodeAbstract)(this.left)).toString(builder);
         builder.append(' ');
         builder.append(this.operator.getOperator());
         builder.append(' ');
-        this.right.toString(builder);
+        ((ASTNodeAbstract)(this.right)).toString(builder);
 
         return builder;
     }

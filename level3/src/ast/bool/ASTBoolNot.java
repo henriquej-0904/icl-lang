@@ -62,7 +62,7 @@ public class ASTBoolNot extends ASTNodeAbstract implements ASTNodeShortCircuit
     @Override
     public StringBuilder toString(StringBuilder builder) {
         builder.append(OPERATOR);
-        this.node.toString(builder);
+        ((ASTNodeAbstract)(this.node)).toString(builder);
         return builder;
     }
 }

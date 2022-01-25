@@ -96,9 +96,9 @@ public class ASTApply extends ASTNodeAbstract
 
     @Override
     public StringBuilder toString(StringBuilder builder) {
-        this.function.toString(builder);
+        ((ASTNodeAbstract)this.function).toString(builder);
         builder.append(" ");
-        Utils.toStringList(args, (Consumer<ASTNode>)((arg) -> arg.toString(builder)), null, Utils.DEFAULT_DELIMITERS, builder);
+        Utils.toStringList(args, (Consumer<ASTNode>)((arg) -> ((ASTNodeAbstract)arg).toString(builder)), null, Utils.DEFAULT_DELIMITERS, builder);
 
         return builder;
     }

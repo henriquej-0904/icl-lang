@@ -42,14 +42,11 @@ public class TypeFunction implements IType
 
     @Override
     public String toString() {
-
         return show();
     }
 
-
     @Override
     public String getSimpleName() {
-        // TODO Auto-generated method stub
         return "closure";
     }
 
@@ -68,15 +65,12 @@ public class TypeFunction implements IType
 
     @Override
     public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
         if( this == obj)
             return true;
         if(!(obj instanceof TypeFunction))
             return false;
         TypeFunction other = (TypeFunction)obj;
         return other.getArgs().equals(this.args) && other.getReturnType().equals(returnType);
-
-        
     }
 
     /**

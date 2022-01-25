@@ -87,7 +87,6 @@ public class ASTWhileLoop extends ASTNodeAbstract
             condition = (VBool)this.whileConditionNode.eval(e);
         }
 
-        // while always returns false
         return  VNull.VALUE;
     }
 
@@ -102,9 +101,9 @@ public class ASTWhileLoop extends ASTNodeAbstract
     @Override
     public StringBuilder toString(StringBuilder builder) {
         builder.append("while (");
-        this.whileConditionNode.toString(builder);
+        ((ASTNodeAbstract)this.whileConditionNode).toString(builder);
         builder.append(") do\n\t");
-        this.bodyNode.toString(builder);
+        ((ASTNodeAbstract)this.bodyNode).toString(builder);
         builder.append("\nend\n");
 
         return builder;

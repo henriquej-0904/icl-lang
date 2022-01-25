@@ -21,7 +21,7 @@ import values.primitive.VString;
 
 public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
 {
-    protected final ASTNode left, rigth;
+    protected final ASTNode left, right;
 
     protected final ArithmeticBinaryOperator operator;
 
@@ -31,7 +31,7 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
      */
     public ASTArithmeticBinaryOperation(ASTNode left, ASTNode rigth, ArithmeticBinaryOperator operator) {
         this.left = left;
-        this.rigth = rigth;
+        this.right = rigth;
         this.operator = operator;
        
     }
@@ -46,7 +46,7 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
 
     private void compileInt(MainCodeBlock c, Environment<Coordinates> e){
         this.left.compile(c, e);
-        this.rigth.compile(c, e);
+        this.right.compile(c, e);
         switch(this.operator)
         {
             case ADD:
@@ -67,11 +67,11 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
     private void compileString(MainCodeBlock c, Environment<Coordinates> e)
     {
         this.left.compile(c, e);
-        this.rigth.compile(c, e);
+        this.right.compile(c, e);
 
-        if(rigth.getType() instanceof TypeInt)
+        if(right.getType() instanceof TypeInt)
             c.emit("invokestatic java/lang/String/valueOf(I)Ljava/lang/String;");
-        else if (rigth.getType() instanceof TypeBool)
+        else if (right.getType() instanceof TypeBool)
             c.emit("invokestatic java/lang/String/valueOf(Z)Ljava/lang/String;");
         
         c.emit("invokevirtual java/lang/String/concat(Ljava/lang/String;)Ljava/lang/String;");
@@ -81,7 +81,7 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
     public IValue eval(Environment<IValue> e)
     {
         VPrimitive<?> val1 = checkRuntimeTypeLeft(this.left.eval(e));
-        IValue val2 = this.rigth.eval(e);
+        IValue val2 = this.right.eval(e);
 
         if (val1 instanceof VInt)
             return evalInt((VInt)val1, val2);
@@ -135,7 +135,7 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
     @Override
     public IType typecheck(Environment<IType> e) {
         TypePrimitive type1 = checkTypeLeft(this.left.typecheck(e));
-        IType type2 = this.rigth.typecheck(e);
+        IType type2 = this.right.typecheck(e);
 
         if (type1 instanceof TypeString) {
             if (this.operator == ArithmeticBinaryOperator.ADD) {
@@ -177,11 +177,11 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
 
     @Override
     public StringBuilder toString(StringBuilder builder) {
-        this.left.toString(builder);
+        ((ASTNodeAbstract)(this.left)).toString(builder);
         builder.append(' ');
         builder.append(this.operator.getOperator());
         builder.append(' ');
-        this.rigth.toString(builder);
+        ((ASTNodeAbstract)(this.right)).toString(builder);
 
         return builder;
     }

@@ -68,7 +68,7 @@ public class ASTPrintln extends ASTNodeAbstract
     @Override
     public StringBuilder toString(StringBuilder builder) {
         builder.append(OPERATOR + " (");
-        this.node.toString(builder);
+        ((ASTNodeAbstract)(this.node)).toString(builder);
         builder.append(")");
 
         return builder;

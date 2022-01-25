@@ -20,7 +20,7 @@ public interface ASTNode {
 
     /**
      * Compiles this node using the specified environment and stores the compilation
-     * result into the code bloc.
+     * result into the code block.
      * 
      * @param c - The code block to store the result of the compilation.
      * @param e - The Environment for the compiler, an id maps to Coordinates.
@@ -39,11 +39,6 @@ public interface ASTNode {
      * Gets the type of this node.
      * @return The type of this node.
      */
-    IType getType();
-
-    
-    StringBuilder toString(StringBuilder builder);
-    
-	
+    IType getType();	
 }
 

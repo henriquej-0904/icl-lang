@@ -47,7 +47,7 @@ public class ASTDereference extends ASTNodeAbstract
     @Override
     public StringBuilder toString(StringBuilder builder) {
         builder.append(OPERATOR);
-        this.reference.toString(builder);
+        ((ASTNodeAbstract)this.reference).toString(builder);
         return builder;
     }
 }
