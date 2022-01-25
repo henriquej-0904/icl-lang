@@ -10,6 +10,7 @@ import compiler.Coordinates;
 import compiler.FrameCodeBlock;
 import compiler.MainCodeBlock;
 import environment.Environment;
+import typeError.TypeErrorException;
 import types.IType;
 import types.TypeFunction;
 import util.FunctionArg;
@@ -58,16 +59,16 @@ public class ASTFun extends ASTNodeAbstract
     }
 
     @Override
-    public IType typecheck(Environment<IType> e) {
-      Environment<IType> env = e.beginScope();
-      List<IType> types = new ArrayList<>(args.size());
-      for (FunctionArg arg : args) {
-          env.assoc(arg.id, arg.type);
-          types.add(arg.type);
-      }
-      IType funReturnType = body.typecheck(env);
-      this.type = new TypeFunction(types, funReturnType);
-    return type;
+    public IType typecheck(Environment<IType> e) throws TypeErrorException {
+        Environment<IType> env = e.beginScope();
+        List<IType> types = new ArrayList<>(args.size());
+        for (FunctionArg arg : args) {
+            env.assoc(arg.id, arg.type);
+            types.add(arg.type);
+        }
+        IType funReturnType = body.typecheck(env);
+        this.type = new TypeFunction(types, funReturnType);
+        return type;
     }
 
     @Override

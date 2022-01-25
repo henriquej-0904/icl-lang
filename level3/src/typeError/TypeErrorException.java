@@ -1,9 +1,9 @@
 package typeError;
 
 /**
- * Represents an error of data types when trying to perform an operation.
+ * Represents an error of data types when trying to perform an operation at compile time.
  */
-public class TypeErrorException extends RuntimeException
+public class TypeErrorException extends Exception
 {
     /**
      * @param message
@@ -35,6 +35,15 @@ public class TypeErrorException extends RuntimeException
      */
     public TypeErrorException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
+    }
+
+    /**
+     * Converts this Checked TypeErrorException to a Unchecked TypeErrorRuntimeException.
+     * @return a new TypeErrorRuntimeException with the same properties.
+     */
+    public TypeErrorRuntimeException toRuntimeException()
+    {
+        return new TypeErrorRuntimeException(this);
     }
     
 }

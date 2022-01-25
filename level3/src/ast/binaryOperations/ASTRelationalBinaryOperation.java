@@ -8,6 +8,7 @@ import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
 import typeError.IllegalOperatorException;
+import typeError.TypeErrorException;
 import types.IType;
 import types.primitives.TypeBool;
 import types.primitives.TypePrimitive;
@@ -239,7 +240,8 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract implements AST
         // Check if val1 type equals val2 type
         if (!val1.getClass().equals(val2.getClass()))
             throw new IllegalOperatorException("The type of the 2 expressions must be equal.",
-                this.operator.getOperator(), val1.getPrimitiveType().show(), val2.getPrimitiveType().show());
+                this.operator.getOperator(), val1.getPrimitiveType().show(), val2.getPrimitiveType().show())
+                .toRuntimeException();
 
         IValue result = null;
         switch(this.operator)
@@ -276,7 +278,8 @@ public class ASTRelationalBinaryOperation extends ASTNodeAbstract implements AST
     }
 
     @Override
-    public IType typecheck(Environment<IType> e) {
+    public IType typecheck(Environment<IType> e) throws TypeErrorException
+    {
         IType type1 = Utils.checkTypeForOperation(this.left.typecheck(e), TypePrimitive.class, operator.getOperator());
         IType type2 =Utils.checkTypeForOperation(this.right.typecheck(e), TypePrimitive.class, operator.getOperator());
         if(!type1.equals(type2))

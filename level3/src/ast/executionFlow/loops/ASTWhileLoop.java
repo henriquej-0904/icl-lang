@@ -6,6 +6,7 @@ import ast.ASTNodeShortCircuit;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
+import typeError.TypeErrorException;
 import types.IType;
 import types.TypeNull;
 import types.primitives.TypeBool;
@@ -27,7 +28,7 @@ public class ASTWhileLoop extends ASTNodeAbstract
     public ASTWhileLoop(ASTNode whileConditionNode, ASTNode bodyNode) {
         this.whileConditionNode = whileConditionNode;
         this.bodyNode = bodyNode;
-        type = TypeBool.TYPE;
+        this.type = TypeNull.TYPE;
     }
 
     @Override
@@ -87,15 +88,16 @@ public class ASTWhileLoop extends ASTNodeAbstract
             condition = (VBool)this.whileConditionNode.eval(e);
         }
 
-        return  VNull.VALUE;
+        return VNull.VALUE;
     }
 
     @Override
-    public IType typecheck(Environment<IType> e) {
+    public IType typecheck(Environment<IType> e) throws TypeErrorException
+    {
         Utils.checkTypeForOperation(this.whileConditionNode.typecheck(e), TypeBool.class,OPERATOR);
         this.bodyNode.typecheck(e);
       
-        return TypeNull.TYPE;
+        return this.type;
     }
 
     @Override

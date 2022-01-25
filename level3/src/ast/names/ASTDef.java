@@ -33,20 +33,19 @@ public class ASTDef extends ASTNodeAbstract
 	{
 		Environment<IValue> env = e.beginScope();
 
-		for (Pair<Bind,IType> field : this.init){
+		for (Pair<Bind,IType> field : this.init)
+		{
 			Bind bind = field.getLeft();
-			
 			env.assoc(bind.getLeft(), Utils.requireNonNull(bind.getRight().eval(env)));
 		}
 			
-
 		IValue value = body.eval(env);
 		env.endScope();
 		return value;
 	}
 
 	@Override
-	public IType typecheck(Environment<IType> e)
+	public IType typecheck(Environment<IType> e) throws TypeErrorException
 	{
 		Environment<IType> env = e.beginScope();
 

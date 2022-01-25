@@ -6,6 +6,7 @@ import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import compiler.RefCodeBlock;
 import environment.Environment;
+import typeError.TypeErrorException;
 import types.IType;
 import types.TypeRef;
 import util.Utils;
@@ -42,7 +43,8 @@ public class ASTNew extends ASTNodeAbstract
     }
 
     @Override
-    public IType typecheck(Environment<IType> e) {
+    public IType typecheck(Environment<IType> e) throws TypeErrorException
+    {
         type = new TypeRef(Utils.requireNonNull(this.val.typecheck(e)));
         return type;
     }

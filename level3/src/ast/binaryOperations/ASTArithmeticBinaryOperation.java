@@ -7,6 +7,7 @@ import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
 import typeError.IllegalOperatorException;
+import typeError.TypeErrorException;
 import types.IType;
 import types.primitives.TypeBool;
 import types.primitives.TypeInt;
@@ -126,32 +127,33 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
                 result = new VString(value1.getValue() + value2Primitive.getValue());
                 break;
             default:
-                throw new IllegalOperatorException(operator.getOperator(), TypeString.TYPE.show());
+                throw new IllegalOperatorException(operator.getOperator(), TypeString.TYPE.show())
+                    .toRuntimeException();
         }
 
         return result;
     }
 
     @Override
-    public IType typecheck(Environment<IType> e) {
+    public IType typecheck(Environment<IType> e) throws TypeErrorException
+    {
         TypePrimitive type1 = checkTypeLeft(this.left.typecheck(e));
         IType type2 = this.right.typecheck(e);
 
-        if (type1 instanceof TypeString) {
-            if (this.operator == ArithmeticBinaryOperator.ADD) {
-                if (!(type2 instanceof TypePrimitive))
-                    throw new IllegalOperatorException(this.operator.getOperator(),
-                            "Primitive", type2.show());
-
+        if (type1 instanceof TypeString)
+        {
+            if (this.operator == ArithmeticBinaryOperator.ADD)
+            {
+                Utils.checkTypeForOperation(type2, TypePrimitive.class, operator.getOperator());
                 return this.type = TypeString.TYPE;
-            } else
-                throw new IllegalOperatorException(operator.getOperator(), TypeString.TYPE.show());
-        } else {
-            // type 1 is TypeInt
-            if (type2 instanceof TypeInt)
-                return this.type = TypeInt.TYPE;
+            }
             else
-                throw new IllegalOperatorException(this.operator.getOperator(), TypeInt.TYPE.show(), type2.show());
+                throw new IllegalOperatorException(operator.getOperator(), TypeString.TYPE.show());
+        } else
+        {
+            // type 1 is TypeInt
+            Utils.checkTypeForOperation(type2, TypeInt.class, operator.getOperator());
+            return this.type = TypeInt.TYPE;
         }
     }
 
@@ -160,12 +162,13 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
         boolean checked = (val instanceof VPrimitive) && !(val instanceof VBool);
 
         if (!checked)
-            throw new IllegalOperatorException(operator.getOperator(), val.getType().show());
+            throw new IllegalOperatorException(operator.getOperator(), val.getType().show())
+                .toRuntimeException();
 
         return (VPrimitive<?>)val;
     }
 
-    protected TypePrimitive checkTypeLeft(IType type)
+    protected TypePrimitive checkTypeLeft(IType type) throws TypeErrorException
     {
         boolean checked = (type instanceof TypePrimitive) && !(type instanceof TypeBool);
 

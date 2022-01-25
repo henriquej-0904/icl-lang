@@ -109,7 +109,8 @@ public class ASTIfThenElse extends ASTNodeAbstract
     }
 
     @Override
-    public IType typecheck(Environment<IType> e) {
+    public IType typecheck(Environment<IType> e) throws TypeErrorException
+    {
         Utils.checkTypeForOperation(this.ifNode.typecheck(e), TypeBool.class, OPERATOR);
 
         IType thenType = this.thenNode.typecheck(e);
@@ -123,7 +124,7 @@ public class ASTIfThenElse extends ASTNodeAbstract
                     " the then and else branches must be equal.\nThen branch type: %s\nElse branch type: %s\n",
                     thenType.show(), elseType.show()));
 
-            type = thenType;
+            this.type = thenType;
         }
         else
         {
@@ -133,10 +134,10 @@ public class ASTIfThenElse extends ASTNodeAbstract
              * part of the program.
              * This construction can only be used to modify state.
              */
-            type = TypeNull.TYPE;
+            this.type = TypeNull.TYPE;
         }
 
-        return thenType;
+        return this.type;
     }
 
     @Override

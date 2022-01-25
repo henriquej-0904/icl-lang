@@ -5,6 +5,7 @@ import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
+import typeError.TypeErrorException;
 import types.IType;
 import values.IValue;
 
@@ -41,10 +42,11 @@ public class ASTSequentialFlow extends ASTNodeAbstract
     }
 
     @Override
-    public IType typecheck(Environment<IType> e) {
+    public IType typecheck(Environment<IType> e) throws TypeErrorException
+    {
         this.left.typecheck(e);
-         type = this.right.typecheck(e);
-         return type;
+        type = this.right.typecheck(e);
+        return type;
     }
 
     @Override

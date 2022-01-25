@@ -45,14 +45,14 @@ public class ASTAssign extends ASTNodeAbstract
     public IValue eval(Environment<IValue> e)
     {
         VCell cell = Utils.checkValueForOperation(this.left.eval(e), VCell.class, OPERATOR, ERROR_MSG);
-        IValue value = this.right.eval(e);
-        Utils.requireNonNull(value.getType());
+        IValue value = Utils.requireNonNull(this.right.eval(e));
         cell.setValue(value);
         return value;
     }
 
     @Override
-    public IType typecheck(Environment<IType> e) {
+    public IType typecheck(Environment<IType> e) throws TypeErrorException
+    {
         TypeRef ref = Utils.checkTypeForOperation(this.left.typecheck(e), TypeRef.class,OPERATOR, ERROR_MSG);
         IType valueType = this.right.typecheck(e);
         Utils.requireNonNull(valueType);

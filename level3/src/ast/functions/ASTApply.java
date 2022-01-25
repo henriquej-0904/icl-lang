@@ -44,7 +44,8 @@ public class ASTApply extends ASTNodeAbstract
 
         if(args.size() != fun.getArgs().size())
             throw new TypeErrorException("Incorrect number of args for function call. Expected " + 
-                fun.getArgs().size() +" and got " + args.size() + " arguments.");
+                fun.getArgs().size() +" and got " + args.size() + " arguments.")
+                .toRuntimeException();
 
         while(it.hasNext())
             funEnv.assoc(names.next().id, it.next().eval(e));
@@ -71,7 +72,7 @@ public class ASTApply extends ASTNodeAbstract
     }
 
     @Override
-    public IType typecheck(Environment<IType> e)
+    public IType typecheck(Environment<IType> e) throws TypeErrorException
     {
         TypeFunction typeFunction = Utils.checkTypeForOperation(this.function.typecheck(e), TypeFunction.class, OPERATOR,ERROR_MSG);
         Iterator<IType>  itFunTypes = typeFunction.getArgs().iterator();

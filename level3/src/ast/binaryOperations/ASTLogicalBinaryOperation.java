@@ -7,6 +7,7 @@ import ast.binaryOperations.operators.LogicalBinaryOperator;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
+import typeError.TypeErrorException;
 import types.IType;
 import types.primitives.TypeBool;
 import util.Utils;
@@ -113,9 +114,9 @@ public class ASTLogicalBinaryOperation extends ASTNodeAbstract implements ASTNod
     }
 
     @Override
-    public IType typecheck(Environment<IType> e) {
-        
-       Utils.checkTypeForOperation(this.left.typecheck(e), TypeBool.class, operator.getOperator());
+    public IType typecheck(Environment<IType> e) throws TypeErrorException
+    {    
+        Utils.checkTypeForOperation(this.left.typecheck(e), TypeBool.class, operator.getOperator());
         return Utils.checkTypeForOperation(this.right.typecheck(e), TypeBool.class, operator.getOperator());
     }
 

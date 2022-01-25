@@ -7,6 +7,7 @@ import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
+import typeError.TypeErrorException;
 import types.IType;
 import types.primitives.TypeBool;
 import types.primitives.TypeInt;
@@ -49,7 +50,7 @@ public class ASTPrintln extends ASTNodeAbstract
     }
 
     @Override
-    public IType typecheck(Environment<IType> e)
+    public IType typecheck(Environment<IType> e) throws TypeErrorException
     {
         this.type = this.node.typecheck(e);
 

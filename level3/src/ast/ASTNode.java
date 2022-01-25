@@ -3,6 +3,7 @@ package ast;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
+import typeError.TypeErrorException;
 import types.IType;
 import values.IValue;
 
@@ -33,7 +34,7 @@ public interface ASTNode {
      * 
      * @return The type of the expression.
      */
-    IType typecheck(Environment<IType> e);
+    IType typecheck(Environment<IType> e) throws TypeErrorException;
 
     /**
      * Gets the type of this node.

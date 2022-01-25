@@ -6,6 +6,7 @@ import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import compiler.RecordCodeBlock;
 import environment.Environment;
+import typeError.TypeErrorException;
 import types.IType;
 import types.TypeRecord;
 import util.Utils;
@@ -36,20 +37,19 @@ public class ASTGetRecordValue extends ASTNodeAbstract
     }
 
     @Override
-    public void compile(MainCodeBlock c, Environment<Coordinates> e) {
+    public void compile(MainCodeBlock c, Environment<Coordinates> e)
+    {
         record.compile(c, e);
-      
-     RecordCodeBlock record = c.getRecord((TypeRecord)this.record.getType());
-     c.emit("checkcast " + record.className);
-     c.emit(String.format("getfield %s/%s %s", record.className, id, this.type.getJvmType()));
-        
+
+        RecordCodeBlock record = c.getRecord((TypeRecord) this.record.getType());
+        c.emit("checkcast " + record.className);
+        c.emit(String.format("getfield %s/%s %s", record.className, id, this.type.getJvmType()));
     }
 
     @Override
-    public IType typecheck(Environment<IType> e) {
-     TypeRecord type = Utils.checkTypeForOperation(this.record.typecheck(e), TypeRecord.class, OPERATOR);
+    public IType typecheck(Environment<IType> e) throws TypeErrorException {
+        TypeRecord type = Utils.checkTypeForOperation(this.record.typecheck(e), TypeRecord.class, OPERATOR);
         return this.type = type.getFieldTypeFromRecord(id);
-
     }
 
     @Override

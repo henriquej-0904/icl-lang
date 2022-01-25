@@ -6,6 +6,7 @@ import ast.ASTNodeShortCircuit;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
+import typeError.TypeErrorException;
 import types.IType;
 import types.primitives.TypeBool;
 import util.Utils;
@@ -54,9 +55,9 @@ public class ASTBoolNot extends ASTNodeAbstract implements ASTNodeShortCircuit
     }
 
     @Override
-    public IType typecheck(Environment<IType> e) {
+    public IType typecheck(Environment<IType> e) throws TypeErrorException
+    {
         return Utils.checkTypeForOperation(this.node.typecheck(e), TypeBool.class, OPERATOR);
-        
     }
 
     @Override

@@ -3,6 +3,7 @@ import environment.Environment;
 import environment.ITypeEnvEntry;
 import environment.IValueEnvEntry;
 import typeError.TypeErrorException;
+import typeError.TypeErrorRuntimeException;
 import types.IType;
 import values.IValue;
 
@@ -97,7 +98,15 @@ public class MathExpression {
 
 					if (!inputFile)
 						parser.ReInit(System.in);
-				} catch (Exception e) {
+				}
+				catch (TypeErrorRuntimeException e) {
+					System.err.println("Type error!");
+					if (DEBUG)
+						e.printStackTrace();
+					else
+						System.err.println(e.getMessage());
+				}
+				catch (Exception e) {
 					if (DEBUG)
 						e.printStackTrace();
 					else {

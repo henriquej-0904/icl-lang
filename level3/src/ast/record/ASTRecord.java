@@ -3,7 +3,6 @@ package ast.record;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
@@ -34,21 +33,18 @@ public class ASTRecord extends ASTNodeAbstract
     @Override
     public IValue eval(Environment<IValue> e)
     {
-        
-        Map<String, IValue> recordMap = fields.stream()
-        .collect(Collectors.toMap(
-            (field) -> field.getLeft().getLeft(),
-            (field) -> Utils.requireNonNull(field.getLeft().getRight().eval(e)),
-            (field1,field2) -> field1,
-            ()-> {
-                return new LinkedHashMap<>(fields.size());
-            }   
-        ));
+        Map<String, IValue> recordMap = new LinkedHashMap<>(fields.size());
+
+        for (Pair<Bind,IType> field : fields) {
+            Bind bind = field.getLeft();
+            recordMap.put(bind.getLeft(), Utils.requireNonNull(bind.getRight().eval(e)));
+        }
 
         if(recordMap.size() != fields.size())
-            throw new TypeErrorException("Cannot have repeated names for diferent fields in the same record");
+            throw new TypeErrorException("Cannot have repeated names for different fields in the same record.")
+                .toRuntimeException();
+        
         return new VRecord(recordMap);
-       
     }
 
     @Override
@@ -65,36 +61,30 @@ public class ASTRecord extends ASTNodeAbstract
     }
 
     @Override
-    public IType typecheck(Environment<IType> e) {
-       
-       
-        Map<String, IType> recordMap = fields.stream()
-        .collect(Collectors.toMap(
-            (field) -> field.getLeft().getLeft(),
-            (field) -> {
-                IType declaredType = field.getRight();
-                Bind bind = field.getLeft();
-                IType actualType  = Utils.requireNonNull(bind.getRight().typecheck(e));
-                if(declaredType == null)
-                   return actualType;
-                // Check if declared type equals the actual type
-                if (!declaredType.equals(actualType))
-                    throw new TypeErrorException(
-                        String.format("Illegal expression type in record def for bind with id '%s'. " +
+    public IType typecheck(Environment<IType> e) throws TypeErrorException
+    {
+        Map<String, IType> recordMap = new LinkedHashMap<>(fields.size());
+
+        for (Pair<Bind,IType> field : fields)
+        {
+            Bind bind = field.getLeft();
+            IType declaredType = field.getRight();
+            IType actualType = Utils.requireNonNull(bind.getRight().typecheck(e));
+
+            // Check if declared type equals the actual type
+            if (declaredType != null && !declaredType.equals(actualType))
+                throw new TypeErrorException(
+                    String.format("Illegal expression type in record def for bind with id '%s'. " +
                         "Declared type is '%s' and got '%s'.", bind.getLeft(), declaredType.show(),
                         actualType.show()));
                 
-                return actualType;           
-            },
-            (field1,field2) -> field1,
-            ()-> {
-                return new LinkedHashMap<>(fields.size());
-            }   
-        ));
+            recordMap.put(bind.getLeft(), actualType);
+        }
 
         if(recordMap.size() != fields.size())
-            throw new TypeErrorException("Cannot have repeated names for diferent fields in the same record");
-		return this.type =  new TypeRecord(recordMap);
+            throw new TypeErrorException("Cannot have repeated names for different fields in the same record.");
+		
+        return this.type =  new TypeRecord(recordMap);
     }
 
     @Override
