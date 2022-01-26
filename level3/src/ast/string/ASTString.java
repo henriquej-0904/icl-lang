@@ -38,6 +38,6 @@ public class ASTString extends ASTNodeAbstract
 
     @Override
     public StringBuilder toString(StringBuilder builder) {
-        return builder.append(this.value);
+        return builder.append( "\"" + this.value + "\"");
     }
 }

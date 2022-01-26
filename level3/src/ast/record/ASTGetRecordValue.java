@@ -53,8 +53,12 @@ public class ASTGetRecordValue extends ASTNodeAbstract
     }
 
     @Override
-    public StringBuilder toString(StringBuilder builder) {
-        // TODO Auto-generated method stub
-        return null;
+    public StringBuilder toString(StringBuilder builder)
+    {
+        ((ASTNodeAbstract)this.record).toString(builder);
+        builder.append('.');
+        builder.append(this.id);
+
+        return builder;
     }    
 }

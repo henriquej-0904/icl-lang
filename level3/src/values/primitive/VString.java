@@ -12,11 +12,6 @@ public final class VString extends VPrimitive<String>
     }
 
     @Override
-    public String show() {
-        return new StringBuilder("\"").append(super.show()).append("\"").toString();
-    }
-
-    @Override
     public TypePrimitive getPrimitiveType() {
         return (TypePrimitive)TypeString.TYPE;
     }

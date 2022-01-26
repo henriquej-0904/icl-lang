@@ -72,9 +72,10 @@ public class ASTFun extends ASTNodeAbstract
     }
 
     @Override
-    public StringBuilder toString(StringBuilder builder) {
-        builder.append("Function ");
-        Utils.toStringList(this.args, null, null, builder);
+    public StringBuilder toString(StringBuilder builder)
+    {
+        builder.append("fun ");
+        Utils.toStringList(this.args, (arg) -> arg.id, null, builder);
         builder.append(" ->\n\t");
         ((ASTNodeAbstract)this.body).toString(builder);
         builder.append("\nend\n");

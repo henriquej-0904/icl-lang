@@ -3,7 +3,7 @@ package types.primitives;
 public class TypeBool extends TypePrimitive implements TypeJavaPrimitive
 {
     public static final String TYPE_NAME = "Boolean";
-    private static final String JVM_TYPE = "I";
+    private static final String JVM_TYPE = "Z";
 
     /**
      * @param classType

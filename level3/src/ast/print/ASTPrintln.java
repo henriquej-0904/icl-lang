@@ -1,7 +1,5 @@
 package ast.print;
 
-import java.util.function.Consumer;
-
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
 import compiler.Coordinates;
@@ -9,8 +7,6 @@ import compiler.MainCodeBlock;
 import environment.Environment;
 import typeError.TypeErrorException;
 import types.IType;
-import types.primitives.TypeBool;
-import types.primitives.TypeInt;
 import types.primitives.TypePrimitive;
 import util.Utils;
 import values.IValue;
@@ -20,8 +16,6 @@ public class ASTPrintln extends ASTNodeAbstract
     private static final String OPERATOR = "println - ()";
 
     protected ASTNode node;
-
-    protected Consumer<MainCodeBlock> compilerPrintlnFunc;
 
     /**
      * @param node
@@ -37,7 +31,7 @@ public class ASTPrintln extends ASTNodeAbstract
         c.emit("dup");
         c.emit("getstatic java/lang/System/out Ljava/io/PrintStream;");
         c.emit("swap");
-        compilerPrintlnFunc.accept(c);
+        c.emit(String.format("invokevirtual java/io/PrintStream/println(%s)V", this.node.getType().getJvmType()));
     }
 
     @Override
@@ -57,41 +51,15 @@ public class ASTPrintln extends ASTNodeAbstract
         // Check if the type can be printed
         Utils.checkTypeForOperation(type, TypePrimitive.class,OPERATOR);
 
-        if (this.type instanceof TypeInt)
-            this.compilerPrintlnFunc = ASTPrintln::printInt;
-        else if( this.type instanceof TypeBool)
-            this.compilerPrintlnFunc = ASTPrintln::printBoolean;
-        else 
-            this.compilerPrintlnFunc = ASTPrintln::printString;
         return this.type;
     }
 
     @Override
     public StringBuilder toString(StringBuilder builder) {
-        builder.append(OPERATOR + " (");
+        builder.append("println (");
         ((ASTNodeAbstract)(this.node)).toString(builder);
         builder.append(")");
 
         return builder;
-    }
-
-    private static void printBoolean(MainCodeBlock c)
-    {
-        c.emit("; convert to String;");
-        c.emit("invokestatic java/lang/String/valueOf(Z)Ljava/lang/String;");
-        c.emit("; call println ");
-        c.emit("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
-    }
-
-    private static void printInt(MainCodeBlock c)
-    {
-        c.emit("; convert to String;");
-        c.emit("invokestatic java/lang/String/valueOf(I)Ljava/lang/String;");
-        c.emit("; call println ");
-        c.emit("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
-    }
-
-    private static void printString(MainCodeBlock c){
-        c.emit("invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V");
     }
 }

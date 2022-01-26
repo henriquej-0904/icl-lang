@@ -12,10 +12,11 @@ import util.Utils;
  */
 public class ClosureInterfaceCodeBlock extends CodeBlock
 {
-    private static String CODE = ".interface	public %s\n" +
-    ".super	java/lang/Object\n" +
-    ".method public	abstract %s\n" +
-    ".end method";
+    private static String CODE =
+        ".interface public %s\n" +
+        ".super	java/lang/Object\n" +
+        ".method public	abstract %s\n" +
+        ".end method";
 
     /**
      * The closure signature type.

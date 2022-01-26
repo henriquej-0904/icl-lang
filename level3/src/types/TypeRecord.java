@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 
-public class TypeRecord  implements IType,Iterable<Entry<String,IType>> {
+public class TypeRecord  implements IType, Iterable<Entry<String,IType>> {
 
     public static final String TYPE_NAME = "Record";
     protected Map<String,IType> fields;
@@ -34,7 +34,6 @@ public class TypeRecord  implements IType,Iterable<Entry<String,IType>> {
 
     @Override
     public String getSimpleName() {
-        // TODO Auto-generated method stub
         return  TYPE_NAME;
     }
     
@@ -46,14 +45,12 @@ public class TypeRecord  implements IType,Iterable<Entry<String,IType>> {
     
     @Override
     public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
         if( this == obj)
             return true;
         if(!(obj instanceof TypeRecord))
             return false;
         TypeRecord other = (TypeRecord)obj;
        return this.fields.equals(other.fields);
-
     }
 
     public IType getFieldTypeFromRecord(String id){
@@ -61,7 +58,6 @@ public class TypeRecord  implements IType,Iterable<Entry<String,IType>> {
     }
     @Override
     public Iterator<Entry<String, IType>> iterator() {
-        // TODO Auto-generated method stub
         return fields.entrySet().iterator();
     }
    

@@ -88,8 +88,16 @@ public class ASTRecord extends ASTNodeAbstract
     }
 
     @Override
-    public StringBuilder toString(StringBuilder builder) {
-        // TODO Auto-generated method stub
-        return null;
+    public StringBuilder toString(StringBuilder builder)
+    {
+		Utils.toStringList(this.fields, 
+			(field) -> {
+				builder.append(field.getLeft().getLeft());
+				builder.append('=');
+				((ASTNodeAbstract)field.getLeft().getRight()).toString(builder);
+			},
+			", ", new String[]{"{", "}"}, builder);
+
+		return builder;
     }
 }

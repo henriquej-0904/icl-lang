@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.function.Function;
 
 import types.IType;
-import types.primitives.TypeJavaPrimitive;
-import types.primitives.TypePrimitive;
+import types.primitives.TypeBool;
+import types.primitives.TypeInt;
 
 /**
  * Represents a Closure that implements a specific apply signature.
@@ -88,12 +88,10 @@ public class ClosureCodeBlock extends CodeBlock
 
         // add local variables to frame
         int fieldIndex = 0;
-        for (IType argType : closureInterface.typeFunction.getArgs()) {
+        for (IType argType : closureInterface.typeFunction.getArgs())
+        {
             emit("dup");
-            if(argType instanceof TypePrimitive)
-                emit("iload " + (fieldIndex + 1));
-            else
-                emit("aload " + (fieldIndex + 1));
+            emit(instructionPrefix("load ", argType) + (fieldIndex + 1));
             emit(String.format("putfield f%d/x%d %s", frame.getFrameId(), fieldIndex,
                 argType.getJvmType()));
 
@@ -106,11 +104,9 @@ public class ClosureCodeBlock extends CodeBlock
         saveCurrentFrame();
     }
 
-    public void endClosure(){
-        if(closureInterface.typeFunction.getReturnType() instanceof TypeJavaPrimitive)
-            emit("ireturn");
-        else
-            emit("areturn");
+    public void endClosure()
+    {
+        emit(instructionPrefix("return", closureInterface.typeFunction.getReturnType()));
         emit(".end method");
     }
 
@@ -120,6 +116,21 @@ public class ClosureCodeBlock extends CodeBlock
         for (String string : code) {
             f.println(string);
         }
+    }
+
+    /**
+     * Given a type, returns the instruction for that type.
+     * 
+     * @param instruction
+     * @param type
+     * @return
+     */
+    private String instructionPrefix(String instruction, IType type)
+    {
+        if ((type instanceof TypeInt) || (type instanceof TypeBool))
+            return "i" + instruction;
+        
+        return "a" + instruction;
     }
 
 }

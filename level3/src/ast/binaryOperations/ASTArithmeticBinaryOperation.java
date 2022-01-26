@@ -70,10 +70,10 @@ public class ASTArithmeticBinaryOperation extends ASTNodeAbstract
         this.left.compile(c, e);
         this.right.compile(c, e);
 
-        if(right.getType() instanceof TypeInt)
-            c.emit("invokestatic java/lang/String/valueOf(I)Ljava/lang/String;");
-        else if (right.getType() instanceof TypeBool)
-            c.emit("invokestatic java/lang/String/valueOf(Z)Ljava/lang/String;");
+
+        if(!(right.getType() instanceof TypeString))
+            c.emit(String.format("invokestatic java/lang/String/valueOf(%s)Ljava/lang/String;",
+                right.getType().getJvmType()));
         
         c.emit("invokevirtual java/lang/String/concat(Ljava/lang/String;)Ljava/lang/String;");
     }
