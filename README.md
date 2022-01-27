@@ -94,6 +94,9 @@ O programa optimiza os environments fazendo com que cada um guarde uma referênc
 As funções de biblioteca, tal como todas as outras, necessitam de parênteses "(...)" para se passar os argumentos.
 
 - println -> Função que recebe um tipo primitivo e imprime a sua representação em texto.
+- length -> Devolve o tamanho de uma string.
+- printf->  Função que imprime uma string formatada baseado numa string e os argumentos especificados.
+- isEmpty-> Indica se uma string é vazia.
 
 ## Tipos da linguagem
 De seguida, apresentam-se os tipos definidos na linguagem. Cada tipo, à esquerda, está associado a uma sintaxe específica que o representa, à direita.
@@ -104,7 +107,7 @@ De seguida, apresentam-se os tipos definidos na linguagem. Cada tipo, à esquerd
 - Reference -> ref_tipo, sendo 'tipo' o tipo que a referência está associada. Por exemplo, ref_int representa uma referência para inteiros.
 - Funções -> (tipo_arg1 , tipo_arg2 , ...)tipo_resultado
 - Records -> record(id_1 : tipo_1 , id_2 : tipo_2 , ...), em que os id's correspondem aos nomes dos campos de um Record.
-  
+- Void -> void, só pode ser dado para retorno de uma função.
   
   Os tipos primitivos da linguagem são inteiros, booleanos e strings e por isso pode-se usar todos os operadores de comparação ( ==, !=, >, >=, <, <=) sobre estes tipos.
   Os operadores aritméticos ( +, -, \*, / ) estão definidos para o tipo Integer.
