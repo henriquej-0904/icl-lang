@@ -18,11 +18,10 @@ wget -O /opt/javacc-javacc-7.0.10/target/javacc.jar "https://repo1.maven.org/mav
 #
 # Install jasmin
 wget -O /opt/jasmin.zip "https://sourceforge.net/projects/jasmin/files/latest/download" && \
-unzip -d /opt /opt/jasmin.zip && rm /opt/jasmin.zip && \
-# Set jasmin Env var and create jasmin alias
-echo >> /root/.bashrc && \
-echo export JASMIN_JAR_PATH=$(find /opt jasmin.jar | grep -e "jasmin.jar") >> /root/.bashrc && \
-echo alias jasmin=\"java -jar $(find /opt jasmin.jar | grep -e "jasmin.jar")\" >> /root/.bashrc
+unzip -d /opt /opt/jasmin.zip && rm /opt/jasmin.zip
+
+COPY jasmin /bin/jasmin
+RUN chmod +x /bin/jasmin
 
 ENV PATH=$PATH:/opt/javacc-javacc-7.0.10/scripts/
 
