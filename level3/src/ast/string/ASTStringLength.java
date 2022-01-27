@@ -32,7 +32,6 @@ public class ASTStringLength extends  ASTNodeAbstract {
 
     @Override
     public void compile(MainCodeBlock c, Environment<Coordinates> e) {
-      System.out.printf("%s%s", "ola", "adeus");
       string.compile(c, e);
       c.emit("invokevirtual java/lang/String/lenght()I");
       

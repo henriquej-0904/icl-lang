@@ -63,7 +63,7 @@ public class ASTIfThenElse extends ASTNodeAbstract
         }
         else
         {
-            c.emit("sipush 0");
+            c.emitNull();
             c.emit(l2 + ":");
         }
     }

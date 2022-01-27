@@ -18,7 +18,7 @@ public class TypeNull implements IType
 
     @Override
     public String getJvmType() {
-        throw new Error("Trying to access TypeNull.getJvmType() for illegal type.");
+        return "Ljava/lang/Object;";
     }
     
     @Override

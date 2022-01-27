@@ -241,6 +241,10 @@ public class MainCodeBlock
         return record;
     }
 
+    public void emitNull(){
+        emit("aconst_null");
+    }
+
     public RecordCodeBlock getRecord(TypeRecord type){
        return records.computeIfAbsent(type, (name)-> {return new RecordCodeBlock(records.size(),type);});
     }

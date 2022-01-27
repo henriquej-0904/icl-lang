@@ -5,6 +5,8 @@ import java.util.function.Function;
 
 import types.IType;
 import types.TypeFunction;
+import types.TypeNull;
+import types.primitives.TypeBool;
 import util.Utils;
 
 /**
@@ -28,9 +30,8 @@ public class ClosureInterfaceCodeBlock extends CodeBlock
     private String applySignature;
 
     public ClosureInterfaceCodeBlock(TypeFunction typeFunction){
-        super(generateInterfaceName(typeFunction));
-        this.typeFunction = typeFunction;
-        returnTypeString = typeFunction.getReturnType().getJvmType();
+       this(generateInterfaceName(typeFunction),typeFunction);
+      
       
     }
 

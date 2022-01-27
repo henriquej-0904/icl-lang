@@ -43,6 +43,8 @@ TOKEN :
   |
   <TYPE_BOOL: "bool">
   |
+  <TYPE_VOID: "void">
+  |
   <TYPE_REF: "ref_">
   |
   <TYPE_String: "string">
@@ -82,13 +84,13 @@ TOKEN :
   |
   < ELSE : "else" >
   |
-
   < WHILE : "while" >
   |
   < DO: "do" >
   |
-
   < PRINT : "println" >
+  |
+  < PRINTF : "printf" >
   |
   < LEN : "length" >
   |
@@ -485,6 +487,11 @@ int upDepth = 0;
     <WHILE> t1=Program() <DO> t2=Program() <END> { t1 = new ASTWhileLoop(t1, t2); } |
 
     <PRINT> <LPAR> t1=Assign() <RPAR> { t1 = new ASTPrintln(t1); } |
+    <PRINTF> <LPAR> t1=Assign(){
+      List<ASTNode> args = new LinkedList<ASTNode>();
+    } (<COMMA> t2 = Assign(){
+      args.add(t2);
+    })* <RPAR> { t1 = new ASTPrintf(t1,args); } |
     <LEN> <LPAR> t1=Assign() <RPAR> { t1 = new ASTStringLength(t1); } |
     <IS_EMPTY> <LPAR> t1=Assign() <RPAR> { t1 = new ASTIsEmpty(t1); } |
     <FUN> { List<FunctionArg> args; 
@@ -532,6 +539,7 @@ IType parseType() :
   tok = <TYPE_BOOL> {type = TypeBool.TYPE;}|
   tok = <TYPE_String> {type = TypeString.TYPE;}|
   <TYPE_REF> {type = new TypeRef(parseType());}|
+ 
   <TYPE_RECORD> {
     Map<String,IType> record = new LinkedHashMap<String,IType>();
 
@@ -546,7 +554,7 @@ IType parseType() :
   
   (type = parseType() {argTypes.add(type);} (<COMMA> type = parseType() { argTypes.add(type);} )* )? 
 
-  <RPAR> type = parseType() {
+  <RPAR> (<TYPE_VOID> {type = TypeNull.TYPE;} | type = parseType()){
     type = new TypeFunction(argTypes, type);
   })
 

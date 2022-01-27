@@ -73,8 +73,7 @@ public class ASTWhileLoop extends ASTNodeAbstract
         c.emit("goto " + lStart);
         c.emit(fl + ":");
 
-        // Push something to the stack.
-        c.emit("sipush 0");
+        c.emitNull();
     }
 
     @Override
