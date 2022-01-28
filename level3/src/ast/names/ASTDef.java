@@ -11,8 +11,6 @@ import environment.Environment;
 import typeError.TypeErrorException;
 import types.IType;
 import types.TypeFunction;
-import types.TypeRecord;
-import types.TypeRef;
 import util.Bind;
 import util.Pair;
 import util.Utils;
@@ -63,18 +61,19 @@ public class ASTDef extends ASTNodeAbstract
 				env.assoc(bind.getLeft(), actualType);
 			}
 			else
-			{
-				IType innerType = declaredType;
-				if (innerType instanceof TypeRef)
-					innerType = ((TypeRef)innerType).getInnerType();
+			{				
+				boolean funcRecursive = (declaredType instanceof TypeFunction) &&
+					((TypeFunction)declaredType).isRecursive();
 				
-				boolean funcRecursive = (innerType instanceof TypeFunction) &&
-					((TypeFunction)innerType).isRecursive();
-				
-				// allows to define recursive functions inside records.
-				if (funcRecursive || innerType instanceof TypeRecord) {
+				// allows to define recursive functions.
+				// first declare the bind in the environment and then perform the typecheck.
+				if (funcRecursive) {
 					env.assoc(bind.getLeft(), declaredType);
 					actualType = bind.getRight().typecheck(env);
+
+					// Set function as recursive to inform the compiler.
+					((TypeFunction)actualType).setRecursive();
+
 					Utils.requireNonNull(actualType);
 					// Check if declared type equals the actual type
 					if (!declaredType.equals(actualType))
@@ -119,11 +118,28 @@ public class ASTDef extends ASTNodeAbstract
 			frame.addFieldType(jvmType);
 
 			Coordinates varCoord = new Coordinates(frame.getFrameId(), String.format(FrameCodeBlock.FIELD_NAME_FORMAT, i));
-			newEnv.assoc(bind.getLeft(), varCoord);
 			
-			c.emitCurrentFrame();
-			bind.getRight().compile(c, newEnv);
-			c.emit(String.format("putfield f%d/%s %s", frame.getFrameId(), varCoord.getRight(), jvmType));
+			boolean funcRecursive = (type instanceof TypeFunction) &&
+					((TypeFunction)type).isRecursive();
+			
+			// allows to define recursive functions.
+			// first declare the bind in the environment and then perform the typecheck.
+			if (funcRecursive)
+			{
+				newEnv.assoc(bind.getLeft(), varCoord);
+
+				c.emitCurrentFrame();
+				bind.getRight().compile(c, newEnv);
+				c.emit(String.format("putfield f%d/%s %s", frame.getFrameId(), varCoord.getRight(), jvmType));
+			}
+			else
+			{
+				c.emitCurrentFrame();
+				bind.getRight().compile(c, newEnv);
+				c.emit(String.format("putfield f%d/%s %s", frame.getFrameId(), varCoord.getRight(), jvmType));
+
+				newEnv.assoc(bind.getLeft(), varCoord);
+			}
 
 			i++;
 		}
