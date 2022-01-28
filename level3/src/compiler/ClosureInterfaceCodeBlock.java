@@ -5,8 +5,6 @@ import java.util.function.Function;
 
 import types.IType;
 import types.TypeFunction;
-import types.TypeNull;
-import types.primitives.TypeBool;
 import util.Utils;
 
 /**
@@ -31,15 +29,12 @@ public class ClosureInterfaceCodeBlock extends CodeBlock
 
     public ClosureInterfaceCodeBlock(TypeFunction typeFunction){
        this(generateInterfaceName(typeFunction),typeFunction);
-      
-      
     }
 
     public ClosureInterfaceCodeBlock(String interfaceName, TypeFunction typeFunction){
         super(interfaceName);
         this.typeFunction = typeFunction;
         returnTypeString = typeFunction.getReturnType().getJvmType();
-      
     }
 
     @Override

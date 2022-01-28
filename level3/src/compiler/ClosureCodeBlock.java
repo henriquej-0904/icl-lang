@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.function.Function;
 
 import types.IType;
-import types.TypeNull;
 import types.primitives.TypeBool;
 import types.primitives.TypeInt;
 

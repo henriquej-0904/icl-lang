@@ -17,7 +17,7 @@ import ast.print.ASTPrintln;
 import java.util.LinkedList;
 
 /**
- * Main class for the Math Expression parser (interpreter & compiler).
+ * Main class for the Math Expression ICL Language (interpreter & compiler).
  */
 public class MathExpression {
 
@@ -25,10 +25,7 @@ public class MathExpression {
 	private static final String COMPILER_PARAM = "-c";
 
 	private static final String DEST_FOLDER_PARAM = "-d";
-	private static final String JASMIN_JAR_PATH_ENV = "JASMIN_JAR_PATH";
 	private static final String EXPRESSION_FILE_EXTENSION = ".icl";
-
-	private static final String DEFAULT_OUTPUT_FOLDER = "out";
 
 	private static final boolean DEBUG = System.getenv("DEBUG") != null;
 
@@ -145,12 +142,9 @@ public class MathExpression {
 
 			destFolder = new File(args[2]);
 		}
-		else
-			destFolder = new File(DEFAULT_OUTPUT_FOLDER);
 
 		File tmpFolder = null;
 		try {
-			String jasminJarPath = getJasminPath();
 			// Open expression file
 			File expressionFile = new File(source);
 			String expressionFileName = getExpressionFileNameWithoutExtension(expressionFile);
@@ -189,7 +183,7 @@ public class MathExpression {
 			ast.compile(c, new Environment<Coordinates>());
 			c.dump(tmpFolder);
 
-			callJasmin(jasminJarPath, tmpFolder, expressionFileName);
+			callJasmin(tmpFolder, expressionFileName);
 			buildJar(destFolder, expressionFileName, tmpFolder); 
 			 
 		} catch (ParseException e) {
@@ -225,16 +219,14 @@ public class MathExpression {
 		} 
 	}
 
-	private static void callJasmin(String jasminJarPath, File tmpFolder,
+	private static void callJasmin(File tmpFolder,
 		String expressionFileName) throws IOException, InterruptedException
 	{
 		// Call jasmin to compile to a .class file.
 
 		List<String> jasminCommand = new LinkedList<String>();
-		jasminCommand.add("java");
-		jasminCommand.add("-jar");
-		jasminCommand.add(jasminJarPath);
 
+		jasminCommand.add("jasmin");
 		jasminCommand.add(DEST_FOLDER_PARAM);
 		jasminCommand.add(tmpFolder.getAbsolutePath());
 
@@ -262,11 +254,14 @@ public class MathExpression {
 	private static void buildJar(File destFolder, String expressionFileName,
 		File tmpFolder) throws IOException, InterruptedException
 	{
+		File outputJarFile = destFolder == null ? new File(expressionFileName + ".jar")
+			: new File(destFolder, expressionFileName + ".jar");
+
 		List<String> jarCommand = new LinkedList<String>();
 		jarCommand.add("jar");
 		jarCommand.add("--create");
 		jarCommand.add("--file");
-		jarCommand.add(destFolder.getAbsolutePath() + File.separator + expressionFileName + ".jar");
+		jarCommand.add(outputJarFile.getAbsolutePath());
 		jarCommand.add("-e");
 		jarCommand.add(expressionFileName);
 
@@ -290,27 +285,12 @@ public class MathExpression {
 		int jarExitValue = jarProcess.waitFor();
 
 		if (jarExitValue == 0) {
-			System.out.println("Created file: " + expressionFileName + ".jar");
+			System.out.println("Created file: " + outputJarFile.getPath());
 		} else {
 			System.err.println(new String (jarProcess.getErrorStream().readAllBytes()));
 			System.err.println("Jar create returned an error.");
 			System.exit(jarExitValue);
 		}
-	}
-
-	/**
-	 * Get the jasmin.jar file path from the environment.
-	 * @return The path for the jasmin.jar file.
-	 */
-	private static String getJasminPath() {
-		String jasminJarPath = System.getenv(JASMIN_JAR_PATH_ENV);
-		if (jasminJarPath == null) {
-			System.err.println("Cannot find jasmin jar executable.\n" + "Environment var " + JASMIN_JAR_PATH_ENV
-					+ " must be defined.");
-			System.exit(1);
-		}
-
-		return jasminJarPath;
 	}
 
 	/**
@@ -321,6 +301,7 @@ public class MathExpression {
 	private static String getExpressionFileNameWithoutExtension(File expressionFile) {
 		String name = expressionFile.getName();
 		int extensionIndex;
+		
 		if (name.isEmpty() || (extensionIndex = name.lastIndexOf(EXPRESSION_FILE_EXTENSION)) <= 0)
 			throw new IllegalArgumentException("The input file name must begin with a valid character"
 					+ " and have the " + EXPRESSION_FILE_EXTENSION + " extension.");

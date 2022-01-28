@@ -1,12 +1,6 @@
 package ast.print;
 
-import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import org.w3c.dom.TypeInfo;
 
 import ast.ASTNode;
 import ast.ASTNodeAbstract;
@@ -16,7 +10,6 @@ import environment.Environment;
 import typeError.TypeErrorException;
 import types.IType;
 import types.TypeNull;
-import types.primitives.TypeInt;
 import types.primitives.TypePrimitive;
 import types.primitives.TypeString;
 import util.Utils;
@@ -47,8 +40,8 @@ public class ASTPrintf extends ASTNodeAbstract {
             return v;
         }).toArray();
       
-        PrintStream f = System.out.printf(format, args);
-      return VNull.VALUE;
+        System.out.printf(format, args);
+        return VNull.VALUE;
     }
 
 

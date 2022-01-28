@@ -26,6 +26,8 @@ FROM henriquej0904/icl:tools
 
 WORKDIR /app
 
+RUN chmod 0777 /app
+
 # Copy jar and build files
 COPY --from=build /app/MathExpression.jar /app/MathExpression.jar
 
