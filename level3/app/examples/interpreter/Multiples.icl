@@ -1,9 +1,9 @@
 def 
-    createCounter = fun x:int -> 
+    createCounter = fun x -> 
         def x = new x in
             {
                 inc = fun -> x := !x + 1 end,
-                add = fun y:int -> x := !x + y end,
+                add = fun y -> x := !x + y end,
 
                 get = fun -> !x end
             }
@@ -12,9 +12,9 @@ def
     
 in
     def
-        multiplesOf = fun x:int, range1:int, range2:int -> 
+        multiplesOf = fun x, range1, range2-> 
             def
-                mod = fun dividend:int, divisor:int ->
+                mod = fun dividend , divisor ->
                     dividend - divisor * (dividend / divisor) end
                 
                 initCounter = fun ->
@@ -53,11 +53,10 @@ in
             multiples = multiplesOf(x, range1, range2)
         in
             printf("Multiples of %d between %d and %d:\n", x, range1, range2);
-
+            println("");
             while (multiples.hasNext()) do
                 println (multiples.get())
             end;
-
             println("Finished!")
         end
     end
