@@ -44,28 +44,30 @@ public class ASTIfThenElse extends ASTNodeAbstract
     public void compileDefault(MainCodeBlock c, Environment<Coordinates> e)
     {
         String l1 = c.getNewLabelId();
-        String l2 = null;
+        String l2 = c.getNewLabelId();
         
         ifNode.compile(c, e);
 
         c.emit("ifeq " + l1);
         thenNode.compile(c, e);
 
-        l2 = c.getNewLabelId();
-        c.emit("goto " + l2);
+        // if we do not have else then the stack height and types must be equal.
+        if (this.elseNode == null)
+        {
+            // remove the value produced by the then execution and push null.
+            c.emit("pop");
+            c.emitNull();
+        }
 
+        c.emit("goto " + l2);
         c.emit(l1 + ": ");
 
         if (elseNode != null)
-        {
             elseNode.compile(c, e);
-            c.emit(l2 + ":");
-        }
         else
-        {
             c.emitNull();
-            c.emit(l2 + ":");
-        }
+
+        c.emit(l2 + ":");
     }
 
     public void compileWithShortCircuit(MainCodeBlock c, Environment<Coordinates> e) {
@@ -73,20 +75,30 @@ public class ASTIfThenElse extends ASTNodeAbstract
         String tl = c.getNewLabelId();
         String fl = c.getNewLabelId();
 
-        String exitLabel = this.elseNode == null ? null : c.getNewLabelId();
+        String exitLabel = c.getNewLabelId();
         
         ((ASTNodeShortCircuit)ifNode).compile(c, e, tl, fl);
 
         c.emit(tl + ":");
         thenNode.compile(c, e);
-        c.emit("goto " + (exitLabel == null ? fl : exitLabel) );
+
+        // if we do not have else then the stack height and types must be equal.
+        if (this.elseNode == null)
+        {
+            // remove the value produced by the then execution and push null.
+            c.emit("pop");
+            c.emitNull();
+        }
+
+        c.emit("goto " + exitLabel );
         c.emit(fl + ":");
 
         if (this.elseNode != null)
-        {
             elseNode.compile(c, e);
-            c.emit(exitLabel + ":");
-        }
+        else
+            c.emitNull();
+
+        c.emit(exitLabel + ":");
     }
 
     @Override
