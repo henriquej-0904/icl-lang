@@ -400,17 +400,10 @@ Pair<Bind, IType> ParseBind():
           if (type == null)
             throw new ParseException("Recursive function type must be declared.", tokId);
 
-          IType checkType = type;
-
-          boolean checked = checkType instanceof TypeFunction;
-          if (!checked && checkType instanceof TypeRef)
-            checkType = ((TypeRef)checkType).getInnerType();
-          
-          checked = checkType instanceof TypeFunction;
-          if (!checked)
+          if (!(type instanceof TypeFunction))
             throw new ParseException("Invalid type for recursive function.", tokId);
 
-          ((TypeFunction)checkType).setRecursive();
+          ((TypeFunction)type).setRecursive();
         }
 
         bind = new Bind(tokId.image, t1);

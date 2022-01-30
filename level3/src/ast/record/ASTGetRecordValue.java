@@ -7,7 +7,6 @@ import compiler.MainCodeBlock;
 import compiler.RecordCodeBlock;
 import environment.Environment;
 import typeError.TypeErrorException;
-import typeError.TypeErrorRuntimeException;
 import types.IType;
 import types.TypeRecord;
 import util.Utils;
