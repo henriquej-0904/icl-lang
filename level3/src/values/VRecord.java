@@ -21,7 +21,7 @@ public class VRecord implements IValue
     {
         IValue value = this.record.get(id);
         if (value == null)
-            throw new NoSuchElementException(id + " not declared.");
+            throw new NoSuchElementException("No field in record with id = " + id);
 
         return value;
     }

@@ -8,7 +8,9 @@ public class Environment<E>
 	private Map<String,E> scope;
 	private Environment<E> previous;
 	
-	public Environment (){}
+	public Environment (){
+		scope = Map.of();
+	}
 
 	private Environment(Environment<E> previous) {
 		this.previous = previous;

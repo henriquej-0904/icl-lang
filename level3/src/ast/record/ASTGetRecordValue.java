@@ -7,6 +7,7 @@ import compiler.MainCodeBlock;
 import compiler.RecordCodeBlock;
 import environment.Environment;
 import typeError.TypeErrorException;
+import typeError.TypeErrorRuntimeException;
 import types.IType;
 import types.TypeRecord;
 import util.Utils;
@@ -34,6 +35,7 @@ public class ASTGetRecordValue extends ASTNodeAbstract
     {
         VRecord record = Utils.checkValueForOperation(this.record.eval(e), VRecord.class, OPERATOR);
         return record.getValue(this.id);
+       
     }
 
     @Override
@@ -49,7 +51,10 @@ public class ASTGetRecordValue extends ASTNodeAbstract
     @Override
     public IType typecheck(Environment<IType> e) throws TypeErrorException {
         TypeRecord type = Utils.checkTypeForOperation(this.record.typecheck(e), TypeRecord.class, OPERATOR);
-        return this.type = type.getFieldTypeFromRecord(id);
+         this.type = type.getFieldTypeFromRecord(id);
+         if(this.type == null)
+            throw new TypeErrorException("No field in record with id = " + id);
+        return this.type;
     }
 
     @Override

@@ -11,7 +11,7 @@ public class TypeErrorRuntimeException extends RuntimeException
      * @param message
      */
     public TypeErrorRuntimeException(String message) {
-        super(new TypeErrorException(message));
+        super(message,new TypeErrorException(message));
         this.typeErrorException = (TypeErrorException)this.getCause();
     }
 
@@ -19,7 +19,7 @@ public class TypeErrorRuntimeException extends RuntimeException
      * @param cause
      */
     public TypeErrorRuntimeException(TypeErrorException cause) {
-        super(cause);
+        super(cause.getMessage(),cause);
         this.typeErrorException = cause;
     }
 
@@ -39,5 +39,9 @@ public class TypeErrorRuntimeException extends RuntimeException
     public TypeErrorException getTypeErrorException() {
         return typeErrorException;
     }
+
+
+
+    
     
 }

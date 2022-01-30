@@ -4,6 +4,7 @@ import ast.ASTNodeAbstract;
 import compiler.Coordinates;
 import compiler.MainCodeBlock;
 import environment.Environment;
+import typeError.TypeErrorException;
 import types.IType;
 import values.IValue;
 
@@ -32,9 +33,12 @@ public class ASTId extends ASTNodeAbstract
     }
 
     @Override
-    public IType typecheck(Environment<IType> e) {
-        this.type = e.find(id);
+    public IType typecheck(Environment<IType> e) throws TypeErrorException{
+      try{  this.type = e.find(id);
         return type;
+        }catch(Exception a){
+                throw new TypeErrorException(a.getMessage(), a);
+        }
     }
 
     /**

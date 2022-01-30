@@ -103,10 +103,10 @@ public class ASTLogicalBinaryOperation extends ASTNodeAbstract implements ASTNod
         switch(this.operator)
         {
             case AND:
-                result = new VBool(val1.getValue() && Utils.checkValueForOperation(this.left.eval(e), VBool.class, operator.getOperator()).getValue());
+                result = new VBool(val1.getValue() && Utils.checkValueForOperation(this.right.eval(e), VBool.class, operator.getOperator()).getValue());
                 break;
             case OR:
-                result = new VBool(val1.getValue() || Utils.checkValueForOperation(this.left.eval(e), VBool.class, operator.getOperator()).getValue());
+                result = new VBool(val1.getValue() || Utils.checkValueForOperation(this.right.eval(e), VBool.class, operator.getOperator()).getValue());
                 break;
         }
 

@@ -89,7 +89,7 @@ public class MathExpression {
 						System.out.print("> ");
 
 					ASTNode ast = parser.Start(true);
-					System.out.println(ast.eval(new Environment<IValue>()).show());
+					System.out.printf(String.format("\n\n$ = %s \n", ast.eval(new Environment<IValue>()).show()));
 				} catch (ParseException e) {
 					System.err.println(e.getMessage());
 
@@ -173,7 +173,7 @@ public class MathExpression {
 
 			// parse input
 			ASTNode ast = parser.Start(false);
-
+			
 			IType type = ast.typecheck(new Environment<IType>());
 			
 			System.out.println(String.format("The expression type is: %s\n", type.show()));
@@ -200,6 +200,7 @@ public class MathExpression {
 		}
 		catch (Exception e) {
 			System.err.println("An error occurred!");
+			
 			if(DEBUG)
 				e.printStackTrace();
 			else
