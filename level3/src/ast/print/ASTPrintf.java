@@ -82,8 +82,20 @@ public class ASTPrintf extends ASTNodeAbstract {
 
     @Override
     public StringBuilder toString(StringBuilder builder) {
-        // TODO Auto-generated method stub
-        return null;
+        builder.append("printf (");
+        builder.append(((ASTNodeAbstract)(this.format)).toString(builder));
+        
+        if (!this.args.isEmpty())
+        {
+            builder.append(", ");
+
+            Utils.toStringList(this.args, (ast) -> {
+                ((ASTNodeAbstract)(ast)).toString(builder);
+            }, null, null, builder);
+        }
+        
+        builder.append(')');
+        return builder;
     }
     
 }
