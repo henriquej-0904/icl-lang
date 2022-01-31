@@ -17,7 +17,7 @@ rm ../files.txt
 WORKDIR /app/bin
 
 RUN find | grep -e ".class" > ../class-files.txt && \
-jar --create --file ../MathExpression.jar -e MathExpression @../class-files.txt && \
+jar --create --file ../ICL.jar -e ICL @../class-files.txt && \
 rm ../class-files.txt
 
 # ------------------------------------------------------------
@@ -29,6 +29,6 @@ WORKDIR /app
 RUN chmod 0777 /app
 
 # Copy jar and build files
-COPY --from=build /app/MathExpression.jar /app/MathExpression.jar
+COPY --from=build /app/ICL.jar /app/ICL.jar
 
 #ENV DEBUG=1

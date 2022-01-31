@@ -17,9 +17,9 @@ import ast.print.ASTPrintln;
 import java.util.LinkedList;
 
 /**
- * Main class for the Math Expression ICL Language (interpreter & compiler).
+ * Main class for the ICL Language (interpreter & compiler).
  */
-public class MathExpression {
+public class ICL {
 
 	private static final String INTERPRETER_PARAM = "-e";
 	private static final String COMPILER_PARAM = "-c";
@@ -54,11 +54,12 @@ public class MathExpression {
 	 * Print usage.
 	 */
 	private static void printUsage() {
-		String usage = "Usage:\n" + "\tjava -jar MathExpression.jar -c <input-file-name>.icl [OPTIONS]\n"
-				+ "\tjava -jar MathExpression.jar -e [<input-file-name>.icl]\n\n" +
+		String usage = "ICL Language - Interpreter/Compiler\n\n" +
+				"Usage:\n" + "\tjava -jar ICL.jar -c <input-file-name>.icl [OPTIONS]\n"
+				+ "\tjava -jar ICL.jar -e [<input-file-name>.icl]\n\n" +
 
 				"\t-c -> Compile an expression from a file to generate a .class file that computes that expression.\n"
-				+ "\t-e -> Evaluate an expression from stdin.\n\n" +
+				+ "\t-e -> Evaluate an expression from stdin or from a file.\n\n" +
 
 				"OPTIONS:\n" + "\t" + DEST_FOLDER_PARAM + " <Output folder> ";
 
@@ -167,7 +168,7 @@ public class MathExpression {
 			}
 			else
 			{
-				tmpFolder = Files.createTempDirectory("MathExpressionJfiles").toFile();
+				tmpFolder = Files.createTempDirectory("ICLJfiles").toFile();
 				tmpFolder.deleteOnExit();
 			}
 
