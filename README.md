@@ -21,7 +21,7 @@ Para correr o programa em modo debug (apresentar os ficheiros jasmin gerados, st
 
 Para se obter informação sobre os comandos que o programa aceita deve-se executar:
 ```bash
-java -jar MathExpression.jar
+java -jar ICL.jar
 
 ```
   
@@ -31,7 +31,7 @@ Para correr o programa em modo interpretador pode-se utilizar a shell ou fornece
   
 Exemplo:
 ```bash
-java -jar MathExpression.jar -e examples/interpreter/PrintRecords.icl
+java -jar ICL.jar -e examples/interpreter/PrintRecords.icl
 
 ```
 ## Correr o programa em modo compilador
@@ -40,7 +40,7 @@ Neste modo, deve ser utilizada a flag -c que indica que se pretende compilar o p
 
 Exemplo:
 ```bash
-java -jar MathExpression.jar -c examples/compiler/PrintRecords.icl
+java -jar ICL.jar -c examples/compiler/PrintRecords.icl
 
 ```
 
