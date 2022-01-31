@@ -36,7 +36,7 @@ java -jar MathExpression.jar -e examples/interpreter/PrintRecords.icl
 ```
 ## Correr o programa em modo compilador
   
-Neste modo, deve ser utilizada a flag -c que indica que se pretende compilar o programa fornecido.
+Neste modo, deve ser utilizada a flag -c que indica que se pretende compilar o programa fornecido. Os exemplos para o compilador estão disponíveis em [examples/compiler](https://github.com/henriquej-0904/icl-aulas/tree/main/level3/app/examples/compiler).
 
 Exemplo:
 ```bash
