@@ -17,24 +17,30 @@ O programa foi desenvolvido com base no docker, pois permitiu instalarmos todas 
 - Compilar o programa ([build.sh](https://github.com/henriquej-0904/icl-aulas/blob/main/level3/build.sh))
 - Executar o container com o programa compilado ([run.sh](https://github.com/henriquej-0904/icl-aulas/blob/main/level3/run.sh))
 
-Para correr o programa em modo debug (apresentar os ficheiros \*.j gerados, stack trace dos erros, etc) deve-se executar o script [debug.sh](https://github.com/henriquej-0904/icl-aulas/blob/main/level3/debug.sh). Os ficheiros jasmin gerados a partir de uma compilação estão acessíveis numa pasta [level3](https://github.com/henriquej-0904/icl-aulas/blob/main/level3)/jFiles.
+Para correr o programa em modo debug (apresentar os ficheiros jasmin gerados, stack trace dos erros, etc) deve-se executar o script [debug.sh](https://github.com/henriquej-0904/icl-aulas/blob/main/level3/debug.sh). Os ficheiros jasmin gerados a partir de uma compilação estão acessíveis numa pasta [app](https://github.com/henriquej-0904/icl-aulas/tree/main/level3/app)/jFiles.
+
+Para se obter informação sobre os comandos que o programa aceita deve-se executar:
+```bash
+java -jar MathExpression.jar
+
+```
   
 ## Correr o programa em modo interpretador
 
-Para correr o programa em modo interpretador pode-se utilizar a shell ou fornecer um ficheiro com um programa com o nome [Expression.icl](https://github.com/henriquej-0904/icl-aulas/blob/main/level3/Expression.icl) (tem de ter este nome para estar acessível no container e permite alterações no mesmo sem ser necessário criar um novo container).
+Para correr o programa em modo interpretador pode-se utilizar a shell ou fornecer um ficheiro com um programa. Existem vários exemplos de programas para o interpretador que estão disponíveis em [examples/interpreter](https://github.com/henriquej-0904/icl-aulas/tree/main/level3/app/examples/interpreter).
   
 Exemplo:
 ```bash
-java -jar MathExpression.jar -e Expression.icl
+java -jar MathExpression.jar -e examples/interpreter/PrintRecords.icl
 
 ```
 ## Correr o programa em modo compilador
   
-Neste modo, é necessário o mesmo ficheiro [Expression.icl](https://github.com/henriquej-0904/icl-aulas/blob/main/level3/Expression.icl).
+Neste modo, deve ser utilizada a flag -c que indica que se pretende compilar o programa fornecido.
 
 Exemplo:
 ```bash
-java -jar MathExpression.jar -c Expression.icl
+java -jar MathExpression.jar -c examples/compiler/PrintRecords.icl
 
 ```
 
@@ -84,7 +90,10 @@ end;;
 
 ## Otimizações do compilador
 
-O programa otimiza a compilação de expressões booleanas quando estas são utilizadas em contruções do tipo IF ou WHILE (Short Circuit).
+O programa otimiza a compilação de expressões booleanas quando estas são utilizadas em contruções do tipo IF ou WHILE (Short Circuit). Além disso, as expressões booleanas são otimizadas da seguinte forma:
+
+- x || y -> Só se avalia y no caso de x ser falso.
+- x && y -> Só se avalia y no caso de x ser verdadeiro.
 
 ## Otimizações do Environment
 O programa optimiza os environments fazendo com que cada um guarde uma referência para o anterior.
