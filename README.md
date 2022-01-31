@@ -70,7 +70,7 @@ end;;
 
 ```
 
-Para criar Records deve ser utilizada a seguinte sintaxe: { id_1:tipo_1 = valor_1, id_1:tipo_1 = valor_1 }. Tal como nos DEF, o typechecker funciona da mesma forma, ou seja, não é obrigatório fornecer os tipos. Um exemplo de utilização de Records é o seguinte:
+Para criar Records deve ser utilizada a seguinte sintaxe: [ id_1:tipo_1 = valor_1, id_1:tipo_1 = valor_1 ]. Tal como nos DEF, o typechecker funciona da mesma forma, ou seja, não é obrigatório fornecer os tipos. Um exemplo de utilização de Records é o seguinte:
 
 ```bash
 def
@@ -78,8 +78,8 @@ def
        printf("Person with name: %s and age: %d\n", person.name, person.age) end
 in
     def
-        person1 = { name = "Henrique", age = 21 }
-        person2 = { name = "José", age = 21 }
+        person1 = [ name = "Henrique", age = 21 ]
+        person2 = [ name = "José", age = 21 ]
     in
         printPerson(person1);
         printPerson(person2)
