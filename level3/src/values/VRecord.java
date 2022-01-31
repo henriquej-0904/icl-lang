@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 
 import types.IType;
 import types.TypeRecord;
+import util.Utils;
 
 public class VRecord implements IValue
 {
@@ -28,7 +29,14 @@ public class VRecord implements IValue
 
     @Override
     public String show() {
-        return "Record = "  + record.toString();
+        StringBuilder builder = new StringBuilder(TYPE_NAME + " ");
+
+        return Utils.toStringList(record.entrySet(),
+        (entry) -> {
+            builder.append(entry.getKey());
+            builder.append('=');
+            builder.append(entry.getValue().show());
+        }, null, new String[]{"[", "]"}, builder).toString();
     }
 
     @Override

@@ -112,9 +112,9 @@ TOKEN :
   |
   < RPAR : ")" >
   |
-  < L_BRACKET : "{" >
+  < L_SQUARE_PAR : "[" >
   |
-  < R_BRACKET : "}" >
+  < R_SQUARE_PAR : "]" >
   |
   < QUOTATION_MARK: "\"" >
   |
@@ -496,7 +496,7 @@ int upDepth = 0;
     } |
 
     // Parse Record
-    <L_BRACKET>
+    <L_SQUARE_PAR>
       {
         List<Pair<Bind,IType>> binds = new LinkedList<Pair<Bind,IType>>();
         Pair<Bind, IType> bindWithType = null;
@@ -513,7 +513,7 @@ int upDepth = 0;
         }
       )*
 
-    <R_BRACKET> {
+    <R_SQUARE_PAR> {
       t1 = new ASTRecord(binds);
     }
 

@@ -1,12 +1,12 @@
 def 
     createCounter = fun x:int -> 
         def x = new x in
-            {
+            [
                 inc = fun -> x := !x + 1 end,
                 add = fun y:int -> x := !x + y end,
                 sub = fun y:int -> x := !x - y end,
                 get = fun -> !x end
-            }
+            ]
         end
     end
     
@@ -77,11 +77,11 @@ in
                     end
             in
                 getFirstPrime();
-                {
+                [
                     hasNext =  fun -> ~ (finish()) end,
 
                     get = fun -> def toReturn = counter.get() in getNextPrime(); toReturn end end
-                }
+                ]
             end
         end
     in

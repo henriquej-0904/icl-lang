@@ -96,7 +96,7 @@ public class ASTRecord extends ASTNodeAbstract
 				builder.append('=');
 				((ASTNodeAbstract)field.getLeft().getRight()).toString(builder);
 			},
-			", ", new String[]{"{", "}"}, builder);
+			null, new String[]{"[", "]"}, builder);
 
 		return builder;
     }

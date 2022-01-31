@@ -1,12 +1,12 @@
 def 
     createCounter = fun x -> 
         def x = new x in
-            {
+            [
                 inc = fun -> x := !x + 1 end,
                 add = fun y -> x := !x + y end,
 
                 get = fun -> !x end
-            }
+            ]
         end
     end
     
@@ -34,7 +34,7 @@ in
 
                 counter = initCounter()
             in
-                {
+                [
                     hasNext = fun -> counter.get() <= range2 end,
 
                     get = fun -> def toReturn = counter.get() in
@@ -42,7 +42,7 @@ in
                                     toReturn
                                 end
                           end  
-                }
+                ]
             end
         end
     in

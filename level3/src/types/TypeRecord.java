@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import util.Utils;
+
 
 public class TypeRecord  implements IType, Iterable<Entry<String,IType>> {
 
@@ -16,7 +18,15 @@ public class TypeRecord  implements IType, Iterable<Entry<String,IType>> {
     }
     @Override
     public String show() {
-      return TYPE_NAME + " " +  fields.toString();
+    
+        StringBuilder builder = new StringBuilder(TYPE_NAME + " ");
+
+        return Utils.toStringList(fields.entrySet(),
+        (entry) -> {
+            builder.append(entry.getKey());
+            builder.append(':');
+            builder.append(entry.getValue().show());
+        }, null, new String[]{"[", "]"}, builder).toString();
        
     }
 
